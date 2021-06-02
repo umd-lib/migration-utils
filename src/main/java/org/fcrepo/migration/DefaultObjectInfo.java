@@ -15,6 +15,8 @@
  */
 package org.fcrepo.migration;
 
+import java.io.File;
+
 /**
  * A default implementation of ObjectInfo that accepts
  * values at construction time.
@@ -26,14 +28,22 @@ public class DefaultObjectInfo implements ObjectInfo {
 
     private String uri;
 
+    private File file;
+
     /**
      * the default object info
      * @param pid the pid
      * @param uri the uri
      */
-    public DefaultObjectInfo(final String pid, final String uri) {
+    public DefaultObjectInfo(final File file, final String pid, final String uri) {
+        this.file = file;
         this.pid = pid;
         this.uri = uri;
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 
     @Override

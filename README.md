@@ -1,179 +1,89 @@
-# Migration Utilities [![Build Status](https://travis-ci.com/fcrepo-exts/migration-utils.svg?branch=master)](https://travis-ci.com/fcrepo-exts/migration-utils)
+# Migration Utilities 
 
-A framework to support migration of data from Fedora 3 to Fedora 6 repositories
+A framework to support migration of data from Fedora 3 to Fedora 6 repositories. This version of
+migration-utils has been adapted for UMD Libraries use to extract Fedora 2 FOXML objects to an
+intermediate format, then convert to a format suitable for loading into Avalon or Archelon. The
+original README.md is available at [README-orig.md](README-orig.md).
 
-## Overview
+## Components
 
-This utility iterates the foxml files of a fedora 2 or 3 repository, and creates a Fedora 6 compliant OCFL [Oxford Common File Layout](https://ocfl.io)
+*target-dir* is a parameter used by the following applications which refers to an input/output directory for their
+operations, not to be confused with the Maven output directory containing migration-utils-*-driver.jar.
 
-Migrations to Fedora 6 write migrated objects directly to the filesystem as [OCFL](https://ocfl.io/draft/spec/)
-objects.  
-In particular:
+All JSON files are in a compact format; each object is one complete document on a single line
 
-* There is a 1:1 correspondence between Fedora 3 objects and OCFL objects.  Fedora 3 datastreams appear as files within the resulting OCFL objects.
-* RDF is not re-mapped, `info:fedora/` subjects and objects are kept intact as-is
-* FOXML object and datastream properties are represented as triples in additional sidecar files
+[org.fcrepo.migration.PicocliMigratorFedora2](src/main/java/org/fcrepo/migration/PicocliMigratorFedora2.java), which is invoked with --action=info to produce an info.json file containing summary information for the FOXML objects.  At this point the UMDM and UMAM objects have not been linked.
 
-## Status
+* Input: fedora *objects* and *datastreams* directories; optional list of pids, otherwise all objects
+* Output: info.json file with summary information for selected FOXML objects.
 
-Fedora 6 support is being actively developed, and is considered unstable until Fedora 6 is released.
+[scripts/filter.py](scripts/filter.py) - Filter Fedora objects for export (by collection, status, etc) and link UMDM with their related UMAM objects.
 
-## How to use
+* Input - info.json format file
+* Output - export.json format file, similar to info.json file but filtered for matching UMDM objects with their hasPart UMAM objects listed under the 'hasPart' key in the UMDM object
 
-Background work
+[org.fcrepo.migration.PicocliMigratorFedora2](src/main/java/org/fcrepo/migration/PicocliMigratorFedora2.java), which is invoked with --action=export to extract FOXML objects and datastreams.
 
-* Determine the disposition of your FOXML files:
-  * Will you be migrating from exported (archive or migration context) FOXML?
-    * If so, you will need all of the export FOXML in a known directory.
-  * Will you be migrating from from a native fcrepo3 filesystem?
-    * If so, fcrepo3 should not be running, and you will need to determine if you're using legacy or akubra storage
+* Input: export.json format file; fedora *objects* and *datastreams* directories
+* Output: export.csv file with summary information for selected FOXML objects; each UMDM and UMAM has its own row.  Datastreams are also exported to directories *target-dir*/umd_XXX for each parent UMDM object.
 
-General usage of the migration utils CLI is as follows:
+[scripts/avalon.py](scripts/avalon.py) - generate batch_manifest.csv which is ready for batch load into Avalon
 
-```java -jar target/migration-utils-6.0.0-SNAPSHOT-driver.jar [various options | --help]```
+* Input: export.csv and exported objects and datastreams
+* Output: Avalon formatted batch_manifest.csv
 
-*Note that the migration utility will only run under Java 11+.*  
+## Building
 
-The following CLI options for specifying details of a given migration are available:
-```
-Usage: migration-utils [-chrVx] [--debug] -a=<targetDir>
-                       [-d=<f3DatastreamsDir>] [-e=<f3ExportedDir>]
-                       [-f=<f3hostname>] [-i=<indexDir>] [-l=<objectLimit>]
-                       [-m=<migrationType>] [-o=<f3ObjectsDir>] [-p=<pidFile>]
-                       -t=<f3SourceType> [-u=<user>] [-U=<userUri>]
-  -h, --help                 Show this help message and exit.
-  -V, --version              Print version information and exit.
-  -t, --source-type=<f3SourceType>
-                             Fedora 3 source type. Choices: akubra | legacy |
-                               exported
-  -d, --datastreams-dir=<f3DatastreamsDir>
-                             Directory containing Fedora 3 datastreams (used
-                               with --source-type 'akubra' or 'legacy')
-  -o, --objects-dir=<f3ObjectsDir>
-                             Directory containing Fedora 3 objects (used with
-                               --source-type 'akubra' or 'legacy')
-  -e, --exported-dir=<f3ExportedDir>
-                             Directory containing Fedora 3 export (used with
-                               --source-type 'exported')
-  -a, --target-dir=<targetDir>
-                             Directory where OCFL storage root and supporting
-                               state will be written
-  -I, --delete-inactive      Migrate objects and datastreams in the Inactive
-                               state as deleted. Default: false.
-  -m, --migration-type=<migrationType>
-                             Type of OCFL objects to migrate to. Choices:
-                               FEDORA_OCFL | PLAIN_OCFL
-                               Default: FEDORA_OCFL
-  -l, --limit=<objectLimit>  Limit number of objects to be processed.
-                               Default: no limit
-  -r, --resume               Resume from last successfully migrated Fedora 3
-                               object
-                               Default: false
-  -c, --continue-on-error    Continue to next PID if an error occurs (instead
-                               of exiting). Disabled by default.
-                               Default: false
-  -p, --pid-file=<pidFile>   PID file listing which Fedora 3 objects to migrate
-  -i, --index-dir=<indexDir> Directory where cached index of datastreams (will
-                               reuse index if already exists)
-  -x, --extensions           Add file extensions to migrated datastreams based
-                               on mimetype recorded in FOXML
-                               Default: false
-  -f, --f3hostname=<f3hostname>
-                             Hostname of Fedora 3, used for replacing
-                               placeholder in 'E' and 'R' datastream URLs
-                               Default: fedora.info
-  -u, --username=<user>      The username to associate with all of the migrated
-                               resources.
-                               Default: fedoraAdmin
-  -U, --user-uri=<userUri>   The username to associate with all of the migrated
-                               resources.
-                               Default: info:fedora/fedoraAdmin
-      --debug                Enables debug logging
-```
+The migration-utils Java software is built with [Maven 3](https://maven.apache.org) and requires Java 11 and Maven 3.1+.
 
-### PID migration selection
-
-The default migration configuration will migrate all of the Fedora 2/3 objects found in the source. Subsequent runs will simply re-migrate all of those objects.
-However, there are circumstances when it is preferred that only a subset of all source objects be migrated.
-There are three means by which a subset of objects may be selected for migration (noting that these means may also be combined).
-* *Limit*: When setting the `limit` configuration (detailed above), the migration will be performed on first X-number of objects specified by the value of `limit`.
-* *PID List*: When a pid-list is provided (detailed above), the migration will only be performed on the objects associated with the PIDs in the provided pid-list file.
-* *Resume*: When enabling the `resume` configuration (detailed above), a file is maintained that keeps track of the last successfully migration object. Subsequent executions will only migrate objects following the last migrated object. Note, this capability is based on the assumption that the order of objects to be migrated is deterministic and the same from one execution to the next.
-
-
-### Examples
-
-Run a minimal fedora 6 migration from fedora3 legacy foxml
-
-```shell
-java -jar target/migration-utils-6.0.0-SNAPSHOT-driver.jar --source-type=legacy --limit=100 --target-dir=target/test/ocfl --objects-dir=src/test/resources/legacyFS/objects --datastreams-dir=src/test/resources/legacyFS/datastreams
-```
-Run a minimal fedora 6 migration from a fedora3 archival export
-```shell
-java -jar target/migration-utils-6.0.0-SNAPSHOT-driver.jar --source-type=exported --limit=100 --target-dir=target/test/ocfl --exported-dir=src/test/resources/exported
-
-```
-
-## Property Mappings
-
-### fcrepo 3 Object properties to fcrepo 6+
-
-| fcrepo 3         | fcrepo 6+                           | Example                  |
-|------------------|-------------------------------------|--------------------------|
-| PID              | fedora3model:PID†                   | yul:328697               |
-| state            | fedoraaccess:objState               | Active                   |
-| label            | fedora3model:label†                 | Elvis Presley            |
-| createDate       | fcrepo:created                      | 2015-03-16T20:11:06.683Z |
-| lastModifiedDate | fcrepo:lastModified                 | 2015-03-16T20:11:06.683Z |
-| ownerId          | fedora3model:ownerId†               | nruest                   |
-
-### fcrepo3 Datastream properties to fcrepo 4+
-
-| fcrepo 3      | fcrepo 6+                                                    | Example                                                    |
-|---------------|--------------------------------------------------------------|------------------------------------------------------------|
-| DSID          | dcterms:identifier                                           | OBJ                                                        |
-| Label         | dcterms:title‡                                               | ASC19109.tif                                               |
-| MIME Type     | ebucore:hasMimeType†                                         | image/tiff                                                 |
-| State         | fedoraaccess:objState                                        | Active                                                     |
-| Created       | fcrepo:created                                               | 2015-03-16T20:11:06.683Z                                   |
-| Versionable   | fedora:hasVersions‡                                          | true                                                       |
-| Format URI    | premis:formatDesignation‡                                    | info:pronom/fmt/156                                        |
-| Alternate IDs | dcterms:identifier‡                                          |                                                            |
-| Access URL    | dcterms:identifier‡                                          |                                                            |
-| Checksum      | cryptofunc:_hashalgorithm_‡                                  | cryptofunc:sha1 "c91342b705b15cb4f6ac5362cc6a47d9425aec86" |
-
-### auditTrail mapping
-
-| fcrepo 3 event                      | fcrepo 4+ Event Type                            |
-|------------------------------------|-------------------------------------------------|
-| addDatastream                      | premis:ing‡                                     |
-| modifyDatastreamByReference        | audit:contentModification/metadataModification‡ |
-| modifyObject                       | audit:resourceModification‡                     |
-| modifyObject (checksum validation) | premis:validation‡                              |
-| modifyDatastreamByValue            | audit:contentModification/metadataModification‡ |
-| purgeDatastream                    | audit:contentRemoval‡                           |
-
-† The `fedora3model` namespace is not a published namespace. It is a representation of the fcrepo 3 namespace `info:fedora/fedora-system:def/model`.
-
-‡ Not yet implemented
-
-**Note**: All fcrepo 3 DC (Dublin Core) datastream values are mapped as dcterms properties on the Object in fcrepo 6+. The same goes for any properties in the RELS-EXT and RELS-INT datastreams.
-
-## Additional Documentation
-
- * [wiki](https://wiki.duraspace.org/display/FF/Fedora+3+to+4+Data+Migration)
-
-### Development
-
-The migration-utils software is built with [Maven 3](https://maven.apache.org) and requires Java 11 and Maven 3.1+.
 ```bash
-mvn clean install
+mvn clean install -DskipTests=true -Dcheckstyle.skip
 ```
-The executable utility will be found in the `target` directory.
 
-## Maintainers
+You will need python 3.8+ to use the Python scripts in the scripts folder.
 
-Current maintainer
+## Example
 
-* [Andrew Woods](https://github.com/awoods)
+```bash
+# Extract summary information about all FOXML objects.
+#
+# Creates export/info.json
+java -jar target/migration-utils-*-driver.jar \
+    --action=info \
+    --objects-dir=objects \
+    --datastreams-dir=datastreams \
+    --target-dir=export
 
+# Filter for UMDM objects which are in the Films@UM collection, are marked Complete or Private,
+# and are UMD_VIDEO. Also merges UMAM objects under their "parent" UMDM object via the
+# hasPart relationship.
+#
+# Creates export/filter.json
+scripts/filter.py \
+    --infile=export/info.json \
+    --outfile=export/filter.json \
+    --collection=umd:1158 \
+    --status='Complete,Private' \
+    --type=UMD_VIDEO
+
+# Export objects from objects and datastreams folders into the export folder, with summary
+# information in export.csv.
+#
+# Creates export/export.csv and export/umd_XXX directories for each UMDM.
+java -jar target/migration-utils-*-driver.jar \
+    --action=export \
+    --objects-dir=objects \
+    --datastreams-dir=datastreams \
+    --filter-json=export/filter.json \
+    --target-dir=export
+
+# Use the contents of the export directory and the export.csv file to generate
+# batch_manifest.csv for import into Avalon.
+#
+# Creates export/batch_manifest.csv
+scripts/avalon.py \
+     --title='Films@UM Migration' \
+     --email='wallberg@umd.edu' \
+     --target-dir=export
+
+```

@@ -116,7 +116,7 @@ public class FoxmlDirectoryDFSIterator implements Iterator<FedoraObjectProcessor
         } else {
             final File currentFile = current.remove(0);
             try {
-                return new FoxmlInputStreamFedoraObjectProcessor(
+                return new FoxmlInputStreamFedoraObjectProcessor(currentFile,
                         new FileInputStream(currentFile), fetcher, resolver, localFedoraServer);
             } catch (final XMLStreamException e) {
                 throw new RuntimeException(currentFile.getPath() + " doesn't appear to be an XML file."

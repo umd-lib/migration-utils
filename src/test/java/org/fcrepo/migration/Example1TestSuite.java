@@ -212,7 +212,7 @@ public abstract class Example1TestSuite {
 
         public SimpleObjectSource(final String path, final URLFetcher f,
                 final InternalIDResolver resolver) throws XMLStreamException {
-            p = new FoxmlInputStreamFedoraObjectProcessor(getClass().getClassLoader().getResourceAsStream(path),
+            p = new FoxmlInputStreamFedoraObjectProcessor(null, getClass().getClassLoader().getResourceAsStream(path),
                     f, resolver, LOCAL_FEDORA_SERVER);
         }
 
