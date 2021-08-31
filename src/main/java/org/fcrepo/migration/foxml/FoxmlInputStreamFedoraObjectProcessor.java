@@ -97,7 +97,7 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
      *                          from which the content exposed by the "is" parameter comes.
      * @throws XMLStreamException xml stream exception
      */
-    public FoxmlInputStreamFedoraObjectProcessor(final InputStream is, final URLFetcher fetcher,
+    public FoxmlInputStreamFedoraObjectProcessor(final File file, final InputStream is, final URLFetcher fetcher,
                                                  final InternalIDResolver resolver, final String localFedoraServer)
             throws XMLStreamException {
         this.fetcher = fetcher;
@@ -111,7 +111,7 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
         if (attributes.get("VERSION") == null || !attributes.get("VERSION").equals("1.1")) {
             isFedora2 = true;
         }
-        objectInfo = new DefaultObjectInfo(attributes.get("PID"), attributes.get("FEDORA_URI"));
+        objectInfo = new DefaultObjectInfo(file, attributes.get("PID"), attributes.get("FEDORA_URI"));
         while (reader.next() == XMLStreamConstants.CHARACTERS) {
         }
 
@@ -300,6 +300,7 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
         private long size;
         private ContentDigest contentDigest;
         private CachedContent dsContent;
+        private String contentLocation;
 
         /**
          * foxml datastream version.
@@ -319,6 +320,7 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
             altIds = dsAttributes.get("ALT_IDS");
             formatUri = dsAttributes.get("FORMAT_URI");
             size = dsAttributes.containsKey("SIZE") ? Long.parseLong(dsAttributes.get("SIZE")) : -1;
+            contentLocation = "<unknown>";
             reader.next();
 
             while (reader.hasNext()) {
@@ -334,6 +336,7 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
                         final Map<String, String> attributes = getAttributes(reader, "TYPE", "DIGEST");
                         this.contentDigest = new DefaultContentDigest(attributes.get("TYPE"), attributes.get("DIGEST"));
                     } else if (localName.equals("xmlContent")) {
+                        contentLocation = "embedded XML";
                         // this XML fragment may not be valid out of context
                         // context, so write it out as a complete XML
                         // file...
@@ -359,9 +362,17 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
                         }
                     } else if (localName.equals("contentLocation")) {
                         final Map<String, String> attributes = getAttributes(reader, "REF", "TYPE");
+                        contentLocation = attributes.get("REF");
                         if (attributes.get("TYPE").equals("INTERNAL_ID")) {
-                            dsContent = idResolver.resolveInternalID(attributes.get("REF"));
+                            try {
+                                dsContent = idResolver.resolveInternalID(attributes.get("REF"));
+                            }
+                            catch (final RuntimeException e) {
+                                LOG.warn(e.getMessage());
+                                dsContent = null;
+                            }
                         } else {
+
                             try {
                                 String ref = attributes.get("REF");
                                 if (ref.contains("local.fedora.server")) {
@@ -452,12 +463,23 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
 
         @Override
         public InputStream getContent() throws IOException {
-            return dsContent.getInputStream();
+            if (dsContent == null) {
+                return null;
+            } else {
+                return dsContent.getInputStream();
+            }
+        }
+
+        @Override
+        public String getContentLocation() {
+            return contentLocation;
         }
 
         @Override
         public String getExternalOrRedirectURL() {
-            if (dsContent instanceof URLCachedContent) {
+            if (dsContent == null) {
+                return null;
+            } else if (dsContent instanceof URLCachedContent) {
                 return ((URLCachedContent) dsContent).getURL().toString();
             } else {
                 throw new IllegalStateException();

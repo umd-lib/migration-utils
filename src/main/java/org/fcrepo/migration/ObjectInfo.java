@@ -15,12 +15,19 @@
  */
 package org.fcrepo.migration;
 
+import java.io.File;
+
 /**
  * An interface defining access to the high level identifying information
  * about a fedora 3 object.
  * @author mdurbin
  */
 public interface ObjectInfo {
+
+    /**
+     * @return The File object for the FOXML
+     */
+    public File getFile();
 
     /**
      * @return  the pid of the object.

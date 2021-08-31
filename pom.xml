@@ -29,6 +29,7 @@
     <javaee.xml.version>2.3.1</javaee.xml.version>
     <jaxb.core.version>2.3.0.1</jaxb.core.version>
     <jaxb.impl.version>2.3.1</jaxb.impl.version>
+    <doclint>none</doclint>
   </properties>
 
   <scm>
@@ -184,6 +185,12 @@
       <artifactId>picocli</artifactId>
       <version>4.0.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>1.6</version>
+    </dependency>
+
   </dependencies>
 
   <repositories>
@@ -332,7 +339,7 @@
               </descriptors>
               <archive>
                 <manifest>
-                  <mainClass>org.fcrepo.migration.PicocliMigrator</mainClass>
+                  <mainClass>org.fcrepo.migration.PicocliMigratorFedora2</mainClass>
                 </manifest>
               </archive>
             </configuration>

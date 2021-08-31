@@ -539,7 +539,7 @@ public class ArchiveGroupHandler implements FedoraObjectVersionHandler {
      * @return extension associated with arg mime, return includes '.' in extension (.txt).
      *                  ..Empty String if unrecognized mime
      */
-    private static String getExtension(final String mime) {
+    public static String getExtension(final String mime) {
         final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
         MimeType type;
         try {

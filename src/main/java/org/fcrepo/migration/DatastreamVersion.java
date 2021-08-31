@@ -103,6 +103,12 @@ public interface DatastreamVersion {
     public InputStream getContent() throws IOException;
 
     /**
+     * Gets the source location for this datastream content.
+     * @return String
+     */
+    public String getContentLocation();
+
+    /**
      * Returns the URL to which an External (X) or Redirect (R) datastream
      * points.  Throws IllegalStateException if this isn't an external or
      * redirect datastream.

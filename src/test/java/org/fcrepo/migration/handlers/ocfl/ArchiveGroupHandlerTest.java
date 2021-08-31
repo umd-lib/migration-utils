@@ -929,7 +929,7 @@ public class ArchiveGroupHandlerTest {
                                                           final String state,
                                                           final List<DatastreamVersion> datastreamVersions) {
         final var mock = Mockito.mock(ObjectVersionReference.class);
-        when(mock.getObjectInfo()).thenReturn(new DefaultObjectInfo(pid, pid));
+        when(mock.getObjectInfo()).thenReturn(new DefaultObjectInfo(null, pid, pid));
         when(mock.isFirstVersion()).thenReturn(isFirst);
         if (isFirst) {
             final var properties = objectProperties(List.of(
