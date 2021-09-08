@@ -275,7 +275,7 @@ public class PicocliMigratorFedora2 implements Callable<Integer> {
 
                 final BufferedReader jsonReader = new BufferedReader(new FileReader(filterJson));
                 final CSVPrinter csvWriter = new CSVPrinter(new FileWriter(new File(targetDir, "export.csv")),
-                        CSVFormat.DEFAULT.withHeader("umdm", "umam", "location", "title"));
+                        CSVFormat.DEFAULT.withHeader("umdm", "umam", "location", "title", "handle"));
 
                 final MigratorFedora2Export exportMigrator = new MigratorFedora2Export(
                     targetDir, csvWriter,
