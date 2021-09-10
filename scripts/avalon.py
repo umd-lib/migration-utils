@@ -227,6 +227,10 @@ def process_args() -> Namespace:
                         type=str,
                         help="Email of the batch loader")
 
+    parser.add_argument('-x', '--index-path',
+                        type=str,
+                        help='JSON file mapping UMDM/UMAM PIDs to file paths')
+
     # Process command line arguments
     args = parser.parse_args()
 
@@ -415,7 +419,8 @@ def main(args: Namespace) -> None:
 
     target = Path(args.target_dir)
 
-    index = load_index(target / 'index.json')
+    index_path = Path(args.index_path) if args.index_path else target / 'index.json'
+    index = load_index(index_path)
 
     # Read in objects
     export_path = target / 'export.csv'
