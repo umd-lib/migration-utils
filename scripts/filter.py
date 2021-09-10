@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
 import json
+import logging
 from argparse import ArgumentParser, FileType
+from tempfile import TemporaryFile
+from xml.etree import ElementTree
+
+import requests
 
 # Filter Fedora objects in json info format
 #
@@ -11,6 +16,16 @@ from argparse import ArgumentParser, FileType
 #          their hasPart UMAM objects listed under the 'hasPart' key in the
 #          UMDM object
 
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
+
+class DelimitedList:
+    def __init__(self, delimiter=','):
+        self.delimiter = delimiter
+
+    def __call__(self, arg):
+        return arg.split(self.delimiter)
+
 
 def process_args():
     """ Process command line arguments. """
@@ -19,172 +34,221 @@ def process_args():
     parser = ArgumentParser()
 
     parser.add_argument("-i", "--infile", required=True,
-                        type=str,
+                        type=FileType(mode='r', encoding='UTF-8'),
                         help="JSON input file")
 
     parser.add_argument("-o", "--outfile", required=True,
-                        type=FileType('w', encoding='UTF-8'),
+                        type=FileType(mode='w', encoding='UTF-8'),
                         help="JSON output file")
 
-    parser.add_argument("-c", "--collection", required=False,
-                        type=str,
+    parser.add_argument("-c", "--collection",
+                        type=DelimitedList(),
+                        default=[],
                         help="Comma-separated list of collection pids")
 
-    parser.add_argument("-s", "--status", required=False,
-                        default="Complete,Private",
-                        type=str,
-                        help="Comma-separated list of doInfo.status " +
-                             "(default: Complete,Private")
+    parser.add_argument("-s", "--status",
+                        type=DelimitedList(),
+                        default=['Complete', 'Private'],
+                        help=(
+                            "Comma-separated list of doInfo.status "
+                            "(default: Complete,Private)"
+                        ))
 
-    parser.add_argument("-t", "--type", required=False,
-                        type=str, help="Comma-separated list of doInfo.type")
+    parser.add_argument("-t", "--type",
+                        type=DelimitedList(),
+                        default=[],
+                        help="Comma-separated list of doInfo.type")
 
     # Process command line arguments
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def is_umdm(obj):
+    return hasitem_chain(obj, 'ds', 'doInfo')
+
+
+def is_umam(obj):
+    return hasitem_chain(obj, 'ds', 'amInfo')
+
+
+def setup_filters(args):
+    """
+    Create a list of filter functions to run.
+
+    :param args: Command-line arguments to this script
+    :return: List of functions
+    """
+    filters = []
 
     if args.collection:
-        args.collection = [e.strip() for e in args.collection.split(',')]
-        print(f"Filter Collections: {args.collection}")
+        logging.info(f"Filter Collections: {args.collection}")
+
+        def filter_collections(obj):
+            rels = getitem_chain(obj, 'ds', 'rels-mets', 'rels', default={})
+            return 'isMemberOfCollection' in rels \
+                   and any(collection in rels['isMemberOfCollection'] for collection in args.collection)
+
+        filters.append(filter_collections)
 
     if args.status:
-        args.status = [e.strip() for e in args.status.split(',')]
-        print(f"Filter Status: {args.status}")
+        logging.info(f"Filter Status: {args.status}")
+
+        def filter_status(obj):
+            do_info = getitem_chain(obj, 'ds', 'doInfo', default={})
+            return 'status' in do_info and do_info['status'] in args.status
+
+        filters.append(filter_status)
 
     if args.type:
-        args.type = [e.strip() for e in args.type.split(',')]
-        print(f"Filter Type: {args.type}")
+        logging.info(f"Filter Type: {args.type}")
 
-    return args
+        def filter_type(obj):
+            do_info = getitem_chain(obj, 'ds', 'doInfo', default={})
+            return 'type' in do_info and do_info['type'] in args.type
+
+        filters.append(filter_type)
+
+    return filters
 
 
-def match(args, object):
-    """ Determine if this is a UMDM matches the filter conditions. """
+def getitem_chain(obj, *keys, default=None):
+    """
+    Inspired by the "dig" method in Ruby hashes.::
 
-    # Check if this is a UMDM object
-    if 'ds' not in object:
-        return False, None
-    ds = object['ds']
+        x = {'foo': {'bar': {'baz': 1719}}}
 
-    if 'doInfo' not in ds:
-        return False, None
-    doInfo = ds['doInfo']
+        getitem_chain(x, 'foo', 'bar', 'baz', default=2304)
+            # => 1719
 
-    # Yes, now get relationships, if they are present
-    rels_mets = None
-    rels = None
-    if 'rels-mets' in ds:
-        rels_mets = ds['rels-mets']
-        if 'rels' in rels_mets:
-            rels = rels_mets['rels']
+        getitem_chain(x, 'a', 'b', 'c', default=2304)
+            # => 2304
 
-    # Check the collection filter
-    if args.collection:
-        if not rels or 'isMemberOfCollection' not in rels:
-            return False, None
+        getitem_chain(x, 'a', 'b', 'c')
+            # => None
 
-        is_match = False
-        for collection in args.collection:
-            if collection in rels['isMemberOfCollection']:
-                is_match = True
+    :param obj:
+    :param keys:
+    :param default:
+    :return:
+    """
+    for key in keys:
+        if key not in obj:
+            return default
+        obj = obj[key]
+    return obj
 
-        if not is_match:
-            return False, None
 
-    # Check the status filter
-    if args.status:
-        if 'status' not in doInfo:
-            return False, None
+def hasitem_chain(obj, *keys):
+    """
+    Inspired by the "dig" method in Ruby hashes.::
 
-        if doInfo['status'] not in args.status:
-            return False, None
+        x = {'foo': {'bar': {'baz': 1719}}}
 
-    # Check the type filter
-    if args.type:
-        if 'type' not in doInfo:
-            return False, None
+        hasitem_chain(x, 'foo', 'bar', 'baz')  # => True
 
-        if doInfo['type'] not in args.type:
-            return False, None
+        hasitem_chain(x, 'a', 'b', 'c')        # => False
 
-    # We have a match, return the parts
-    if not rels or 'hasPart' not in rels:
-        return True, []
-    else:
-        return True, rels['hasPart']
+    :param obj:
+    :param keys:
+    :return:
+    """
+    for key in keys:
+        if key not in obj:
+            return False
+        obj = obj[key]
+    return True
+
+
+def get_handle(pid):
+    logging.debug(f'Looking up handle for {pid}')
+    response = requests.get('https://fedora.lib.umd.edu/handle/', params={'action': 'lookup', 'pid': pid})
+    if not response.ok:
+        logging.warning(f'No handle found for {pid}')
+        return ''
+
+    root = ElementTree.fromstring(response.text)
+    handle_element = root.find('.//handle')
+    if handle_element is None:
+        logging.warning(f'No handle found for {pid}')
+        return ''
+
+    return handle_element.text
 
 
 def main(args):
-    """ Main input/output filter. """
+    """
+    Main input/output filter.
 
-    # We make two passes through the input file:
-    #  1. Collect all UMDM objects which match the filters
-    #  2. Collect all UMAM for the matching UMDM
+    Makes two passes through the input file:
 
+    1. Collect all UMDM objects which match the filters
+    2. Collect all UMAM for the matching UMDM
+
+    Then writes to the output file.
+    """
+
+    # matching UMDM objects
     umdm = []
-    parts = {}
-    partsCount = 0
+    # mapping from UMAM pid => UMDM
+    umdm_for_umam_pid = {}
+    parts_count = 0
 
-    # Collect all UMDM matching the filters
-    print("Finding UMDM")
-    with open(args.infile, 'r', encoding='UTF-8') as infile:
-        for line in infile:
-            object = json.loads(line)
+    with TemporaryFile(mode='w+') as umam_list:
+        # Collect all UMDM matching the filters
+        logging.info("Finding UMDM")
+        filters = setup_filters(args)
+        for line in args.infile:
+            obj = json.loads(line)
 
-            is_match, has_parts = match(args, object)
-            if is_match:
+            # copy any UMAM objects to the temp file
+            if is_umam(obj):
+                umam_list.write(line)
+
+            if is_umdm(obj) and all(check(obj) for check in filters):
+                # Map the UMAM pids to their parent UMDM
+                umam_pids = getitem_chain(obj, 'ds', 'rels-mets', 'rels', 'hasPart', default=[])
+                umdm_for_umam_pid.update({pid: obj for pid in umam_pids})
+
                 # Add the title
-                title = "<unknown>"
-                if ('ds' in object
-                    and 'umdm' in object['ds']
-                    and 'umdm_title' in object['ds']['umdm']):
-                    title = object['ds']['umdm']['umdm_title']
-                object['title'] = title
+                obj['title'] = getitem_chain(obj, 'ds', 'umdm', 'umdm_title', default='<unknown>')
+
+                # Add the handle
+                obj['handle'] = get_handle(obj['pid'])
 
                 # Save the UMDM object
-                umdm.append(object)
+                umdm.append(obj)
 
-                # Map the UMAM pids to their parent UMDM
-                for part in has_parts:
-                    parts[part] = object
+        logging.info(f"  {len(umdm)}")
 
-    print(f"  {len(umdm)}")
+        # Collect all UMAM for the matching UMDM
+        logging.info("Finding UMAM")
 
-    # Collect all UMAM for the matching UMDM
-    print("Finding UMAM")
-    with open(args.infile, 'r', encoding='UTF-8') as infile:
-        for line in infile:
-            object = json.loads(line)
+        # rewind the temp file listing of UMAM objects
+        umam_list.seek(0)
+        for line in umam_list:
+            obj = json.loads(line)
+            pid = obj['pid']
 
-            umamPid = object['pid']
+            if pid in umdm_for_umam_pid:
+                umdm_object = umdm_for_umam_pid[pid]
 
-            if (umamPid in parts
-               and 'ds' in object
-               and 'amInfo' in object['ds']):
+                if 'hasPart' not in umdm_object:
+                    umdm_object['hasPart'] = []
 
-                # Add the UMAM
-                umdmObject = parts[umamPid]
+                # Add the UMAM to its parent UMDM
+                umdm_object['hasPart'].append(obj)
 
-                if 'hasPart' not in umdmObject:
-                    umdmObject['hasPart'] = []
+                parts_count += 1
 
-                umdmObject['hasPart'].append(object)
-
-                partsCount += 1
-
-    print(f"  {partsCount}")
+    logging.info(f"  {parts_count}")
 
     # Write out the results
-    print("Writing output JSON")
-    for object in umdm:
-        args.outfile.write(json.dumps(object))
+    logging.info("Writing output JSON")
+    for obj in umdm:
+        args.outfile.write(json.dumps(obj))
         args.outfile.write("\n")
-    args.outfile.close()
 
 
 if __name__ == '__main__':
-
-    # Process command line arguments
-    args = process_args()
-
     # Run input/output filter
-    main(args)
+    main(process_args())

@@ -107,7 +107,7 @@ public class MigratorFedora2Export {
                 final File umdmDir = new File(targetDir, umdmDirName);
                 handler.setObjectDir(umdmDir);
 
-                csvWriter.printRecord(umdm.pid, "", umdmDirName, umdm.title);
+                csvWriter.printRecord(umdm.pid, "", umdmDirName, umdm.title, umdm.handle);
                 csvWriter.flush();
 
                 processor.processObject(handler);
@@ -151,6 +151,7 @@ public class MigratorFedora2Export {
         public String foxml;
         public List<UMAM> hasPart;
         public String title;
+        public String handle;
     }
 
     /**

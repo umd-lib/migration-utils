@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-import csv
-from argparse import ArgumentParser, FileType
+import json
+import logging
+from argparse import ArgumentParser, Namespace
+from csv import DictReader, writer
 from pathlib import Path
-from xml.dom.minidom import parse
+from typing import Optional, Iterable, Union
+from xml.dom.minidom import parse, Element, Text
 
 # Convert Fedora exported objects to Avalon input format.
 #
@@ -12,6 +15,8 @@ from xml.dom.minidom import parse
 # Output - json info file which is filtered for matching UMDM objects and
 #          their hasPart UMAM objects listed under the 'hasPart' key in the
 #          UMDM object
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 languageMap = {
     "ar": "Arabic",
@@ -39,13 +44,14 @@ languageMap = {
     "zh": "Chinese",
 }
 
+
 class Object:
     """ Class to store metadata and files for a single media object. """
 
     def __init__(self):
         self.bib_id_label = ""
         self.bib_id = ""
-        self.other_identifier = [] # (type, value)
+        self.other_identifier = []  # (type, value)
         self.title = ""
         self.creator = []
         self.contributor = []
@@ -56,22 +62,153 @@ class Object:
         self.abstract = ""
         self.language = []
         self.physical_description = ""
-        self.related_item = [] # (label, url)
+        self.related_item = []  # (label, url)
         self.geographic_subject = []
         self.topical_subject = []
         self.temporal_subject = []
         self.terms_of_use = ""
         self.table_of_contents = ""
-        self.note = [] # (type, value)
+        self.note = []  # (type, value)
         self.publish = "No"
         self.hidden = "No"
 
         # Offset, Skip Transcoding, Absolute Location, and Date Ingested are
         # not currently supported
-        self.file = [] # (file, label)
+        self.file = []  # (file, label)
+
+        self.handle = ''
+
+    def process_umdm(self, umdm_path: Path) -> None:
+        """ Gather data from the UMDM xml. """
+
+        doc = parse(str(umdm_path))
+
+        desc_meta = doc.documentElement
+
+        century_date_range = ""
+
+        for e in desc_meta.childNodes:
+
+            # agent
+            if e.nodeName == 'agent':
+                agent_type = e.getAttribute('type')
+                for node in e.childNodes:
+                    if node.nodeName in ('persName', 'corpName'):
+                        text = get_text(node.childNodes)
+                        if agent_type == 'contributor':
+                            self.contributor.append(text)
+                        elif agent_type == 'creator':
+                            self.creator.append(text)
+                        elif agent_type == 'provider':
+                            self.publisher.append(text)
+
+            # covPlace
+            elif e.nodeName == 'covPlace':
+                for geogName in e.getElementsByTagName('geogName'):
+                    text = get_text(geogName.childNodes)
+                    if text != 'not captured':
+                        self.geographic_subject.append(text)
+
+            # covTime
+            elif e.nodeName == 'covTime':
+
+                for date in e.getElementsByTagName('date'):
+                    self.date_issued = get_text(date.childNodes)
+
+                for dateRange in e.getElementsByTagName('dateRange'):
+                    date_from = dateRange.getAttribute('from')
+                    date_to = dateRange.getAttribute('to')
+                    self.date_issued = date_from + "/" + date_to
+
+                for century in e.getElementsByTagName('century'):
+                    text = get_text(century.childNodes)
+
+                    # Save the century as date range, in case we need it for the
+                    # date_issued
+                    century_date_range = text.replace("-", "/")
+
+            # description
+            elif e.nodeName == 'description':
+
+                description_type = e.getAttribute('type')
+                text = get_text(e.childNodes)
+
+                if description_type == 'summary':
+                    if self.abstract:
+                        self.abstract += "; "
+                    self.abstract += text
+
+                elif description_type == 'credits':
+                    self.note.append(('creation/production credits', text))
+
+            # language
+            elif e.nodeName == 'language':
+
+                text = get_text(e.childNodes)
+                for value in text.split("; "):
+                    if value in languageMap:
+                        value = languageMap[value]
+                    self.language.append(value)
+
+            # subject
+            elif e.nodeName == 'subject':
+
+                subject_type = e.getAttribute('type')
+                text = get_text(e.childNodes)
+
+                if subject_type == 'genre':
+                    self.genre.append(text)
+
+                else:
+                    self.topical_subject.append(text)
+
+            # culture
+            elif e.nodeName == 'culture':
+                text = get_text(e.childNodes)
+                if text != 'not captured':
+                    self.topical_subject.append(text + ' Culture')
+
+            # identifier
+            elif e.nodeName == 'identifier':
+
+                identifier_type = e.getAttribute('type')
+                text = get_text(e.childNodes)
+
+                if identifier_type == 'oclc':
+                    self.other_identifier.append(('oclc', text))
+
+                else:
+                    self.other_identifier.append(('local', text))
+
+            # physDesc
+            elif e.nodeName == 'physDesc':
+
+                for node in e.childNodes:
+                    text = get_text(node.childNodes)
+
+                    if node.nodeName in ('color', 'format'):
+                        if self.physical_description:
+                            self.physical_description += '; '
+                        self.physical_description += text
+
+                    if node.nodeName in ('extent', 'size'):
+                        if self.physical_description:
+                            self.physical_description += '; '
+                        text += " " + node.getAttribute('units')
+                        self.physical_description += text
+
+            # rights
+            elif e.nodeName == 'rights':
+                if self.terms_of_use:
+                    self.terms_of_use += '; '
+                self.terms_of_use += get_text(e.childNodes)
+
+        # Use century for date_issued, if necessary
+        if not self.date_issued and century_date_range:
+            self.date_issued = century_date_range
 
 
-def process_args():
+def process_args() -> Namespace:
     """ Process command line arguments. """
 
     # Setup command line arguments
@@ -95,7 +232,7 @@ def process_args():
     return args
 
 
-def write_csv(args, manifest, objects):
+def write_csv(title: str, email: str, manifest_path: Path, objects: Iterable) -> None:
     """ Write objects out to the CSV manifest file. """
 
     # Get column counts
@@ -112,25 +249,25 @@ def write_csv(args, manifest, objects):
     max_file = 1
     max_language = 1
 
-    for object in objects:
-
-        max_other_identifier = max(len(object.other_identifier), max_other_identifier)
-        max_creator = max(len(object.creator), max_creator)
-        max_contributor = max(len(object.contributor), max_contributor)
-        max_publisher = max(len(object.publisher), max_publisher)
-        max_genre = max(len(object.genre), max_genre)
-        max_related_item = max(len(object.related_item), max_related_item)
-        max_geographic_subject = max(len(object.geographic_subject), max_geographic_subject)
-        max_topical_subject = max(len(object.topical_subject), max_topical_subject)
-        max_temporal_subject = max(len(object.temporal_subject), max_temporal_subject)
-        max_note = max(len(object.note), max_note)
-        max_file = max(len(object.file), max_file)
-        max_language = max(len(object.language), max_language)
+    for obj in objects:
+        max_other_identifier = max(len(obj.other_identifier), max_other_identifier)
+        max_creator = max(len(obj.creator), max_creator)
+        max_contributor = max(len(obj.contributor), max_contributor)
+        max_publisher = max(len(obj.publisher), max_publisher)
+        max_genre = max(len(obj.genre), max_genre)
+        max_related_item = max(len(obj.related_item), max_related_item)
+        max_geographic_subject = max(len(obj.geographic_subject), max_geographic_subject)
+        max_topical_subject = max(len(obj.topical_subject), max_topical_subject)
+        max_temporal_subject = max(len(obj.temporal_subject), max_temporal_subject)
+        max_note = max(len(obj.note), max_note)
+        max_file = max(len(obj.file), max_file)
+        max_language = max(len(obj.language), max_language)
 
     # Build the headers
     headers = \
         ["Bibliographic ID Label", "Bibliographic ID"] \
-        + ["Other Identifier Type", "Other Identifier"] * max_other_identifier\
+        + ["Other Identifier Type", "Other Identifier"] * max_other_identifier \
+        + ["Handle"] \
         + ["Title"] \
         + ["Creator"] * max_creator \
         + ["Contributor"] * max_contributor \
@@ -149,291 +286,181 @@ def write_csv(args, manifest, objects):
         + ["File", "Label"] * max_file
 
     # Write the output CSV file
-    with open(manifest, 'w', newline='') as manifest_file:
-        manifest_csv = csv.writer(manifest_file)
-
-        row = None
-
-        def add_multi(values, size, max_count):
-            """ Write multi-valued columns. """
-
-            # values - list of values
-            # size - size of a value:
-            #    1 if a string, means one column
-            #   >1 if sequence of strings, means multiple columns
-            # max_count - total number of values to write
-
-            nonlocal row
-
-            for i in range(0, max_count):
-                if i < len(values):
-                    if size == 1:
-                        row.append(values[i])
-                    else:
-                        row.extend(values[i])
-                else:
-                    row.extend([""] * size)
+    with manifest_path.open(mode='w', newline='') as manifest_file:
+        manifest_csv = writer(manifest_file)
 
         # Write the special first row with batch information
-        manifest_csv.writerow([args.title, args.email] + [""] * (len(headers) - 2))
+        manifest_csv.writerow([title, email] + [""] * (len(headers) - 2))
 
         # Write the header row
         manifest_csv.writerow(headers)
 
         # Write each object row
-        for object in objects:
-            row = []
+        for obj in objects:
+            row = [
+                # "Bibliographic ID Label", "Bibliographic ID"
+                obj.bib_id_label,
+                obj.bib_id,
 
-            # "Bibliographic ID Label", "Bibliographic ID"
-            row.append(object.bib_id_label)
-            row.append(object.bib_id)
+                # "Other Identifier Type", Other Identifier"
+                *multicolumn(obj.other_identifier, 2, max_other_identifier),
 
-            # "Other Identifier Type", Other Identifier" * max_other_identifier\
-            add_multi(object.other_identifier, 2, max_other_identifier)
+                # "Handle"
+                obj.handle,
 
-            # "Title"
-            row.append(object.title)
+                # "Title"
+                obj.title,
 
-            # "Creator"
-            add_multi(object.creator, 1, max_creator)
+                # "Creator"
+                *multicolumn(obj.creator, 1, max_creator),
 
-            # "Contributor"
-            add_multi(object.contributor, 1, max_contributor)
+                # "Contributor"
+                *multicolumn(obj.contributor, 1, max_contributor),
 
-            # "Genre" * max_genre \
-            add_multi(object.genre, 1, max_genre)
+                # "Genre"
+                *multicolumn(obj.genre, 1, max_genre),
 
-            # "Publisher"
-            add_multi(object.publisher, 1, max_publisher)
+                # "Publisher"
+                *multicolumn(obj.publisher, 1, max_publisher),
 
-            # "Date Created", "Date Issued", "Abstract"
-            row.append(object.date_created)
-            row.append(object.date_issued)
-            row.append(object.abstract)
+                # "Date Created", "Date Issued", "Abstract"
+                obj.date_created,
+                obj.date_issued,
+                obj.abstract,
 
-            # "Language"
-            add_multi(object.language, 1, max_language)
+                # "Language"
+                *multicolumn(obj.language, 1, max_language),
 
-            # "Physical Description"
-            row.append(object.physical_description)
+                # "Physical Description"
+                obj.physical_description,
 
-            # "Related Item Label", "Related Item URL"
-            add_multi(object.related_item, 2, max_related_item)
+                # "Related Item Label", "Related Item URL"
+                *multicolumn(obj.related_item, 2, max_related_item),
 
-            # "Topical Subject"
-            add_multi(object.topical_subject, 1, max_topical_subject)
+                # "Topical Subject"
+                *multicolumn(obj.topical_subject, 1, max_topical_subject),
 
-            # "Geographic Subject"
-            add_multi(object.geographic_subject, 1, max_geographic_subject)
+                # "Geographic Subject"
+                *multicolumn(obj.geographic_subject, 1, max_geographic_subject),
 
-            # "Temporal Subject"
-            add_multi(object.temporal_subject, 1, max_temporal_subject)
+                # "Temporal Subject"
+                *multicolumn(obj.temporal_subject, 1, max_temporal_subject),
 
-            # "Terms of Use", "Table of Contents"
-            row.append(object.terms_of_use)
-            row.append(object.table_of_contents)
+                # "Terms of Use", "Table of Contents"
+                obj.terms_of_use,
+                obj.table_of_contents,
 
-            # "Note Type", "Note"
-            add_multi(object.note, 2, max_note)
+                # "Note Type", "Note"
+                *multicolumn(obj.note, 2, max_note),
 
-            # "Publish", "Hidden"
-            row.append(object.publish)
-            row.append(object.hidden)
+                # "Publish", "Hidden"
+                obj.publish,
+                obj.hidden,
 
-            # "File", "Label"
-            add_multi(object.file, 2, max_file)
+                # "File", "Label"
+                *multicolumn(obj.file, 2, max_file)
+            ]
 
             # Write the row
             manifest_csv.writerow(row)
 
 
-def get_text(nodelist):
-    """ Extract text from an XML node list. """
-    rc = []
-    for node in nodelist:
-        if node.nodeType == node.TEXT_NODE:
-            rc.append(node.data.strip().replace("\n", ""))
-    return ''.join(rc)
+def get_text(nodelist: Iterable[Union[Element, Text]]) -> str:
+    """Extract text from an XML node list."""
+    return ''.join(node.data.strip().replace('\n', '') for node in nodelist if node.nodeType == node.TEXT_NODE)
 
 
-def process_umdm(location, object):
-    """ Gather data from the UMDM xml. """
+def multicolumn(values: list, size: int, max_count: int) -> list:
+    """
+    Format multiple values, taking into account multi-column values.
 
-    doc = parse(str(location / 'umdm.xml'))
+    :param values: list of values
+    :param size: number of columns for each value
+    :param max_count: total number of values to allocate space for
+    :return: list of columns
+    """
 
-    descMeta = doc.documentElement
-
-    centuryDateRange = ""
-
-    for e in descMeta.childNodes:
-
-        # agent
-        if e.nodeName == 'agent':
-            type = e.getAttribute('type')
-            for node in e.childNodes:
-                if node.nodeName in ('persName', 'corpName'):
-                    text = get_text(node.childNodes)
-                    if type == 'contributor':
-                        object.contributor.append(text)
-                    elif type == 'creator':
-                        object.creator.append(text)
-                    elif type == 'provider':
-                        object.publisher.append(text)
-
-        # covPlace
-        elif e.nodeName == 'covPlace':
-            for geogName in e.getElementsByTagName('geogName'):
-                text = get_text(geogName.childNodes)
-                if text != 'not captured':
-                    object.geographic_subject.append(text)
-
-        # covTime
-        elif e.nodeName == 'covTime':
-
-            for date in e.getElementsByTagName('date'):
-                object.date_issued = get_text(date.childNodes)
-
-            for dateRange in e.getElementsByTagName('dateRange'):
-                date_from = dateRange.getAttribute('from')
-                date_to = dateRange.getAttribute('to')
-                object.date_issued = date_from + "/" + date_to
-
-            for century in e.getElementsByTagName('century'):
-                text = get_text(century.childNodes)
-
-                # Save the century as date range, in case we need it for the
-                # date_issued
-                centuryDateRange = text.replace("-", "/")
-
-        # description
-        elif e.nodeName == 'description':
-
-            type = e.getAttribute('type')
-            text = get_text(e.childNodes)
-
-            if type == 'summary':
-                if object.abstract:
-                    object.abstract += "; "
-                object.abstract += text
-
-            elif type == 'credits':
-                object.note.append(('creation/production credits', text))
-
-        # language
-        elif e.nodeName == 'language':
-
-            text = get_text(e.childNodes)
-            for value in text.split("; "):
-                if value in languageMap:
-                    value = languageMap[value]
-                object.language.append(value)
-
-        # subject
-        elif e.nodeName == 'subject':
-
-            type = e.getAttribute('type')
-            text = get_text(e.childNodes)
-
-            if type == 'genre':
-                object.genre.append(text)
-
+    columns = []
+    for i in range(0, max_count):
+        if i < len(values):
+            if size == 1:
+                columns.append(values[i])
             else:
-                object.topical_subject.append(text)
+                columns.extend(values[i])
+        else:
+            columns.extend([''] * size)
 
-        # culture
-        elif e.nodeName == 'culture':
-            text = get_text(e.childNodes)
-            if text != 'not captured':
-                object.topical_subject.append(text + ' Culture')
-
-        # identifier
-        elif e.nodeName == 'identifier':
-
-            type = e.getAttribute('type')
-            text = get_text(e.childNodes)
-
-            if type == 'oclc':
-                object.other_identifier.append(('oclc', text))
-
-            else:
-                object.other_identifier.append(('local', text))
-
-        # physDesc
-        elif e.nodeName == 'physDesc':
-
-            for node in e.childNodes:
-                text = get_text(node.childNodes)
-
-                if node.nodeName in ('color', 'format'):
-                    if object.physical_description:
-                        object.physical_description += '; '
-                    object.physical_description += text
-
-                if node.nodeName in ('extent', 'size'):
-                    if object.physical_description:
-                        object.physical_description += '; '
-                    text += " " + node.getAttribute('units')
-                    object.physical_description += text
-
-        # rights
-        elif e.nodeName == 'rights':
-            if object.terms_of_use:
-                object.terms_of_use += '; '
-            object.terms_of_use += get_text(e.childNodes)
+    return columns
 
 
-    # Use century for date_issued, if necessary
-    if not object.date_issued and centuryDateRange:
-        object.date_issued = centuryDateRange
+def load_index(index_path: Path) -> Optional[dict]:
+    if not index_path.is_file():
+        logging.warning(f'No index file found at {index_path}; will skip linking objects to their files')
+        return None
+    else:
+        index = {}
+        with index_path.open(mode='r') as index_file:
+            logging.info(f'Reading index from {index_path}')
+            for line in index_file:
+                index.update(json.loads(line))
+        return index
 
 
-def main(args):
+def main(args: Namespace) -> None:
     """ Main conversion loop. """
 
     objects = []
-    object = None
+    obj = None
 
     target = Path(args.target_dir)
 
+    index = load_index(target / 'index.json')
+
     # Read in objects
-    export = target / 'export.csv'
-    print(f"Reading input objects from {export}")
+    export_path = target / 'export.csv'
+    logging.info(f"Reading input objects from {export_path}")
+    missing_files = []
 
-    with open(export, "r") as export_file:
-        export_csv = csv.reader(export_file)
+    with export_path.open(mode='r') as export_file:
+        export_csv = DictReader(export_file)
 
-        for umdm, umam, location, title in export_csv:
-
+        for record in export_csv:
+            umam = record['umam']
+            umdm = record['umdm']
             if not umam:
                 # Process UMDM, start new object
-                object = Object()
-                objects.append(object)
+                obj = Object()
 
-                object.title = title
+                obj.title = record['title']
+                obj.other_identifier.append(("local", umdm))
+                obj.handle = record['handle']
+                obj.process_umdm(target / record['location'] / 'umdm.xml')
 
-                object.other_identifier.append(("local", umdm))
-
-                process_umdm(target / location, object)
-
-                # object.file.append(("UMDM", location))
-                object.file.append(("export/test.mp4", "Test MP4 Video"))
+                objects.append(obj)
             else:
-                # TODO: Process UMAM
-                # object.file.append(("UMAM", umam))
-                None
+                # add UMAM to the current UMDM
+                if obj is None:
+                    # UMAM occurred before a UMDM
+                    raise Exception(f'File {export_path} is not formatted correctly')
+                if index is None:
+                    logging.debug(f'No restored files index configured; skipping file linking for {umdm}/{umam}')
+                    continue
+                try:
+                    filename = index[umdm][umam]
+                    obj.file.append([f'{umdm.replace(":", "_")}/{umam.replace(":", "_")}/{filename}', umam])
+                except KeyError:
+                    missing_files.append(f'{umdm}/{umam}')
+                    logging.warning(f'File for {umdm}/{umam} not found in restored files index')
 
     # Write output csv
-    manifest = target / 'batch_manifest.csv'
-    print(f"Writing output {manifest}")
-    print(f"  {len(objects)} objects")
+    manifest_path = target / 'batch_manifest.csv'
+    logging.info(f"Writing output {manifest_path}")
+    logging.info(f"  {len(objects)} objects")
+    logging.info(f'  {len(missing_files)} missing files')
 
-    write_csv(args, manifest, objects)
+    write_csv(args.title, args.email, manifest_path, objects)
 
 
 if __name__ == '__main__':
-
-    # Process command line arguments
-    args = process_args()
-
     # Run the conversion
-    main(args)
+    main(process_args())
