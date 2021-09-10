@@ -15,6 +15,7 @@ from xml.dom.minidom import parse, Element, Text
 # Output - json info file which is filtered for matching UMDM objects and
 #          their hasPart UMAM objects listed under the 'hasPart' key in the
 #          UMDM object
+from xml.etree import ElementTree
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
@@ -445,10 +446,15 @@ def main(args: Namespace) -> None:
                 if index is None:
                     logging.debug(f'No restored files index configured; skipping file linking for {umdm}/{umam}')
                     continue
+
+                umdm_umam_path = Path(umdm.replace(":", "_"), umam.replace(":", "_"))
                 try:
                     filename = index[umdm][umam]
-                    obj.file.append([f'{umdm.replace(":", "_")}/{umam.replace(":", "_")}/{filename}', umam])
+                    obj.file.append([f'{umdm_umam_path}/{filename}', umam])
                 except KeyError:
+                    doc = ElementTree.parse(target / umdm_umam_path / 'umam.xml')
+                    filename = doc.getroot().findtext('./technical/fileName') or doc.getroot().findtext('./identifier')
+                    obj.file.append(['MISSING', filename or ''])
                     missing_files.append(f'{umdm}/{umam}')
                     logging.warning(f'File for {umdm}/{umam} not found in restored files index')
 
