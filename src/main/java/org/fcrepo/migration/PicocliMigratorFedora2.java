@@ -44,8 +44,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.fasterxml.jackson.core.JsonFactory;
-
 import static edu.wisc.library.ocfl.api.util.Enforce.expressionTrue;
 import static edu.wisc.library.ocfl.api.util.Enforce.notNull;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -86,8 +84,8 @@ public class PicocliMigratorFedora2 implements Callable<Integer> {
     //         description = "Fedora 3 source type. Choices: akubra | legacy | exported")
     private final F3SourceTypes f3SourceType = F3SourceTypes.LEGACY;
 
-    @Option(names = {"--action", "-a"}, defaultValue="info", showDefaultValue = ALWAYS, order = 1,
-            description="Fedora 2 Action. Choices: info | export")
+    @Option(names = {"--action", "-a"}, defaultValue = "info", showDefaultValue = ALWAYS, order = 1,
+            description = "Fedora 2 Action. Choices: info | export")
     private final F3Actions f3Action = F3Actions.INFO;
 
     @Option(names = {"--datastreams-dir", "-d"}, order = 2,
@@ -149,7 +147,9 @@ public class PicocliMigratorFedora2 implements Callable<Integer> {
     @Option(names = {"--debug"}, order = 30, description = "Enables debug logging")
     private boolean debug;
 
-    @Option(names = {"--filter-json"}, order = 30, description = "Input file required for the --action=export option; specifies the UMDM and UMAM to export; formatted as output from scripts/filter.py")
+    @Option(names = {"--filter-json"}, order = 30,
+            description = "Input file required for the --action=export option; " +
+                          "specifies the UMDM and UMAM to export; formatted as output from scripts/filter.py")
     private File filterJson;
 
     /**

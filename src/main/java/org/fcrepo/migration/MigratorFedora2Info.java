@@ -17,8 +17,6 @@ package org.fcrepo.migration;
 
 import org.fcrepo.migration.pidlist.PidListManager;
 import org.slf4j.Logger;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.xml.stream.XMLStreamException;

@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,7 +29,6 @@ import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,7 +68,8 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#state" , "state"),
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#label" , "label"),
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#createdDate" , "createdDate"),
-        new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/view#lastModifiedDate" , "lastModifiedDate"),
+        new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/view#lastModifiedDate" ,
+                                                    "lastModifiedDate"),
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#contentModel" , "contentModel")
     );
 
@@ -88,6 +87,7 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
 
     /**
      * Set the object directory to stash the files.
+     * @param objectDir
      */
     public void setObjectDir(final File objectDir) {
         this.objectDir = objectDir;
@@ -115,16 +115,13 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             while ((bytesRead = is.read(buffer)) != -1) {
                 os.write(buffer, 0, bytesRead);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("IO exception writing " + foxml.toPath() + " in beginObject: " + e);
-        }
-        finally {
+        } finally {
             if (os != null) {
                 try {
                     os.close();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("IO exception writing " + foxml.toPath() + " in beginObject: " + e);
                 }
             }
@@ -155,16 +152,13 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             }
 
             json.writeEndObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("json exception in processObjectProperties: " + e);
-        }
-        finally {
+        } finally {
             if (json != null) {
                 try {
                     json.close();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("json exception in processObjectProperties: " + e);
                 }
             }
@@ -221,7 +215,7 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             json.writeFieldName("location");
             json.writeString(ds.getContentLocation());
 
-            ContentDigest digest = ds.getContentDigest();
+            final ContentDigest digest = ds.getContentDigest();
             if (digest != null) {
                 json.writeFieldName("digest");
                 json.writeStartObject();
@@ -233,16 +227,13 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             }
 
             json.writeEndObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("json exception in processDatastreamVersion: " + e);
-        }
-        finally {
+        } finally {
             if (json != null) {
                 try {
                     json.close();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("json exception in processDatastreamVersion: " + e);
                 }
             }
@@ -255,14 +246,13 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
                 // skip
                 return;
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             // ignore, if it is not a url then we are not interested
         }
 
         // Get the Datastream export file name
         String dsName = id;
-        String extension = ArchiveGroupHandler.getExtension(ds.getMimeType());
+        final String extension = ArchiveGroupHandler.getExtension(ds.getMimeType());
         if (dsName == null || dsName.equals("")) {
             dsName = ".dat";
         }
@@ -281,17 +271,15 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             while ((bytesRead = is.read(buffer)) != -1) {
                 os.write(buffer, 0, bytesRead);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("IO exception writing " + dsFile.toPath() + " in processDatastreamVersion: " + e);
-        }
-        finally {
+        } finally {
             if (os != null) {
                 try {
                     os.close();
-                }
-                catch (Exception e) {
-                    System.out.println("IO exception writing " + dsFile.toPath() + " in processDatastreamVersion: " + e);
+                } catch (Exception e) {
+                    System.out.println("IO exception writing " + dsFile.toPath() +
+                                       " in processDatastreamVersion: " + e);
                 }
             }
         }
@@ -306,18 +294,18 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
 
         try {
 
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
             String fileID = "";
             boolean isInRels = false;
             String relationship = "";
 
-            Map<String, String> map = new HashMap<String, String>();
-            Map<String, Set<String>> mapRelationships = new HashMap<>();
+            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, Set<String>> mapRelationships = new HashMap<>();
 
-            while (reader.hasNext()){
-                int event = reader.next();
+            while (reader.hasNext()) {
+                final int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     final String name = reader.getLocalName();
@@ -325,7 +313,7 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
 
                     // final String attr = parser.getAttributeValue()
 
-                    if (ns.equals(MetsNS) && name.equals("file")){
+                    if (ns.equals(MetsNS) && name.equals("file")) {
                         fileID = reader.getAttributeValue(null, "ID");
 
                     } else if (ns.equals(MetsNS) && name.equals("FLocat")) {
@@ -379,8 +367,7 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             //     json.writeEndArray();
             // };
             // json.writeEndObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception processing rels-mets: " + e);
         }
     }
@@ -393,14 +380,14 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
 
         try {
 
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
             String name = "";
             String ns = "";
 
-            while (reader.hasNext()){
-                int event = reader.next();
+            while (reader.hasNext()) {
+                final int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     name = reader.getLocalName();
@@ -420,8 +407,7 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception processing doInfo/amInfo: " + e);
         }
     }
@@ -434,22 +420,22 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
 
         try {
 
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
             String name = "";
             String ns = "";
             String title_type = "";
-            StringBuilder title = new StringBuilder();
+            final StringBuilder title = new StringBuilder();
 
-            while (reader.hasNext()){
-                int event = reader.next();
+            while (reader.hasNext()) {
+                final int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     name = reader.getLocalName();
                     ns = reader.getNamespaceURI();
 
-                    if (name.equals("title")){
+                    if (name.equals("title")) {
                         title_type = reader.getAttributeValue(null, "type");
                     }
 
@@ -473,8 +459,7 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             // json.writeFieldName("umdm_title");
             // json.writeString(title.toString());
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception processing doInfo/amInfo: " + e);
         }
     }

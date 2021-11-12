@@ -90,6 +90,7 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
 
     /**
      * foxml input stream fedora object processor.
+     * @param file the file
      * @param is the input stream
      * @param fetcher the fetcher
      * @param resolver the resolver
@@ -366,8 +367,7 @@ public class FoxmlInputStreamFedoraObjectProcessor implements FedoraObjectProces
                         if (attributes.get("TYPE").equals("INTERNAL_ID")) {
                             try {
                                 dsContent = idResolver.resolveInternalID(attributes.get("REF"));
-                            }
-                            catch (final RuntimeException e) {
+                            } catch (final RuntimeException e) {
                                 LOG.warn(e.getMessage());
                                 dsContent = null;
                             }
