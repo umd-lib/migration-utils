@@ -65,7 +65,7 @@ The migration-utils Java software is built with [Maven 3](https://maven.apache.o
 and requires Java 11 and Maven 3.1+.
 
 ```bash
-mvn clean install -DskipTests=true -Dcheckstyle.skip
+mvn clean install
 ```
 
 You will need python 3.8+ to use the Python scripts in the `scripts` folder.
