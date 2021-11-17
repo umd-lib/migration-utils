@@ -1,0 +1,38 @@
+
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+          <fileSec>
+            <fileGrp ID="fedora">
+              <file ID="1">
+                <FLocat xlink:type="simple" xlink:href="umd:3392" LOCTYPE="OTHER" OTHERLOCTYPE="PID"></FLocat>
+              </file>
+		<file ID="2">
+		    <FLocat xlink:type="simple" xlink:href="umd:683684" LOCTYPE="OTHER" OTHERLOCTYPE="PID"></FLocat>
+		</file>
+		<file ID="3">
+		    <FLocat xlink:type="simple" xlink:href="umd:683685" LOCTYPE="OTHER" OTHERLOCTYPE="PID"></FLocat>
+		</file>
+            </fileGrp>
+          </fileSec>
+          <structMap TYPE="LOGICAL">
+            <div ID="rels">
+              <div ID="isMemberOfCollection">
+                <fptr FILEID="1"></fptr>
+              </div>
+              <div ID="hasPart">
+            <fptr FILEID="2"></fptr>
+              <fptr FILEID="3"></fptr>
+              </div>
+            </div>
+          </structMap>
+          <structMap TYPE="LOGICAL">
+            <div ID="videos">
+          <div ORDER="1">
+            <fptr FILEID="2"></fptr>
+          </div>
+            <div ORDER="2">
+            <fptr FILEID="3"></fptr>
+          </div>
+            </div>
+          </structMap>
+        </mets>
+            

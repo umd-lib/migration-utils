@@ -1,0 +1,42 @@
+
+<descMeta xml:lang="en">
+  <title type="main">John F Kennedy's speech at the 49th Commencement of American University,
+Washington, D.C., June 10, 1963</title>
+  <agent type="provider">
+    <corpName>WAMU (Radio station : Washington, District of Columbia)</corpName>
+  </agent>
+  <identifier>2207</identifier>
+  <description type="summary">John F Kennedy's speech at the 49th Commencement of American University,
+Washington, D.C., June 10, 1963.</description>
+  <rights>Access is restricted.</rights>
+  <mediaType type="sound recording">
+    <form type="analog">spoken word</form>
+  </mediaType>
+  <covPlace>
+    <geogName type="continent">North America</geogName>
+    <geogName type="country">United States of America</geogName>
+    <geogName type="region">District of Columbia</geogName>
+    <geogName type="settlement">Washington D. C.</geogName>
+  </covPlace>
+  <covTime>
+    <century era="ad" certainty="exact">1901-2000</century>
+    <date era="ad" certainty="exact">1963-06-10</date>
+  </covTime>
+  <repository>
+    <corpName>Mass Media and Culture</corpName>
+  </repository>
+  <physDesc>
+    <size units="in">10.5</size>
+    <extent units="hh:mm:ss">1:23:55</extent>
+    <format>1/4" open reel tape</format>
+  </physDesc>
+  <subject type="browse">Broadcasting, Communications</subject>
+  <relationships>
+    <relation label="archivalcollection" type="isPartOf">
+      <bibRef>
+        <title type="main">WAMU Collection</title>
+      </bibRef>
+    </relation>
+  </relationships>
+</descMeta>
+            

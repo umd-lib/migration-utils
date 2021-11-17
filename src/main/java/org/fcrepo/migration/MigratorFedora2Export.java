@@ -20,6 +20,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
@@ -48,15 +50,15 @@ public class MigratorFedora2Export {
 
     private Fedora2ExportStreamingFedoraObjectHandler handler;
 
-    private InternalIDResolver resolver;
+    protected InternalIDResolver resolver;
 
-    private String localFedoraServer;
+    protected String localFedoraServer;
 
-    private URLFetcher fetcher;
+    protected URLFetcher fetcher;
 
-    private CSVPrinter csvWriter;
+    protected CSVPrinter csvWriter;
 
-    private File targetDir;
+    protected File targetDir;
 
     /**
      * Constructor.
@@ -81,6 +83,12 @@ public class MigratorFedora2Export {
         this.localFedoraServer = localFedoraServer;
     }
 
+    protected FoxmlInputStreamFedoraObjectProcessor createProcessor(final File umdmFile)
+            throws XMLStreamException, FileNotFoundException {
+        return new FoxmlInputStreamFedoraObjectProcessor(
+                umdmFile, new FileInputStream(umdmFile), fetcher, resolver, localFedoraServer);
+    }
+
     /**
      * the run method for migrator.
      *
@@ -90,7 +98,6 @@ public class MigratorFedora2Export {
     public void run() throws XMLStreamException {
 
         final ObjectMapper mapper = new ObjectMapper();
-        FoxmlInputStreamFedoraObjectProcessor processor = null;
 
         try {
             // Read one JSON document for each UMDM object
@@ -99,40 +106,13 @@ public class MigratorFedora2Export {
 
                 final UMDM umdm = mapper.readValue(line, UMDM.class);
 
-                // Process the UMDM
-                LOGGER.info("Processing UMDM=" + umdm.pid + " @ " + umdm.foxml);
-
-                final File umdmFile = new File(umdm.foxml);
-                processor = new FoxmlInputStreamFedoraObjectProcessor(umdmFile,
-                        new FileInputStream(umdmFile), fetcher, resolver, localFedoraServer);
-
-                final String umdmDirName = umdm.pid.replace(":", "_");
-                final File umdmDir = new File(targetDir, umdmDirName);
-                handler.setObjectDir(umdmDir);
-
-                csvWriter.printRecord(umdm.pid, "", umdmDirName, umdm.title, umdm.handle);
-                csvWriter.flush();
-
-                processor.processObject(handler);
+                writeUmdmToCsv(umdm);
+                processUmdm(umdm);
 
                 if (umdm.hasPart != null) {
                     for (UMAM umam : umdm.hasPart) {
-                        // Process the UMAM
-                        LOGGER.info("Processing UMDM=" + umdm.pid + ", UMAM=" + umam.pid + " @ " + umam.foxml);
-
-                        final File umamFile = new File(umam.foxml);
-                        processor = new FoxmlInputStreamFedoraObjectProcessor(umamFile,
-                                new FileInputStream(umamFile), fetcher, resolver, localFedoraServer);
-
-                        final String umamDirName = umam.pid.replace(":", "_");
-                        final File umamDir = new File(umdmDir, umamDirName);
-                        handler.setObjectDir(umamDir);
-
-                        csvWriter.printRecord(umdm.pid, umam.pid, umdmDirName + "/" + umamDirName, "");
-                        csvWriter.flush();
-
-                        processor.processObject(handler);
-
+                        writeUmamToCsv(umdm, umam);
+                        processUmam(umdm, umam);
                     }
                 }
             }
@@ -142,6 +122,39 @@ public class MigratorFedora2Export {
             LOGGER.error(message, ex);
             throw new RuntimeException(message, ex);
         }
+    }
+
+    protected void processUmdm(final UMDM umdm) throws FileNotFoundException, XMLStreamException {
+        LOGGER.info("Processing UMDM=" + umdm.pid + " @ " + umdm.foxml);
+
+        final File umdmFile = new File(umdm.foxml);
+        final FoxmlInputStreamFedoraObjectProcessor processor = createProcessor(umdmFile);
+
+        final File umdmDir = new File(targetDir, umdm.getDirectoryName());
+        handler.setObjectDir(umdmDir);
+        processor.processObject(handler);
+    }
+
+    protected void processUmam(final UMDM umdm, final UMAM umam) throws FileNotFoundException, XMLStreamException {
+        LOGGER.info("Processing UMDM=" + umdm.pid + ", UMAM=" + umam.pid + " @ " + umam.foxml);
+        final File umamFile = new File(umam.foxml);
+        final FoxmlInputStreamFedoraObjectProcessor processor = createProcessor(umamFile);
+
+        final File umamDir = new File(targetDir, umdm.getDirectoryName() + "/" + umam.getDirectoryName());
+        handler.setObjectDir(umamDir);
+        processor.processObject(handler);
+    }
+
+    protected void writeUmdmToCsv(final UMDM umdm) throws IOException {
+        csvWriter.printRecord(umdm.pid, "", umdm.getDirectoryName(), umdm.title, umdm.handle);
+        csvWriter.flush();
+    }
+
+    protected void writeUmamToCsv(final UMDM umdm, final UMAM umam)
+            throws IOException {
+        csvWriter.printRecord(umdm.pid, umam.pid,
+                umdm.getDirectoryName() + "/" + umam.getDirectoryName(), "");
+        csvWriter.flush();
     }
 
     /**
@@ -155,6 +168,10 @@ public class MigratorFedora2Export {
         public List<UMAM> hasPart;
         public String title;
         public String handle;
+
+        public String getDirectoryName() {
+            return pid.replace(":", "_");
+        }
     }
 
     /**
@@ -166,6 +183,10 @@ public class MigratorFedora2Export {
 
         public String pid;
         public String foxml;
+
+        public String getDirectoryName() {
+            return pid.replace(":", "_");
+        }
     }
 
 }
