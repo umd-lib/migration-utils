@@ -15,12 +15,10 @@
  */
 package org.fcrepo.migration.handlers;
 
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +56,8 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#state" , "state"),
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#label" , "label"),
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#createdDate" , "createdDate"),
-        new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/view#lastModifiedDate" , "lastModifiedDate"),
+        new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/view#lastModifiedDate" ,
+                                                    "lastModifiedDate"),
         new AbstractMap.SimpleEntry<String, String>("info:fedora/fedora-system:def/model#contentModel" , "contentModel")
     );
 
@@ -66,7 +65,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
     JsonFactory factory = null;
     JsonGenerator json = null;
 
-    public Fedora2InfoStreamingFedoraObjectHandler(Writer jsonObjectWriter) {
+    public Fedora2InfoStreamingFedoraObjectHandler(final Writer jsonObjectWriter) {
         this.jsonObjectWriter = jsonObjectWriter;
         factory = new JsonFactory();
         factory.configure(Feature.AUTO_CLOSE_TARGET, false);
@@ -85,8 +84,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             json.writeString(object.getPid());
             json.writeFieldName("foxml");
             json.writeString(object.getFile().toString());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("json exception in beginObject: " + e);
         }
     }
@@ -108,8 +106,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             // Start the list of datastreams
             json.writeFieldName("ds");
             json.writeStartObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("json exception in processObjectProperties: " + e);
         }
 
@@ -120,7 +117,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
 
         try {
 
-            DatastreamInfo info = ds.getDatastreamInfo();
+            final DatastreamInfo info = ds.getDatastreamInfo();
 
             final String id = info.getDatastreamId();
 
@@ -162,8 +159,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             }
 
             json.writeEndObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception processing datastream: " + e);
         }
 
@@ -178,18 +174,18 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
 
         try {
 
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
             String fileID = "";
             boolean isInRels = false;
             String relationship = "";
 
-            Map<String, String> map = new HashMap<String, String>();
-            Map<String, Set<String>> mapRelationships = new HashMap<>();
+            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, Set<String>> mapRelationships = new HashMap<>();
 
-            while (reader.hasNext()){
-                int event = reader.next();
+            while (reader.hasNext()) {
+                final int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     final String name = reader.getLocalName();
@@ -197,7 +193,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
 
                     // final String attr = parser.getAttributeValue()
 
-                    if (ns.equals(MetsNS) && name.equals("file")){
+                    if (ns.equals(MetsNS) && name.equals("file")) {
                         fileID = reader.getAttributeValue(null, "ID");
 
                     } else if (ns.equals(MetsNS) && name.equals("FLocat")) {
@@ -251,8 +247,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
                 json.writeEndArray();
             };
             json.writeEndObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception processing rels-mets: " + e);
         }
     }
@@ -265,14 +260,14 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
 
         try {
 
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
             String name = "";
             String ns = "";
 
-            while (reader.hasNext()){
-                int event = reader.next();
+            while (reader.hasNext()) {
+                final int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     name = reader.getLocalName();
@@ -292,8 +287,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception processing doInfo/amInfo: " + e);
         }
     }
@@ -306,22 +300,22 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
 
         try {
 
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
             String name = "";
             String ns = "";
             String title_type = "";
-            StringBuilder title = new StringBuilder();
+            final StringBuilder title = new StringBuilder();
 
-            while (reader.hasNext()){
-                int event = reader.next();
+            while (reader.hasNext()) {
+                final int event = reader.next();
 
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     name = reader.getLocalName();
                     ns = reader.getNamespaceURI();
 
-                    if (name.equals("title")){
+                    if (name.equals("title")) {
                         title_type = reader.getAttributeValue(null, "type");
                     }
 
@@ -345,8 +339,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             json.writeFieldName("umdm_title");
             json.writeString(title.toString());
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Exception processing doInfo/amInfo: " + e);
         }
     }
@@ -369,8 +362,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
 
             // Write the end of line for this record
             jsonObjectWriter.write("\n");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("json exception in completeObject: " + e);
         }
         System.out.println(object.getPid() + " parsed in " + (System.currentTimeMillis() - start) + "ms.");
@@ -384,8 +376,7 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
 
             // Write the end of line for this record
             jsonObjectWriter.write("\n");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("json exception in abortObject: " + e);
         }
         System.out.println(object.getPid() + " failed to parse in " + (System.currentTimeMillis() - start) + "ms.");

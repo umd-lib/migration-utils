@@ -32,6 +32,7 @@ public class DefaultObjectInfo implements ObjectInfo {
 
     /**
      * the default object info
+     * @param file the file
      * @param pid the pid
      * @param uri the uri
      */

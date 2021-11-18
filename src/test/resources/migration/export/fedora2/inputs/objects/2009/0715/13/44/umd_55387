@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+           xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:audit="info:fedora/fedora-system:def/audit#"
+           fedoraxsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd"
+           PID="umd:55387">
+    <foxml:objectProperties>
+        <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="UMDM Object"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2009-07-15T17:44:12.179Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2013-03-08T16:00:04.108Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UMD_VIDEO"/>
+    </foxml:objectProperties>
+    <foxml:datastream ID="AUDIT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="AUDIT.0" LABEL="Fedora Object Audit Trail" CREATED="2009-07-15T17:44:12.179Z" MIMETYPE="text/xml" FORMAT_URI="info:fedora/fedora-system:format/xml.fedora.audit">
+            <foxml:xmlContent>
+            <audit:auditTrail xmlns:audit="info:fedora/fedora-system:def/audit#">
+                <audit:record ID="AUDREC1">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>ingestObject</audit:action>
+                    <audit:componentID></audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.179Z</audit:date>
+                    <audit:justification>Created new Fedora Object</audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC2">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDatastream</audit:action>
+                    <audit:componentID>rels-mets</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.370Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC3">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDisseminator</audit:action>
+                    <audit:componentID>DISS1</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.448Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC4">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDisseminator</audit:action>
+                    <audit:componentID>DISS2</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.530Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC5">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDatastream</audit:action>
+                    <audit:componentID>doInfo</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.630Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC6">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDisseminator</audit:action>
+                    <audit:componentID>DISS3</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.720Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC7">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDisseminator</audit:action>
+                    <audit:componentID>DISS4</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.810Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC8">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDisseminator</audit:action>
+                    <audit:componentID>DISS5</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:12.904Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC9">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDisseminator</audit:action>
+                    <audit:componentID>DISS6</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:13.001Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC10">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDatastream</audit:action>
+                    <audit:componentID>umdm</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:13.377Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC11">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>addDisseminator</audit:action>
+                    <audit:componentID>DISS7</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:13.481Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC12">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>umdm</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:14.102Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC13">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>rels-mets</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:14.526Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC14">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>rels-mets</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:15.451Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC15">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>doInfo</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:16.299Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC16">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>doInfo</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-15T17:44:17.789Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC17">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>doInfo</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-07-30T02:51:19.275Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC18">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>doInfo</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-08-03T22:29:58.188Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC19">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>doInfo</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2009-08-27T18:42:16.769Z</audit:date>
+                    <audit:justification></audit:justification>
+                </audit:record>
+                <audit:record ID="AUDREC20">
+                    <audit:process type="Fedora API-M"/>
+                    <audit:action>modifyDatastreamByValue</audit:action>
+                    <audit:componentID>rels-mets</audit:componentID>
+                    <audit:responsibility>fedoraAdmin</audit:responsibility>
+                    <audit:date>2013-03-08T16:00:04.108Z</audit:date>
+                    <audit:justification>mets</audit:justification>
+                </audit:record>
+            </audit:auditTrail>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="doInfo" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="doInfo.5" LABEL="Digital Object Information" CREATED="2009-08-27T18:42:16.769Z" MIMETYPE="text/xml" SIZE="130">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<doInfo xmlns="http://www.itd.umd.edu/fedora/doInfo">
+  <type>UMD_VIDEO</type>
+  <status>Complete</status>
+</doInfo>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="umdm" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="umdm.1" LABEL="University of Maryland Descriptive Metadata" CREATED="2009-07-15T17:44:14.102Z" MIMETYPE="text/xml" SIZE="2539">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<descMeta xml:lang="en">
+  <mediaType type="movingImage">
+    <form type="analog">documentary</form>
+  </mediaType>
+  <title type="main">The Gordon W. Prange Collection: saving hidden history, Japan 1945-1949</title>
+  <agent type="creator">
+    <corpName>University Video, University of Maryland, College Park</corpName>
+  </agent>
+  <agent type="creator">
+    <persName>Vikor, Desider L., 1950-</persName>
+  </agent>
+  <agent type="creator">
+    <persName>Prange, Winfred</persName>
+  </agent>
+  <agent type="creator">
+    <persName>Prange, Polly</persName>
+  </agent>
+  <agent type="provider">
+    <corpName>University of Maryland</corpName>
+  </agent>
+  <covPlace>
+    <geogName type="continent">North America</geogName>
+    <geogName type="country">United States of America</geogName>
+    <geogName type="region">Maryland</geogName>
+    <geogName type="settlement">College Park</geogName>
+  </covPlace>
+  <covTime>
+    <century era="ad">2001-2100</century>
+    <date era="ad" type="exact">2008</date>
+  </covTime>
+  <culture>American</culture>
+  <culture>Japanese</culture>
+  <language>en</language>
+  <description type="summary">Introduction of the Gordon W. Prange Collection, University of
+        Maryland Libraries. </description>
+  <subject type="browse">Government, Law, Politics</subject>
+  <subject type="browse">University of Maryland</subject>
+  <subject scheme="LCNAF" type="topical">Prange, Gordon W. (Gordon William), 1910-1980</subject>
+  <subject scheme="LCSH" type="topical">Gordon W. Prange Collection (University of Maryland at
+        College Park. Libraries)</subject>
+  <subject scheme="LCSH" type="topical">Japan -- History -- Allied occupation, 1945-1952 --
+        Library resources</subject>
+  <subject scheme="LCSH" type="topical">Japan -- History -- Allied occupation, 1945-1952 --
+        Censorship</subject>
+  <subject scheme="LCSH" type="topical">Supreme Commander for the Allied Powers. Civil Censorship
+        Detachment</subject>
+  <subject type="temporal">
+    <century>1901-2000</century>
+  </subject>
+  <physDesc>
+    <extent units="minutes">10</extent>
+    <color>color</color>
+  </physDesc>
+  <relationships></relationships>
+  <repository>
+    <corpName>Gordon W. Prange Collection</corpName>
+  </repository>
+  <rights type="copyrightowner">University of Maryland</rights>
+  <rights> This video or portions therein cannot be reproduced without the written permission of
+        the Gordon Prange Collection. Contact prangebunko@umd.edu for more information. </rights>
+</descMeta>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata" CREATED="2009-07-15T17:44:12.179Z" MIMETYPE="text/xml" SIZE="219">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:title>UMDM Object</dc:title>
+  <dc:identifier>umd:55387</dc:identifier>
+</oai_dc:dc>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="rels-mets" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="rels-mets.3" LABEL="METS Relationships" CREATED="2013-03-08T16:00:04.108Z" MIMETYPE="text/xml" SIZE="0">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<mets schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd"
+  xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <fileSec>
+    <fileGrp ID="fedora">
+      <file ID="1">
+        <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="PID" xlink:href="umd:3392" xlink:type="simple"/>
+      </file>
+      <file ID="2">
+        <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="PID" fileName="Prangecollct" xlink:href="umd:55388" xlink:type="simple"/>
+      </file>
+    </fileGrp>
+  </fileSec>
+  <structMap TYPE="LOGICAL">
+    <div ID="rels">
+      <div ID="isMemberOfCollection">
+        <fptr FILEID="1"/>
+      </div>
+      <div ID="hasPart">
+        <fptr FILEID="2"/>
+      </div>
+    </div>
+  </structMap>
+  <structMap TYPE="LOGICAL">
+    <div ID="videos">
+      <div ORDER="1">
+        <fptr FILEID="2"/>
+      </div>
+    </div>
+  </structMap>
+</mets>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:disseminator ID="DISS7" BDEF_CONTRACT_PID="umd-bdef:umdm" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS7.0" BMECH_SERVICE_PID="umd-bmech:umdm" CREATED="2009-07-15T17:44:13.481Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="umdm"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS5" BDEF_CONTRACT_PID="umd-bdef:thumbnail" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS5.0" BMECH_SERVICE_PID="umd-bmech:thumbnail" CREATED="2009-07-15T17:44:12.904Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS6" BDEF_CONTRACT_PID="umd-bdef:image" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS6.0" BMECH_SERVICE_PID="umd-bmech:image.umdm" CREATED="2009-07-15T17:44:13.001Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS4" BDEF_CONTRACT_PID="umd-bdef:handle" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS4.0" BMECH_SERVICE_PID="umd-bmech:handle" CREATED="2009-07-15T17:44:12.810Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS3" BDEF_CONTRACT_PID="umd-bdef:doInfo" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS3.0" BMECH_SERVICE_PID="umd-bmech:doInfo" CREATED="2009-07-15T17:44:12.720Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="doInfo"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="umd-bdef:rels" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="umd-bmech:rels" CREATED="2009-07-15T17:44:12.530Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="umd-bdef:rels-mets" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="umd-bmech:rels-mets" CREATED="2009-07-15T17:44:12.448Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="rels-mets"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+</foxml:digitalObject>

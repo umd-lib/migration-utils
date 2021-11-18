@@ -1,0 +1,36 @@
+
+<adminMeta>
+          <identifier>bcast-026392-0001</identifier>
+          <digiProv>
+            <date>2015</date>
+            <agent type="creator">
+              <corpName>GBAV</corpName>
+            </agent>
+            <description>Sharestream
+              <extRef>http://streamer.lib.umd.edu/ssdcms/i.do?u=021fe48f7dbc4d5</extRef>
+            </description>
+          </digiProv>
+          <digiProv>
+            <date>2015</date>
+            <agent type="creator">
+              <persName></persName>
+            </agent>
+            <description></description>
+          </digiProv>
+          <adminRights>
+            <access>UMDfilms00001</access>
+          </adminRights>
+          <technical>
+  <fileName>bcast-026392-0001</fileName>
+  <format>
+    <mimeType>audio/mpeg</mimeType>
+    <compression>lossy</compression>
+  </format>
+  <audio>
+    <duration>0:52:12</duration>
+    <channels></channels>
+    <audioTrack></audioTrack>
+  </audio>
+</technical>
+        </adminMeta>
+            

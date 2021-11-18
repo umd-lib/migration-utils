@@ -1,0 +1,44 @@
+
+<adminMeta>
+  <identifier>http://streamer.lib.umd.edu/ssdcms/i.do?u=a2776238f657480</identifier>
+  <digiProv>
+    <date>2009-07-13</date>
+    <agent type="creator">
+      <corpName>Gordon W. Prange Collection</corpName>
+    </agent>
+    <description>Sharestream <extRef>http://streamer.lib.umd.edu/ssdcms/i.do?u=a2776238f657480</extRef>
+    </description>
+  </digiProv>
+  <adminRights>
+    <access>UMDpublic</access>
+  </adminRights>
+  <technical>
+    <fileSize units="bytes">72922456</fileSize>
+    <format>
+      <mimeType>RealMedia</mimeType>
+      <compression>lossy</compression>
+    </format>
+    <video>
+      <duration>9:44</duration>
+      <color>color</color>
+      <videoFormat>
+        <scanSignal>progressive</scanSignal>
+        <videoStandard>NTSC</videoStandard>
+      </videoFormat>
+      <videoSound>
+        <audioTrack>
+          <soundField>stereo</soundField>
+          <language>en</language>
+        </audioTrack>
+      </videoSound>
+      <dataRate rate="kbps" type="target">768</dataRate>
+      <videoResolution>
+        <aspectRatio>4:3</aspectRatio>
+        <horizontalPixels>320</horizontalPixels>
+        <verticalPixels>240</verticalPixels>
+      </videoResolution>
+      <frame rate="fps">29.97</frame>
+    </video>
+  </technical>
+</adminMeta>
+            
