@@ -223,7 +223,9 @@ public class MigratorFedora2Export {
 
         @Override
         public void exportUmdm(final UMDM umdm) throws IOException {
-            csvWriter.printRecord(umdm.pid, "", umdm.getDirectoryName(), umdm.title, umdm.handle);
+            String title = umdm.title;
+            title = title.replaceAll("\n", " ");
+            csvWriter.printRecord(umdm.pid, "", umdm.getDirectoryName(), title, umdm.handle);
             csvWriter.flush();
         }
 
