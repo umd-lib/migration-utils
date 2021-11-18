@@ -18,14 +18,17 @@ package org.fcrepo.migration;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.fcrepo.migration.foxml.FoxmlInputStreamFedoraObjectProcessor;
 import org.fcrepo.migration.foxml.HttpClientURLFetcher;
@@ -56,7 +59,7 @@ public class MigratorFedora2Export {
 
     protected URLFetcher fetcher;
 
-    protected CSVPrinter csvWriter;
+    protected ExportWriter exportWriter;
 
     protected File targetDir;
 
@@ -64,18 +67,18 @@ public class MigratorFedora2Export {
      * Constructor.
      *
      * @param targetDir
-     * @param csvWriter
+     * @param exportWriter
      * @param handler
      * @param jsonReader
      * @param resolver
      * @param localFedoraServer
      */
-    public MigratorFedora2Export(final File targetDir, final CSVPrinter csvWriter,
+    public MigratorFedora2Export(final File targetDir, final ExportWriter exportWriter,
             final Fedora2ExportStreamingFedoraObjectHandler handler,
             final BufferedReader jsonReader, final InternalIDResolver resolver,
             final String localFedoraServer) {
         this.targetDir = targetDir;
-        this.csvWriter = csvWriter;
+        this.exportWriter = exportWriter;
         this.handler = handler;
         this.jsonReader = jsonReader;
         this.resolver = resolver;
@@ -106,12 +109,12 @@ public class MigratorFedora2Export {
 
                 final UMDM umdm = mapper.readValue(line, UMDM.class);
 
-                writeUmdmToCsv(umdm);
+                exportWriter.exportUmdm(umdm);
                 processUmdm(umdm);
 
                 if (umdm.hasPart != null) {
                     for (UMAM umam : umdm.hasPart) {
-                        writeUmamToCsv(umdm, umam);
+                        exportWriter.exportUmam(umdm, umam);
                         processUmam(umdm, umam);
                     }
                 }
@@ -143,18 +146,6 @@ public class MigratorFedora2Export {
         final File umamDir = new File(targetDir, umdm.getDirectoryName() + "/" + umam.getDirectoryName());
         handler.setObjectDir(umamDir);
         processor.processObject(handler);
-    }
-
-    protected void writeUmdmToCsv(final UMDM umdm) throws IOException {
-        csvWriter.printRecord(umdm.pid, "", umdm.getDirectoryName(), umdm.title, umdm.handle);
-        csvWriter.flush();
-    }
-
-    protected void writeUmamToCsv(final UMDM umdm, final UMAM umam)
-            throws IOException {
-        csvWriter.printRecord(umdm.pid, umam.pid,
-                umdm.getDirectoryName() + "/" + umam.getDirectoryName(), "");
-        csvWriter.flush();
     }
 
     /**
@@ -189,4 +180,39 @@ public class MigratorFedora2Export {
         }
     }
 
+    public static interface ExportWriter extends Closeable {
+        public void exportUmdm(UMDM umdm) throws IOException;
+
+        public void exportUmam(UMDM umdm, UMAM umam) throws IOException;
+    }
+
+    public static class CSVExportWriter implements ExportWriter {
+        private CSVPrinter csvWriter;
+
+        public CSVExportWriter(final String csvOutputFile) throws IOException {
+            this.csvWriter = new CSVPrinter(new FileWriter(csvOutputFile),
+                    CSVFormat.DEFAULT.withHeader("umdm", "umam", "location", "title", "handle"));
+
+        }
+
+        @Override
+        public void exportUmdm(final UMDM umdm) throws IOException {
+            csvWriter.printRecord(umdm.pid, "", umdm.getDirectoryName(), umdm.title, umdm.handle);
+            csvWriter.flush();
+        }
+
+        @Override
+        public void exportUmam(final UMDM umdm, final UMAM umam) throws IOException {
+            csvWriter.printRecord(umdm.pid, umam.pid,
+                    umdm.getDirectoryName() + "/" + umam.getDirectoryName(), "");
+            csvWriter.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (csvWriter != null) {
+                csvWriter.close();
+            }
+        }
+    }
 }

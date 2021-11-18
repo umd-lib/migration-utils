@@ -18,8 +18,8 @@ package org.fcrepo.migration;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import org.fcrepo.migration.MigratorFedora2Export.CSVExportWriter;
+import org.fcrepo.migration.MigratorFedora2Export.ExportWriter;
 import org.fcrepo.migration.foxml.InternalIDResolver;
 import org.fcrepo.migration.foxml.LegacyFSIDResolver;
 import org.fcrepo.migration.foxml.NativeFoxmlDirectoryObjectSource;
@@ -274,19 +274,19 @@ public class PicocliMigratorFedora2 implements Callable<Integer> {
                 notNull(filterJson, "filterJson input file must be provided!");
 
                 final BufferedReader jsonReader = new BufferedReader(new FileReader(filterJson));
-                final CSVPrinter csvWriter = new CSVPrinter(new FileWriter(new File(targetDir, "export.csv")),
-                        CSVFormat.DEFAULT.withHeader("umdm", "umam", "location", "title", "handle"));
+                final String exportMetadataFileStr = new File(targetDir, "export.csv").toString();
+                final ExportWriter exportWriter = new CSVExportWriter(exportMetadataFileStr);
 
                 final MigratorFedora2Export exportMigrator = new MigratorFedora2Export(
-                    targetDir, csvWriter,
+                    targetDir, exportWriter,
                     new Fedora2ExportStreamingFedoraObjectHandler(),
                     jsonReader, idResolver, f3hostname);
 
                 try {
                     exportMigrator.run();
                 } finally {
-                    if (csvWriter != null) {
-                        csvWriter.close();
+                    if (exportWriter != null) {
+                        exportWriter.close();
                     }
                 }
                 break;

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,8 +16,8 @@ import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import org.fcrepo.migration.MigratorFedora2Export.ExportWriter;
+import org.fcrepo.migration.MigratorFedora2Export.CSVExportWriter;
 import org.fcrepo.migration.foxml.FoxmlInputStreamFedoraObjectProcessor;
 import org.fcrepo.migration.foxml.InternalIDResolver;
 import org.fcrepo.migration.foxml.LegacyFSIDResolver;
@@ -49,7 +48,7 @@ public class MigratorFedora2ExportTest {
      *             if an exception occurs
      */
     public MigratorFedora2Export createExportMigrator(
-            final File exportOutputDir, final CSVPrinter csvWriter) throws Exception {
+            final File exportOutputDir, final ExportWriter exportWriter) throws Exception {
         final File baseInputsDir = new File(
                 this.getClass().getClassLoader().getResource("migration/export/fedora2/").getFile());
         final File inputsDir = new File(baseInputsDir, "inputs/");
@@ -63,25 +62,24 @@ public class MigratorFedora2ExportTest {
 
         final BufferedReader jsonReader = new BufferedReader(new InputStreamReader(filterJsonStream));
 
-        final MigratorFedora2Export exportMigrator = new TestMigratorFedora2Export(exportOutputDir, csvWriter,
+        final MigratorFedora2Export exportMigrator = new TestMigratorFedora2Export(exportOutputDir, exportWriter,
                 objectHandler,
                 jsonReader, idResolver, f3hostname, inputsDir);
         return exportMigrator;
     }
 
     @Test
-    public void testSanity() throws Exception {
+    public void testCsvExport() throws Exception {
         final File exportOutputDir = tempTargetDir.getRoot();
         final File csvOutputFile = new File(exportOutputDir, "export.csv");
-        final CSVPrinter csvWriter = new CSVPrinter(new FileWriter(csvOutputFile),
-                CSVFormat.DEFAULT.withHeader("umdm", "umam", "location", "title", "handle"));
+        final ExportWriter exportWriter = new CSVExportWriter(csvOutputFile.toString());
 
-        final MigratorFedora2Export exportMigrator = createExportMigrator(exportOutputDir, csvWriter);
+        final MigratorFedora2Export exportMigrator = createExportMigrator(exportOutputDir, exportWriter);
         try {
             exportMigrator.run();
         } finally {
-            if (csvWriter != null) {
-                csvWriter.close();
+            if (exportWriter != null) {
+                exportWriter.close();
             }
         }
 
@@ -98,12 +96,12 @@ public class MigratorFedora2ExportTest {
         private File inputsDir;
 
         public TestMigratorFedora2Export(
-                final File targetDir, final CSVPrinter csvWriter,
+                final File targetDir, final ExportWriter exportWriter,
                 final Fedora2ExportStreamingFedoraObjectHandler handler,
                 final BufferedReader jsonReader,
                 final InternalIDResolver resolver, final String localFedoraServer,
                 final File inputsDir) {
-            super(targetDir, csvWriter, handler, jsonReader, resolver, localFedoraServer);
+            super(targetDir, exportWriter, handler, jsonReader, resolver, localFedoraServer);
             this.inputsDir = inputsDir;
         }
 
