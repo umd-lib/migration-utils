@@ -41,8 +41,8 @@ public class MigratorFedora2ExportTest {
      * @param exportOutputDir
      *            a File representing the (temporary) directory to write the
      *            exported files to.
-     * @param csvWriter
-     *            the CSVPrinter to use in writing the CSV files
+     * @param exportWriter
+     *            the ExportWriter to use in writing the export metadata file
      * @return a MigratorFedora2Export to use in testing
      * @throws Exception
      *             if an exception occurs
