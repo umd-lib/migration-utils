@@ -303,41 +303,16 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             final XMLInputFactory factory = XMLInputFactory.newInstance();
             final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
-            String name = "";
-            String ns = "";
-            String title_type = "";
-            final StringBuilder title = new StringBuilder();
+             final UmdmTitleParser titleProcessor = new UmdmTitleParser();
 
             while (reader.hasNext()) {
-                final int event = reader.next();
-
-                if (event == XMLStreamConstants.START_ELEMENT) {
-                    name = reader.getLocalName();
-                    ns = reader.getNamespaceURI();
-
-                    if (name.equals("title")) {
-                        title_type = reader.getAttributeValue(null, "type");
-                    }
-
-                } else if (event == XMLStreamConstants.END_ELEMENT) {
-                    name = "";
-                    ns = "";
-                    title_type = "";
-
-                } else if (event == XMLStreamConstants.CHARACTERS) {
-                    if (title_type != null && title_type.equals("main")) {
-
-                        if (title.length() > 0) {
-                            title.append(" / ");
-                        }
-                        title.append(reader.getText());
-                    }
-                }
+                reader.next();
+                titleProcessor.parse(reader);
             }
 
             // Add the title
             json.writeFieldName("umdm_title");
-            json.writeString(title.toString());
+            json.writeString(titleProcessor.getTitle());
 
         } catch (Exception e) {
             System.out.println("Exception processing doInfo/amInfo: " + e);
@@ -380,5 +355,42 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             System.out.println("json exception in abortObject: " + e);
         }
         System.out.println(object.getPid() + " failed to parse in " + (System.currentTimeMillis() - start) + "ms.");
+    }
+
+    private static class UmdmTitleParser {
+        private StringBuilder title = new StringBuilder();
+        private String name = "";
+        private String ns = "";
+        private String title_type = "";
+
+        public void parse(final XMLStreamReader reader) {
+            final int event = reader.getEventType();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                name = reader.getLocalName();
+                ns = reader.getNamespaceURI();
+
+                if (name.equals("title")) {
+                    title_type = reader.getAttributeValue(null, "type");
+                }
+
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                name = "";
+                ns = "";
+                title_type = "";
+
+            } else if (event == XMLStreamConstants.CHARACTERS) {
+                if (title_type != null && title_type.equals("main")) {
+
+                    if (title.length() > 0) {
+                        title.append(" / ");
+                    }
+                    title.append(reader.getText());
+                }
+            }
+        }
+
+        public String getTitle() {
+            return title.toString();
+        }
     }
 }
