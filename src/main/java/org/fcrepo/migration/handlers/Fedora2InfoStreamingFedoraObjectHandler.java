@@ -17,9 +17,11 @@ package org.fcrepo.migration.handlers;
 
 import java.io.Writer;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -304,11 +306,11 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             final XMLInputFactory factory = XMLInputFactory.newInstance();
             final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
-            final UmdmTitleParser titleParser = new UmdmTitleParser();
+            final UmdmTitleXmlEventParser titleParser = new UmdmTitleXmlEventParser();
 
             while (reader.hasNext()) {
                 reader.next();
-                titleParser.parse(reader);
+                titleParser.parseEvent(reader);
             }
 
             // Add the title
@@ -358,12 +360,20 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
         System.out.println(object.getPid() + " failed to parse in " + (System.currentTimeMillis() - start) + "ms.");
     }
 
-    private static class UmdmTitleParser {
+    /**
+     * Extracts the UMDM title from XMLStreamReader events
+     */
+    private static class UmdmTitleXmlEventParser {
         private LinkedList<String> xmlPathStack = new LinkedList<>();
-        private StringBuilder title = new StringBuilder();
+        private List<String> titles = new ArrayList<>();
         private String title_type = "";
 
-        public void parse(final XMLStreamReader reader) {
+        /**
+         * Parses the current event of the XMLStreamReader to extract the title
+         * information
+         * @param reader the XMLStreamReader
+         */
+        public void parseEvent(final XMLStreamReader reader) {
             final int event = reader.getEventType();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 final String name = reader.getLocalName();
@@ -383,18 +393,17 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
                     parentTag = xmlPathStack.get(1);
                 }
 
-                if ("descMeta".equals(parentTag) && title_type != null && title_type.equals("main")) {
-
-                    if (title.length() > 0) {
-                        title.append(" / ");
-                    }
-                    title.append(reader.getText());
+                if ("descMeta".equals(parentTag) && "main".equals(title_type)) {
+                    titles.add(reader.getText());
                 }
             }
         }
 
+        /**
+         * @return the parsed title
+         */
         public String getTitle() {
-            return title.toString();
+            return String.join(" / ", titles);
         }
     }
 }
