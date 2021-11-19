@@ -19,6 +19,7 @@ import java.io.Writer;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -303,16 +304,16 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             final XMLInputFactory factory = XMLInputFactory.newInstance();
             final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
-             final UmdmTitleParser titleProcessor = new UmdmTitleParser();
+            final UmdmTitleParser titleParser = new UmdmTitleParser();
 
             while (reader.hasNext()) {
                 reader.next();
-                titleProcessor.parse(reader);
+                titleParser.parse(reader);
             }
 
             // Add the title
             json.writeFieldName("umdm_title");
-            json.writeString(titleProcessor.getTitle());
+            json.writeString(titleParser.getTitle());
 
         } catch (Exception e) {
             System.out.println("Exception processing doInfo/amInfo: " + e);
@@ -358,28 +359,31 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
     }
 
     private static class UmdmTitleParser {
+        private LinkedList<String> xmlPathStack = new LinkedList<>();
         private StringBuilder title = new StringBuilder();
-        private String name = "";
-        private String ns = "";
         private String title_type = "";
 
         public void parse(final XMLStreamReader reader) {
             final int event = reader.getEventType();
             if (event == XMLStreamConstants.START_ELEMENT) {
-                name = reader.getLocalName();
-                ns = reader.getNamespaceURI();
+                final String name = reader.getLocalName();
+                xmlPathStack.push(name);
 
                 if (name.equals("title")) {
                     title_type = reader.getAttributeValue(null, "type");
                 }
 
             } else if (event == XMLStreamConstants.END_ELEMENT) {
-                name = "";
-                ns = "";
                 title_type = "";
+                xmlPathStack.pop();
 
             } else if (event == XMLStreamConstants.CHARACTERS) {
-                if (title_type != null && title_type.equals("main")) {
+                String parentTag = null;
+                if (xmlPathStack.size() > 1) {
+                    parentTag = xmlPathStack.get(1);
+                }
+
+                if ("descMeta".equals(parentTag) && title_type != null && title_type.equals("main")) {
 
                     if (title.length() > 0) {
                         title.append(" / ");
