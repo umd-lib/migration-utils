@@ -1,0 +1,46 @@
+
+<adminMeta>
+          <identifier>FHdanielya01</identifier>
+          <digiProv> 
+            <date>2007-09-07</date>  
+            <agent type="creator"> 
+              <corpName>Nonprint Media Services</corpName> 
+            </agent>  
+            <description>Sharestream
+              <extRef>http://streamer.lib.umd.edu/ssdcms/i.do?u=ef859ef9c22743e</extRef> 
+            </description> 
+          </digiProv>
+          <adminRights> 
+            <access>UMDfilms00001</access> 
+          </adminRights>
+          <technical> 
+            <fileSize units="bytes">271577533</fileSize>  
+            <format> 
+              <mimeType>video/x-m4v</mimeType>  
+              <compression>lossy</compression> 
+            </format>  
+            <video> 
+              <duration>36:10</duration>  
+              <color>color</color>  
+              <videoFormat> 
+                <scanSignal>progressive</scanSignal>  
+                <videoStandard>NTSC</videoStandard> 
+              </videoFormat>  
+              <videoSound> 
+                <audioTrack> 
+                  <soundField>stereo</soundField>  
+                  <language>eng</language> 
+                </audioTrack> 
+              </videoSound>  
+              <dataRate rate="kbps" type="target">768</dataRate>  
+              <videoResolution> 
+                <aspectRatio>4:3</aspectRatio>  
+                <horizontalPixels></horizontalPixels>  
+                <verticalPixels></verticalPixels> 
+              </videoResolution>  
+              <frame rate="fps">29.97</frame> 
+            </video>  
+            <fileName>FHdanielya01</fileName> 
+          </technical>
+        </adminMeta>
+            

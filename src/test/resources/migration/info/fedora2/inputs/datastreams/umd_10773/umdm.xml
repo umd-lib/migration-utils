@@ -1,0 +1,63 @@
+
+<descMeta>
+          <mediaType type="movingImage"> 
+            <form type="analog">nonfiction television</form> 
+          </mediaType>
+          <title type="main">Daniel Yankelovich on public opinion research</title>
+          <agent type="contributor"> 
+            <persName>Yankelovich, Daniel</persName> 
+          </agent>
+          <agent type="contributor"> 
+            <persName>Moyers, Bill D.</persName> 
+          </agent>
+          <agent type="contributor"> 
+            <persName>Ganguzza, Mark</persName> 
+          </agent>
+          <agent type="provider"> 
+            <corpName>Public Affairs Television (Firm)</corpName> 
+          </agent>
+          <agent type="provider"> 
+            <corpName>Films for the Humanities &amp; Sciences (Firm)</corpName> 
+          </agent>
+          <agent type="provider"> 
+            <corpName>WNET (Television station : New York, N.Y.)</corpName> 
+          </agent>
+          <covPlace> 
+            <geogName type="continent">North America</geogName>  
+            <geogName type="country">United States of America</geogName>  
+            <geogName type="region">New Jersey</geogName> 
+          </covPlace>
+          <covTime> 
+            <century era="ad" certainty="exact">2001-2100</century>  
+            <date era="ad" certainty="exact">2002</date> 
+          </covTime>
+          <culture>North American</culture>
+          <culture>American</culture>
+          <language>en</language>
+          <description type="credits">Directed by Mark Ganguzza. Host/interviewer, Bill Moyers; interviewee, Daniel Yankelovich. Editor, Larry Goldfine.</description>
+          <description type="summary">Bill Moyers talks with the survey pioneer recently named one of the 20th century's ten most influential people in the area of public policy. From his vast experience in the field, Daniel Yankelovich explains the agendas behind public opinion research, homing in on its uses and abuses by special interest groups. He also discusses the integral link between the economy and education, as well as what Americans can do to become poll savvy.</description>
+          <subject type="browse">Government, Law, Politics</subject>
+          <subject label="Films@UM" type="browse">Government, Law, Politics</subject>
+          <subject scheme="LCSH" type="topical">Public opinion polls</subject>
+          <subject scheme="LCSH" type="topical">Public opinion -- United States</subject>
+          <subject scheme="LCSH" type="topical">Political culture -- United States</subject>
+          <subject scheme="LCNAF" type="topical"> 
+            <persName>Yankelovich, Daniel -- Interviews</persName> 
+          </subject>
+          <subject type="genre">Television interviews</subject>
+          <subject type="genre">Public affairs television programs</subject>
+          <identifier type="aleph">alephsys004125952</identifier>
+          <identifier type="oclc">ocn797971120</identifier>
+          <physDesc> 
+            <extent units="minutes">36</extent>  
+            <color>color</color> 
+          </physDesc>
+          <relationships> 
+            <relation label="series" type="isPartOf">Now with Bill Moyers (Television program)</relation> 
+          </relationships>
+          <repository> 
+            <corpName>Nonprint Media Services</corpName> 
+          </repository>
+          <rights type="access">Access restricted to patrons at the University of Maryland.</rights>
+        </descMeta>
+            
