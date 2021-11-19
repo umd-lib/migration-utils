@@ -6,19 +6,17 @@ This subdirectory contains files for testing the "export" action via JUnit.
 
 ## inputs
 
-The "inputs" subdirectory contains the files that are used as inputs into the
+The "inputs" subdirectory contains the files that are used as inputs for the
 "export" action.
 
-These inputs were taken from the `/processing/processing/fedora2` of the
-`libdpiprocessing.lib.umd.edu` server.
+These inputs were taken from the `libdpiprocessing.lib.umd.edu` server.
 
-
-The `filter.json` file was taken from the
+The `inputs/filter.json` file was taken from the
 `/processing/processing/fedora2/exports/all` directory and simplified to only a
 handful of entries.
 
-The "object" files associated with the entries in the `filter.json` file were
-then places in the `objects` subdirectory.
+The `inputs/objects` directory contains a the object files associated with the
+entries in the "filter.json" file.
 
 ## expected
 
@@ -29,5 +27,5 @@ The `export.json` file was taken from the
 `/processing/processing/fedora2/exports/all` directory and simplified to the handful
 of entries actually exported.
 
-The associated datastream folders were also downloaded from the
+The associated datastream folders were downloaded from the
 `/processing/processing/fedora2/exports/all` directory.
