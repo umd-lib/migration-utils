@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+           xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:audit="info:fedora/fedora-system:def/audit#"
+           fedoraxsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd"
+           PID="umd:81753">
+    <foxml:objectProperties>
+        <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="UMDM Object"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2013-03-07T18:44:05.524Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2013-03-07T18:44:05.524Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UMD_VIDEO"/>
+    </foxml:objectProperties>
+    <foxml:datastream ID="doInfo" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="doInfo.0" LABEL="Digital Object Information" CREATED="2013-03-07T18:44:05.524Z" MIMETYPE="text/xml" SIZE="156">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<doInfo xmlns="http://www.itd.umd.edu/fedora/doInfo">
+          <type>UMD_VIDEO</type>
+          <status>Complete</status>
+        </doInfo>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="umdm" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="umdm.0" LABEL="University of Maryland Descriptive Metadata" CREATED="2013-03-07T18:44:05.524Z" MIMETYPE="text/xml" SIZE="2715">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<descMeta>
+          <mediaType type="movingImage"> 
+            <form type="analog">live action</form> 
+          </mediaType>
+          <title type="main">Football: University of Maryland (12) vs. Syracuse University (26), September 22, 1956</title>
+          <covPlace> 
+            <geogName type="continent">North America</geogName>  
+            <geogName type="country">United States</geogName>  
+            <geogName type="region">Maryland</geogName>  
+            <geogName type="settlement">College Park</geogName> 
+          </covPlace>
+          <covTime> 
+            <century certainty="exact" era="ad">1901-2000</century>  
+            <date certainty="exact" era="ad">1956-09-22</date> 
+          </covTime>
+          <culture>University of Maryland</culture>
+          <culture>American</culture>
+          <language>en</language>
+          <description type="summary">Film footage of a football game between the University of Maryland and Syracuse University, College Park, Maryland, September 22, 1956.</description>
+          <subject type="browse">Sports, Recreation</subject>
+          <subject type="browse">University of Maryland</subject>
+          <subject label="AlbUM" type="browse">Sports</subject>
+          <subject label="AlbUM" type="browse">Events</subject>
+          <subject scheme="LCNAF" type="topical"> 
+            <corpName>University of Maryland, College Park -- Football</corpName> 
+          </subject>
+          <subject scheme="LCNAF" type="topical"> 
+            <corpName>Terrapins (Football team)</corpName> 
+          </subject>
+          <subject type="temporal"> 
+            <decade certainty="exact">1951-1960</decade> 
+          </subject>
+          <subject scheme="LCSH" type="genre">Filmed football games</subject>
+          <physDesc> 
+            <extent units="minutes">29</extent>  
+            <color>black and white</color> 
+          </physDesc>
+          <relationships> 
+            <relation label="archivalcollection" type="isPartOf"> 
+              <bibRef> 
+                <title type="main">University of Maryland Football Heritage Film collection</title>  
+                <bibScope type="accession">2011-166</bibScope> 
+              </bibRef> 
+            </relation> 
+          </relationships>
+          <repository> 
+            <corpName>University Archives</corpName> 
+          </repository>
+          <rights>Collection may be protected under Title 17 of the U.S. Copyright Law. To obtain permission to publish or reproduce, please contact the University of Maryland Libraries at http://digital.lib.umd.edu/archivesum/contact.jsp</rights>
+          <rights type="copyrightowner">unknown</rights>
+        </descMeta>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="DC.0" LABEL="Dublin Core Metadata" CREATED="2013-03-07T18:44:05.524Z" MIMETYPE="text/xml" SIZE="320">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:title>Football: University of Maryland (12) vs. Syracuse University (26), September 22, 1956</dc:title>
+  <dc:identifier>umd:81753</dc:identifier>
+</oai_dc:dc>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="rels-mets" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="rels-mets.0" LABEL="METS Relationships" CREATED="2013-03-07T18:44:05.524Z" MIMETYPE="text/xml" SIZE="1165">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+          <fileSec>
+            <fileGrp ID="fedora">
+              <file ID="1">
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="PID" xlink:href="umd:3391" type="simple"></FLocat>
+              </file>
+              <file ID="2">
+                <FLocat fileName="19560922-FB-001-Game" LOCTYPE="OTHER" OTHERLOCTYPE="PID" xlink:href="umd:90242" type="simple"></FLocat>
+              </file>
+            </fileGrp>
+          </fileSec>
+          <structMap TYPE="LOGICAL">
+            <div ID="rels">
+              <div ID="isMemberOfCollection">
+                <fptr FILEID="1"></fptr>
+              </div>
+              <div ID="hasPart">
+                <fptr FILEID="2"></fptr>
+              </div>
+            </div>
+          </structMap>
+          <structMap TYPE="LOGICAL">
+            <div ID="videos">
+              <div LABEL="video" ORDER="1">
+                <fptr FILEID="2"></fptr>
+              </div>
+            </div>
+          </structMap>
+        </mets>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:disseminator ID="DISS7" BDEF_CONTRACT_PID="umd-bdef:thumbnail" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS7.0" BMECH_SERVICE_PID="umd-bmech:thumbnail" CREATED="2013-03-07T18:44:05.524Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS5" BDEF_CONTRACT_PID="umd-bdef:image" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS5.0" BMECH_SERVICE_PID="umd-bmech:image.umdm" CREATED="2013-03-07T18:44:05.524Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS6" BDEF_CONTRACT_PID="umd-bdef:umdm" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS6.0" BMECH_SERVICE_PID="umd-bmech:umdm" CREATED="2013-03-07T18:44:05.524Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="umdm"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS4" BDEF_CONTRACT_PID="umd-bdef:handle" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS4.0" BMECH_SERVICE_PID="umd-bmech:handle" CREATED="2013-03-07T18:44:05.524Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS3" BDEF_CONTRACT_PID="umd-bdef:doInfo" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS3.0" BMECH_SERVICE_PID="umd-bmech:doInfo" CREATED="2013-03-07T18:44:05.524Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="doInfo"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="umd-bdef:rels" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="umd-bmech:rels" CREATED="2013-03-07T18:44:05.524Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="umd-bdef:rels-mets" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="umd-bmech:rels-mets" CREATED="2013-03-07T18:44:05.524Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="rels-mets"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+</foxml:digitalObject>

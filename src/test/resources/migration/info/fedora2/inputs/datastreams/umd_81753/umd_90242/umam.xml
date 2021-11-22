@@ -1,0 +1,45 @@
+
+<adminMeta>
+          <identifier>19560922-FB-001-Game</identifier>
+          <digiProv> 
+            <date>2010-09-02</date>  
+            <agent type="creator"> 
+              <corpName>UMD Special Collections</corpName> 
+            </agent>  
+            <description>Sharestream
+              <extRef>http://streamer.lib.umd.edu/ssdcms/i.do?u=6ea93eca65ac4a7</extRef> 
+            </description> 
+          </digiProv>
+          <adminRights> 
+            <access>UMDpublic</access> 
+          </adminRights>
+          <technical> 
+            <fileSize units="bytes">75348103</fileSize>  
+            <format> 
+              <mimeType>video/x-m4v</mimeType>  
+              <compression>lossy</compression> 
+            </format>  
+            <video> 
+              <duration>9:39</duration>  
+              <color>color</color>  
+              <videoFormat> 
+                <scanSignal>progressive</scanSignal>  
+                <videoStandard>NTSC</videoStandard> 
+              </videoFormat>  
+              <videoSound> 
+                <audioTrack> 
+                  <soundField>silent</soundField> 
+                </audioTrack> 
+              </videoSound>  
+              <dataRate rate="kbps" type="target">768</dataRate>  
+              <videoResolution> 
+                <aspectRatio>4:3</aspectRatio>  
+                <horizontalPixels></horizontalPixels>  
+                <verticalPixels></verticalPixels> 
+              </videoResolution>  
+              <frame rate="fps">29.97</frame> 
+            </video>  
+            <fileName>19560922-FB-001-Game</fileName> 
+          </technical>
+        </adminMeta>
+            

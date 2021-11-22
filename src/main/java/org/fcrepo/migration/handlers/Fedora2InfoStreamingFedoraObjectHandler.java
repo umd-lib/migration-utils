@@ -17,8 +17,11 @@ package org.fcrepo.migration.handlers;
 
 import java.io.Writer;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -303,41 +306,16 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             final XMLInputFactory factory = XMLInputFactory.newInstance();
             final XMLStreamReader reader = factory.createXMLStreamReader(ds.getContent());
 
-            String name = "";
-            String ns = "";
-            String title_type = "";
-            final StringBuilder title = new StringBuilder();
+            final UmdmTitleXmlEventParser titleParser = new UmdmTitleXmlEventParser();
 
             while (reader.hasNext()) {
-                final int event = reader.next();
-
-                if (event == XMLStreamConstants.START_ELEMENT) {
-                    name = reader.getLocalName();
-                    ns = reader.getNamespaceURI();
-
-                    if (name.equals("title")) {
-                        title_type = reader.getAttributeValue(null, "type");
-                    }
-
-                } else if (event == XMLStreamConstants.END_ELEMENT) {
-                    name = "";
-                    ns = "";
-                    title_type = "";
-
-                } else if (event == XMLStreamConstants.CHARACTERS) {
-                    if (title_type != null && title_type.equals("main")) {
-
-                        if (title.length() > 0) {
-                            title.append(" / ");
-                        }
-                        title.append(reader.getText());
-                    }
-                }
+                reader.next();
+                titleParser.parseEvent(reader);
             }
 
             // Add the title
             json.writeFieldName("umdm_title");
-            json.writeString(title.toString());
+            json.writeString(titleParser.getTitle());
 
         } catch (Exception e) {
             System.out.println("Exception processing doInfo/amInfo: " + e);
@@ -380,5 +358,52 @@ public class Fedora2InfoStreamingFedoraObjectHandler implements StreamingFedoraO
             System.out.println("json exception in abortObject: " + e);
         }
         System.out.println(object.getPid() + " failed to parse in " + (System.currentTimeMillis() - start) + "ms.");
+    }
+
+    /**
+     * Extracts the UMDM title from XMLStreamReader events
+     */
+    private static class UmdmTitleXmlEventParser {
+        private LinkedList<String> xmlPathStack = new LinkedList<>();
+        private List<String> titles = new ArrayList<>();
+        private String title_type = "";
+
+        /**
+         * Parses the current event of the XMLStreamReader to extract the title
+         * information
+         * @param reader the XMLStreamReader
+         */
+        public void parseEvent(final XMLStreamReader reader) {
+            final int event = reader.getEventType();
+            if (event == XMLStreamConstants.START_ELEMENT) {
+                final String name = reader.getLocalName();
+                xmlPathStack.push(name);
+
+                if (name.equals("title")) {
+                    title_type = reader.getAttributeValue(null, "type");
+                }
+
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                title_type = "";
+                xmlPathStack.pop();
+
+            } else if (event == XMLStreamConstants.CHARACTERS) {
+                String parentTag = null;
+                if (xmlPathStack.size() > 1) {
+                    parentTag = xmlPathStack.get(1);
+                }
+
+                if ("descMeta".equals(parentTag) && "main".equals(title_type)) {
+                    titles.add(reader.getText());
+                }
+            }
+        }
+
+        /**
+         * @return the parsed title
+         */
+        public String getTitle() {
+            return String.join(" / ", titles);
+        }
     }
 }

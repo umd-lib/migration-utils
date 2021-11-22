@@ -4,15 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -22,13 +15,13 @@ import org.fcrepo.migration.foxml.FoxmlInputStreamFedoraObjectProcessor;
 import org.fcrepo.migration.foxml.InternalIDResolver;
 import org.fcrepo.migration.foxml.LegacyFSIDResolver;
 import org.fcrepo.migration.handlers.Fedora2ExportStreamingFedoraObjectHandler;
+import org.fcrepo.migration.utils.TestUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import junit.framework.AssertionFailedError;
-
 /**
+ * Tests for the Fedora 2 "export" migration action
  * @author dsteelma
  */
 public class MigratorFedora2ExportTest {
@@ -84,7 +77,7 @@ public class MigratorFedora2ExportTest {
 
         final File expectedOutputDir = new File(
                 this.getClass().getClassLoader().getResource("migration/export/fedora2/expected").getFile());
-        verifyDirsAreEqual(expectedOutputDir.toPath(), exportOutputDir.toPath());
+        TestUtils.assertDirsAreEqual(expectedOutputDir.toPath(), exportOutputDir.toPath());
     }
 
     /**
@@ -139,41 +132,5 @@ public class MigratorFedora2ExportTest {
             return new FoxmlInputStreamFedoraObjectProcessor(
                     objectFile, new FileInputStream(objectFile), fetcher, resolver, localFedoraServer);
         }
-    }
-
-    /**
-     * Helper class that compares all the files in a file hierarchy.
-     *
-     * Largely derived from https://stackoverflow.com/a/39584230
-     *
-     * @param expected
-     *             the Path containing the expected directory hierarchy
-     * @param actual
-     *             the Path containing the actual directory hierarchy generated
-     *             by the test.
-     * @throws IOException
-     *             if an I/O exception occurs.
-     */
-    private static void verifyDirsAreEqual(final Path expected, final Path actual) throws IOException {
-        Files.walkFileTree(expected, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(final Path file,
-                    final BasicFileAttributes attrs)
-                    throws IOException {
-                final FileVisitResult result = super.visitFile(file, attrs);
-
-                // get the relative file name from path "one"
-                final Path relativize = expected.relativize(file);
-                // construct the path for the counterpart file in "other"
-                final Path fileInOther = actual.resolve(relativize);
-
-                final byte[] otherBytes = Files.readAllBytes(fileInOther);
-                final byte[] theseBytes = Files.readAllBytes(file);
-                if (!Arrays.equals(otherBytes, theseBytes)) {
-                    throw new AssertionFailedError(file + " is not equal to " + fileInOther);
-                }
-                return result;
-            }
-        });
     }
 }

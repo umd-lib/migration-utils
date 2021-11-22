@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+           xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:audit="info:fedora/fedora-system:def/audit#"
+           fedoraxsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd"
+           PID="umd:11061">
+    <foxml:objectProperties>
+        <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="UMAM Object"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2013-05-07T13:19:41.315Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2013-05-07T13:19:41.315Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UMD_VIDEO"/>
+    </foxml:objectProperties>
+    <foxml:datastream ID="thumbnail" STATE="A" CONTROL_GROUP="E" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="thumbnail.0" LABEL="thumbnail" CREATED="2013-05-07T13:19:41.315Z" MIMETYPE="image/jpeg" SIZE="0">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:contentLocation TYPE="URL" REF="http://local.fedora.server/images/video_thumbnail.jpeg"/>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="DC.0" LABEL="Dublin Core Metadata" CREATED="2013-05-07T13:19:41.315Z" MIMETYPE="text/xml" SIZE="279">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:title>Daniel Yankelovich on public opinion research</dc:title>
+  <dc:identifier>umd:11061</dc:identifier>
+</oai_dc:dc>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="amInfo" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="amInfo.0" LABEL="Digital Object Information" CREATED="2013-05-07T13:19:41.315Z" MIMETYPE="text/xml" SIZE="156">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<amInfo xmlns="http://www.itd.umd.edu/fedora/amInfo">
+          <type>UMD_VIDEO</type>
+          <status>Complete</status>
+        </amInfo>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="umam" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="umam.0" LABEL="University of Maryland Administrative Metadata" CREATED="2013-05-07T13:19:41.315Z" MIMETYPE="text/xml" SIZE="1686">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<adminMeta>
+          <identifier>FHdanielya01</identifier>
+          <digiProv> 
+            <date>2007-09-07</date>  
+            <agent type="creator"> 
+              <corpName>Nonprint Media Services</corpName> 
+            </agent>  
+            <description>Sharestream
+              <extRef>http://streamer.lib.umd.edu/ssdcms/i.do?u=ef859ef9c22743e</extRef> 
+            </description> 
+          </digiProv>
+          <adminRights> 
+            <access>UMDfilms00001</access> 
+          </adminRights>
+          <technical> 
+            <fileSize units="bytes">271577533</fileSize>  
+            <format> 
+              <mimeType>video/x-m4v</mimeType>  
+              <compression>lossy</compression> 
+            </format>  
+            <video> 
+              <duration>36:10</duration>  
+              <color>color</color>  
+              <videoFormat> 
+                <scanSignal>progressive</scanSignal>  
+                <videoStandard>NTSC</videoStandard> 
+              </videoFormat>  
+              <videoSound> 
+                <audioTrack> 
+                  <soundField>stereo</soundField>  
+                  <language>eng</language> 
+                </audioTrack> 
+              </videoSound>  
+              <dataRate rate="kbps" type="target">768</dataRate>  
+              <videoResolution> 
+                <aspectRatio>4:3</aspectRatio>  
+                <horizontalPixels></horizontalPixels>  
+                <verticalPixels></verticalPixels> 
+              </videoResolution>  
+              <frame rate="fps">29.97</frame> 
+            </video>  
+            <fileName>FHdanielya01</fileName> 
+          </technical>
+        </adminMeta>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:disseminator ID="DISS4" BDEF_CONTRACT_PID="umd-bdef:video" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS4.0" BMECH_SERVICE_PID="umd-bmech:video" CREATED="2013-05-07T13:19:41.315Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="umam" DATASTREAM_ID="umam"/>
+                <foxml:datastreamBinding KEY="image" DATASTREAM_ID="thumbnail"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS3" BDEF_CONTRACT_PID="umd-bdef:umam" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS3.0" BMECH_SERVICE_PID="umd-bmech:umam" CREATED="2013-05-07T13:19:41.315Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="umam"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="umd-bdef:rels" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="umd-bmech:rels" CREATED="2013-05-07T13:19:41.315Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="umd-bdef:amInfo" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="umd-bmech:amInfo" CREATED="2013-05-07T13:19:41.315Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="amInfo"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+</foxml:digitalObject>

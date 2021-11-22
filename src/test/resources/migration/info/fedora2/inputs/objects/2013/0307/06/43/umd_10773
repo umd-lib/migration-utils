@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+           xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:audit="info:fedora/fedora-system:def/audit#"
+           fedoraxsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd"
+           PID="umd:10773">
+    <foxml:objectProperties>
+        <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="UMDM Object"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2013-03-07T11:43:32.851Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2013-03-07T11:43:32.851Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UMD_VIDEO"/>
+    </foxml:objectProperties>
+    <foxml:datastream ID="doInfo" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="doInfo.0" LABEL="Digital Object Information" CREATED="2013-03-07T11:43:32.851Z" MIMETYPE="text/xml" SIZE="156">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<doInfo xmlns="http://www.itd.umd.edu/fedora/doInfo">
+          <type>UMD_VIDEO</type>
+          <status>Complete</status>
+        </doInfo>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="umdm" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="umdm.0" LABEL="University of Maryland Descriptive Metadata" CREATED="2013-03-07T11:43:32.851Z" MIMETYPE="text/xml" SIZE="3480">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<descMeta>
+          <mediaType type="movingImage"> 
+            <form type="analog">nonfiction television</form> 
+          </mediaType>
+          <title type="main">Daniel Yankelovich on public opinion research</title>
+          <agent type="contributor"> 
+            <persName>Yankelovich, Daniel</persName> 
+          </agent>
+          <agent type="contributor"> 
+            <persName>Moyers, Bill D.</persName> 
+          </agent>
+          <agent type="contributor"> 
+            <persName>Ganguzza, Mark</persName> 
+          </agent>
+          <agent type="provider"> 
+            <corpName>Public Affairs Television (Firm)</corpName> 
+          </agent>
+          <agent type="provider"> 
+            <corpName>Films for the Humanities &amp; Sciences (Firm)</corpName> 
+          </agent>
+          <agent type="provider"> 
+            <corpName>WNET (Television station : New York, N.Y.)</corpName> 
+          </agent>
+          <covPlace> 
+            <geogName type="continent">North America</geogName>  
+            <geogName type="country">United States of America</geogName>  
+            <geogName type="region">New Jersey</geogName> 
+          </covPlace>
+          <covTime> 
+            <century certainty="exact" era="ad">2001-2100</century>  
+            <date certainty="exact" era="ad">2002</date> 
+          </covTime>
+          <culture>North American</culture>
+          <culture>American</culture>
+          <language>en</language>
+          <description type="credits">Directed by Mark Ganguzza. Host/interviewer, Bill Moyers; interviewee, Daniel Yankelovich. Editor, Larry Goldfine.</description>
+          <description type="summary">Bill Moyers talks with the survey pioneer recently named one of the 20th century&apos;s ten most influential people in the area of public policy. From his vast experience in the field, Daniel Yankelovich explains the agendas behind public opinion research, homing in on its uses and abuses by special interest groups. He also discusses the integral link between the economy and education, as well as what Americans can do to become poll savvy.</description>
+          <subject type="browse">Government, Law, Politics</subject>
+          <subject label="Films@UM" type="browse">Government, Law, Politics</subject>
+          <subject scheme="LCSH" type="topical">Public opinion polls</subject>
+          <subject scheme="LCSH" type="topical">Public opinion -- United States</subject>
+          <subject scheme="LCSH" type="topical">Political culture -- United States</subject>
+          <subject scheme="LCNAF" type="topical"> 
+            <persName>Yankelovich, Daniel -- Interviews</persName> 
+          </subject>
+          <subject type="genre">Television interviews</subject>
+          <subject type="genre">Public affairs television programs</subject>
+          <identifier type="aleph">alephsys004125952</identifier>
+          <identifier type="oclc">ocn797971120</identifier>
+          <physDesc> 
+            <extent units="minutes">36</extent>  
+            <color>color</color> 
+          </physDesc>
+          <relationships> 
+            <relation label="series" type="isPartOf">Now with Bill Moyers (Television program)</relation> 
+          </relationships>
+          <repository> 
+            <corpName>Nonprint Media Services</corpName> 
+          </repository>
+          <rights type="access">Access restricted to patrons at the University of Maryland.</rights>
+        </descMeta>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="DC.0" LABEL="Dublin Core Metadata" CREATED="2013-03-07T11:43:32.851Z" MIMETYPE="text/xml" SIZE="279">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:title>Daniel Yankelovich on public opinion research</dc:title>
+  <dc:identifier>umd:10773</dc:identifier>
+</oai_dc:dc>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="rels-mets" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+        <foxml:datastreamVersion ID="rels-mets.0" LABEL="METS Relationships" CREATED="2013-03-07T11:43:32.851Z" MIMETYPE="text/xml" SIZE="1157">
+            <foxml:contentDigest TYPE="DISABLED" DIGEST="none"/>
+            <foxml:xmlContent>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd">
+          <fileSec>
+            <fileGrp ID="fedora">
+              <file ID="1">
+                <FLocat LOCTYPE="OTHER" OTHERLOCTYPE="PID" xlink:href="umd:1158" type="simple"></FLocat>
+              </file>
+              <file ID="2">
+                <FLocat fileName="FHdanielya01" LOCTYPE="OTHER" OTHERLOCTYPE="PID" xlink:href="umd:11061" type="simple"></FLocat>
+              </file>
+            </fileGrp>
+          </fileSec>
+          <structMap TYPE="LOGICAL">
+            <div ID="rels">
+              <div ID="isMemberOfCollection">
+                <fptr FILEID="1"></fptr>
+              </div>
+              <div ID="hasPart">
+                <fptr FILEID="2"></fptr>
+              </div>
+            </div>
+          </structMap>
+          <structMap TYPE="LOGICAL">
+            <div ID="videos">
+              <div LABEL="video" ORDER="1">
+                <fptr FILEID="2"></fptr>
+              </div>
+            </div>
+          </structMap>
+        </mets>
+            </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:disseminator ID="DISS7" BDEF_CONTRACT_PID="umd-bdef:thumbnail" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS7.0" BMECH_SERVICE_PID="umd-bmech:thumbnail" CREATED="2013-03-07T11:43:32.851Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS5" BDEF_CONTRACT_PID="umd-bdef:image" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS5.0" BMECH_SERVICE_PID="umd-bmech:image.umdm" CREATED="2013-03-07T11:43:32.851Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS6" BDEF_CONTRACT_PID="umd-bdef:umdm" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS6.0" BMECH_SERVICE_PID="umd-bmech:umdm" CREATED="2013-03-07T11:43:32.851Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="umdm"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS4" BDEF_CONTRACT_PID="umd-bdef:handle" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS4.0" BMECH_SERVICE_PID="umd-bmech:handle" CREATED="2013-03-07T11:43:32.851Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS3" BDEF_CONTRACT_PID="umd-bdef:doInfo" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS3.0" BMECH_SERVICE_PID="umd-bmech:doInfo" CREATED="2013-03-07T11:43:32.851Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="doInfo"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="umd-bdef:rels" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="umd-bmech:rels" CREATED="2013-03-07T11:43:32.851Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="NULLBIND" DATASTREAM_ID="DC"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="umd-bdef:rels-mets" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="umd-bmech:rels-mets" CREATED="2013-03-07T11:43:32.851Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DATASTREAM" DATASTREAM_ID="rels-mets"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+</foxml:digitalObject>
