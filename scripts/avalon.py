@@ -198,6 +198,18 @@ class Object:
                         text += " " + node.getAttribute('units')
                         self.physical_description += text
 
+            # relationships
+            elif e.nodeName == 'relationships':
+
+                for node in e.childNodes:
+                    if node.nodeName == 'relation':
+                        relation = node.getAttribute('label')
+                        if relation == 'archivalcollection':
+                            for relationChild in node.childNodes:
+                                if relationChild.nodeName == 'bibRef':
+                                    note_text = relationChild.toxml().encode("unicode_escape").decode("utf-8")
+                                    self.note.append(('general', note_text))
+
             # rights
             elif e.nodeName == 'rights':
                 if self.terms_of_use:
