@@ -6,7 +6,7 @@ from argparse import ArgumentParser, Namespace
 from csv import DictReader, writer
 from pathlib import Path
 from typing import Optional, Iterable, Union
-from xml.dom.minidom import parse, Element, Text
+from xml.dom.minidom import parse, Element, Node, Text
 
 # Convert Fedora exported objects to Avalon input format.
 #
@@ -207,8 +207,9 @@ class Object:
                         if relation == 'archivalcollection':
                             for relationChild in node.childNodes:
                                 if relationChild.nodeName == 'bibRef':
-                                    note_text = relationChild.toxml().encode("unicode_escape").decode("utf-8")
-                                    self.note.append(('general', note_text))
+                                    note_text = bibref_to_note_text(relationChild)
+                                    escaped_note_text = note_text.encode("unicode_escape").decode("utf-8")
+                                    self.note.append(('general', escaped_note_text))
 
             # rights
             elif e.nodeName == 'rights':
@@ -380,6 +381,43 @@ def write_csv(title: str, email: str, manifest_path: Path, objects: Iterable) ->
 
             # Write the row
             manifest_csv.writerow(row)
+
+
+def collapse_whitespace_nodes(element: Element):
+    '''Collapses extraneous whitespace child elements in given element,
+       and normalizes.
+       Largely taken from "remove_whitespace" method in
+       https://realpython.com/python-xml-parser/'''
+    if element.nodeType == Node.TEXT_NODE:
+        if element.nodeValue.strip() == "":
+            element.nodeValue = ""
+    for child in element.childNodes:
+        collapse_whitespace_nodes(child)
+    element.normalize()
+
+
+def bibref_to_note_text(bibref: Element) -> str:
+    '''Converts <bibref> child nodes into multi-line text describing the bibref'''
+    collapse_whitespace_nodes(bibref)
+    bibref_items = []
+    for e in bibref.childNodes:
+        item_text = get_text(e.childNodes).strip()
+        if item_text == '':
+            continue
+
+        caption = ''
+        if e.nodeName == 'bibScope':
+            caption = e.getAttribute('type') + ' '
+
+        bibref_item = f"{caption.capitalize()}{item_text}".strip()
+
+        # Ensure <title>, if present, is first in bibref_items
+        if e.nodeName == 'title':
+            bibref_items.insert(0, bibref_item)
+        else:
+            bibref_items.append(bibref_item)
+    item_separator = ', '
+    return item_separator.join(bibref_items)
 
 
 def get_text(nodelist: Iterable[Union[Element, Text]]) -> str:

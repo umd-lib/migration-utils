@@ -59,6 +59,9 @@ files
 * Input: export.csv and exported objects and datastreams
 * Output: Avalon formatted batch_manifest.csv
 
+[scripts/unit_tests.py](scripts/unit_tests.py) - Unit tests for verifying
+behavior of scripts
+
 ## Building
 
 The migration-utils Java software is built with [Maven 3](https://maven.apache.org)
