@@ -13,8 +13,8 @@ class TestObject(unittest.TestCase):
         umdm_file = 'src/test/resources/scripts/avalon/umd_55387_umdm.xml'
         self.obj = Object()
         self.obj.title = 'Test Object 1'
-        self.obj.other_identifier.append(("local", 'umd:55387'))
-        self.obj.handle = 'hdl:1903.1/5368'
+        self.obj.other_identifier.append(('local', 'umd:55387'))
+        self.obj.other_identifier.append(('handle', 'hdl:1903.1/5368'))
         self.obj.process_umdm(Path(umdm_file))
 
         self.assertEqual(['North America', 'United States of America', 'Maryland', 'College Park'],
@@ -26,18 +26,18 @@ class TestObjectToCsvConverter(unittest.TestCase):
         umdm_file = 'src/test/resources/scripts/avalon/umd_55387_umdm.xml'
         self.obj = Object()
         self.obj.title = 'Test Object 1'
-        self.obj.other_identifier.append(("local", 'umd:55387'))
-        self.obj.handle = 'hdl:1903.1/5368'
+        self.obj.other_identifier.append(('local', 'umd:55387'))
+        self.obj.other_identifier.append(('handle', 'hdl:1903.1/5368'))
         self.obj.process_umdm(Path(umdm_file))
 
         self.column_counts = CsvColumnCounts([self.obj])
         self.converter = ObjectToCsvConverter(self.column_counts)
 
+
     def test_headers(self):
         expected_headers = \
             ['Bibliographic ID Label', 'Bibliographic ID'] \
             + ['Other Identifier Type', 'Other Identifier'] * self.column_counts.max_other_identifier \
-            + ['Handle'] \
             + ['Title'] \
             + ['Creator'] * self.column_counts.max_creator \
             + ['Contributor'] * self.column_counts.max_contributor \
@@ -59,11 +59,20 @@ class TestObjectToCsvConverter(unittest.TestCase):
 
     def test_convert(self):
         row = self.converter.convert(self.obj)
+
+        # Verify "Other Identifier Type/Other Identifier" for handle in headers
+        # Use the value to get the index in the header, because there are
+        # multiple other identifiers
+        handle_index = row.index('hdl:1903.1/5368')
+        self.assertEqual('Other Identifier', self.converter.headers[handle_index])
+        self.assertEqual('Other Identifier Type', self.converter.headers[handle_index - 1])
+
+        # Verify contents of row
         title_index = self.converter.headers.index('Title')
-        handle_index = self.converter.headers.index('Handle')
         geographic_subject_index = self.converter.headers.index('Geographic Subject')
 
         self.assertEqual('Test Object 1', row[title_index])
+        self.assertEqual('handle', row[handle_index - 1])
         self.assertIn('hdl:1903.1/5368', row[handle_index])
         self.assertIn('North America', row[geographic_subject_index])
 

@@ -77,7 +77,6 @@ class Object:
         # not currently supported
         self.file = []  # (file, label)
 
-        self.handle = ''
 
     def process_umdm(self, umdm_path: Path) -> None:
         """ Gather data from the UMDM xml. """
@@ -380,7 +379,6 @@ class ObjectToCsvConverter:
         self.headers = \
             ["Bibliographic ID Label", "Bibliographic ID"] \
             + ["Other Identifier Type", "Other Identifier"] * column_counts.max_other_identifier \
-            + ["Handle"] \
             + ["Title"] \
             + ["Creator"] * column_counts.max_creator \
             + ["Contributor"] * column_counts.max_contributor \
@@ -412,9 +410,6 @@ class ObjectToCsvConverter:
 
             # "Other Identifier Type", Other Identifier"
             *self.multicolumn(obj.other_identifier, 2, self.column_counts.max_other_identifier),
-
-            # "Handle"
-            obj.handle,
 
             # "Title"
             obj.title,
@@ -591,7 +586,8 @@ def main(args: Namespace) -> None:
 
                 obj.title = record['title']
                 obj.other_identifier.append(("local", umdm))
-                obj.handle = record['handle']
+                obj.other_identifier.append(('handle', record['handle']))
+
                 obj.process_umdm(target / record['location'] / 'umdm.xml')
 
                 objects.append(obj)
