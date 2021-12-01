@@ -77,7 +77,6 @@ class Object:
         # not currently supported
         self.file = []  # (file, label)
 
-
     def process_umdm(self, umdm_path: Path) -> None:
         """ Gather data from the UMDM xml. """
 
@@ -265,10 +264,14 @@ class XmlUtils:
     '''Utilties for handling minidom XML elements'''
     @staticmethod
     def collapse_whitespace_nodes(element: Element) -> None:
-        '''Collapses extraneous whitespace child elements in given element,
+        '''
+        Collapses extraneous whitespace child elements in given element,
         and normalizes. This method preserves the XML tag information.
         Largely taken from "remove_whitespace" method in
-        https://realpython.com/python-xml-parser/'''
+        https://realpython.com/python-xml-parser/
+
+        :param element: the Element to modify (element is modified in place)
+        '''
         if element.nodeType == Node.TEXT_NODE:
             if element.nodeValue.strip() == "":
                 element.nodeValue = ""
@@ -278,15 +281,26 @@ class XmlUtils:
 
     @staticmethod
     def get_text(nodelist: Iterable[Union[Element, Text]]) -> str:
-        '''Extract text from an XML node list'''
+        '''
+        Extract text from an XML node list
+
+        :param nodelist: an Iterable of Elements to extract the text from
+        '''
         return ''.join(node.data.strip().replace('\n', '') for node in nodelist if node.nodeType == node.TEXT_NODE)
 
 
 class BibRefToTextConverter:
-    '''Converts <bibRef> XML element into a text string'''
+    '''
+    Converts <bibRef> XML element into a text string.
+    '''
     @staticmethod
     def as_text(bib_ref: Element) -> str:
-        '''Converts <bibRef> nodes into multi-line text describing the bibRef'''
+        '''
+        Converts <bibRef> nodes into multi-line text describing the bibRef
+
+        :param bib_ref: the Element to convert
+        :return: a text string containing the information in the bibRef element
+        '''
         XmlUtils.collapse_whitespace_nodes(bib_ref)
 
         bib_ref_dict = BibRefToTextConverter.bib_ref_to_dict(bib_ref)
@@ -308,6 +322,10 @@ class BibRefToTextConverter:
         The value stored in the map is a list (as there could possibly be
         multiple instance of a tag or bibScope type) -- there will be one entry
         in the list for each instance.
+
+        :param bib_ref: the Element to convert
+        :return: A Dict of keys and values representing the information in the
+                bibRef
         '''
         bib_ref_items: Dict[str, List[str]] = {}
         for e in bib_ref.childNodes:
@@ -335,6 +353,9 @@ class BibRefToTextConverter:
 
         Any other tags or bibScope types are placed at the end, in an undefined
         order.
+
+        :param bib_ref_dict: Dict from 'bib_ref_to_dict' method to convert
+        :return: a List of Strings representing the bibRef information
         '''
         bibscope_output_order = ['accession', 'series', 'subseries', 'box', 'folder', 'item']
         text_elements = []

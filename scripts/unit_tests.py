@@ -33,7 +33,6 @@ class TestObjectToCsvConverter(unittest.TestCase):
         self.column_counts = CsvColumnCounts([self.obj])
         self.converter = ObjectToCsvConverter(self.column_counts)
 
-
     def test_headers(self):
         expected_headers = \
             ['Bibliographic ID Label', 'Bibliographic ID'] \
