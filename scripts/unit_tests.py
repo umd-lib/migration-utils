@@ -3,8 +3,90 @@
 '''Unit tests for Python scripts'''
 import unittest
 
+from pathlib import Path
 from xml.dom.minidom import parseString
-from avalon import BibRefToTextConverter, XmlUtils
+from avalon import BibRefToTextConverter, CsvColumnCounts, Object, ObjectToCsvConverter, XmlUtils
+
+
+class TestObject(unittest.TestCase):
+    def test_creation_from_umdm(self):
+        umdm_file = 'src/test/resources/scripts/avalon/umd_55387_umdm.xml'
+        self.obj = Object()
+        self.obj.title = 'Test Object 1'
+        self.obj.other_identifier.append(("local", 'umd:55387'))
+        self.obj.handle = 'hdl:1903.1/5368'
+        self.obj.process_umdm(Path(umdm_file))
+
+        self.assertEqual(['North America', 'United States of America', 'Maryland', 'College Park'],
+                         self.obj.geographic_subject)
+
+
+class TestObjectToCsvConverter(unittest.TestCase):
+    def setUp(self):
+        umdm_file = 'src/test/resources/scripts/avalon/umd_55387_umdm.xml'
+        self.obj = Object()
+        self.obj.title = 'Test Object 1'
+        self.obj.other_identifier.append(("local", 'umd:55387'))
+        self.obj.handle = 'hdl:1903.1/5368'
+        self.obj.process_umdm(Path(umdm_file))
+
+        self.column_counts = CsvColumnCounts([self.obj])
+        self.converter = ObjectToCsvConverter(self.column_counts)
+
+    def test_headers(self):
+        expected_headers = \
+            ['Bibliographic ID Label', 'Bibliographic ID'] \
+            + ['Other Identifier Type', 'Other Identifier'] * self.column_counts.max_other_identifier \
+            + ['Handle'] \
+            + ['Title'] \
+            + ['Creator'] * self.column_counts.max_creator \
+            + ['Contributor'] * self.column_counts.max_contributor \
+            + ['Genre'] * self.column_counts.max_genre \
+            + ['Publisher'] * self.column_counts.max_publisher \
+            + ['Date Created', 'Date Issued', 'Abstract'] \
+            + ['Language'] * self.column_counts.max_language \
+            + ['Physical Description'] \
+            + ['Related Item Label', 'Related Item URL'] * self.column_counts.max_related_item \
+            + ['Topical Subject'] * self.column_counts.max_topical_subject \
+            + ['Geographic Subject'] * self.column_counts.max_geographic_subject \
+            + ['Temporal Subject'] * self.column_counts.max_temporal_subject \
+            + ['Terms of Use', 'Table of Contents'] \
+            + ['Note Type', 'Note'] * self.column_counts.max_note \
+            + ['Publish', 'Hidden'] \
+            + ['File', 'Label'] * self.column_counts.max_file
+
+        self.assertEqual(expected_headers, self.converter.headers)
+
+    def test_convert(self):
+        row = self.converter.convert(self.obj)
+        title_index = self.converter.headers.index('Title')
+        handle_index = self.converter.headers.index('Handle')
+        geographic_subject_index = self.converter.headers.index('Geographic Subject')
+
+        self.assertEqual('Test Object 1', row[title_index])
+        self.assertIn('hdl:1903.1/5368', row[handle_index])
+        self.assertIn('North America', row[geographic_subject_index])
+
+
+class TestCsvColumnCounts(unittest.TestCase):
+    def test_counts_from_single_object(self):
+        umdm_file = 'src/test/resources/scripts/avalon/umd_55387_umdm.xml'
+        obj = Object()
+        obj.process_umdm(Path(umdm_file))
+        csv_column_counts = CsvColumnCounts([obj])
+
+        self.assertEqual(1, csv_column_counts.max_other_identifier)
+        self.assertEqual(4, csv_column_counts.max_creator)
+        self.assertEqual(1, csv_column_counts.max_contributor)
+        self.assertEqual(1, csv_column_counts.max_publisher)
+        self.assertEqual(1, csv_column_counts.max_genre)
+        self.assertEqual(1, csv_column_counts.max_related_item)
+        self.assertEqual(4, csv_column_counts.max_geographic_subject)
+        self.assertEqual(10, csv_column_counts.max_topical_subject)
+        self.assertEqual(1, csv_column_counts.max_temporal_subject)
+        self.assertEqual(1, csv_column_counts.max_note)
+        self.assertEqual(1, csv_column_counts.max_file)
+        self.assertEqual(1, csv_column_counts.max_language)
 
 
 class TestBibRefToTextConverter(unittest.TestCase):
@@ -91,6 +173,7 @@ class TestBibRefToTextConverter(unittest.TestCase):
         xml = '<bibRef><title type="main">Test Title</title>\n<bibScope type="accession">2011-166</bibScope><bibScope type="accession">ABC-123</bibScope></bibRef>'
         bib_ref = self.to_element(xml)
         self.assertEqual('Test Title, Accession 2011-166, Accession ABC-123', BibRefToTextConverter.as_text(bib_ref))
+
 
 if __name__ == '__main__':
     unittest.main()
