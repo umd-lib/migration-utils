@@ -1,0 +1,61 @@
+<descMeta xml:lang="en">
+  <mediaType type="movingImage">
+    <form type="analog">documentary</form>
+  </mediaType>
+  <title type="main">The Gordon W. Prange Collection: saving hidden history, Japan 1945-1949</title>
+  <agent type="creator">
+    <corpName>University Video, University of Maryland, College Park</corpName>
+  </agent>
+  <agent type="creator">
+    <persName>Vikor, Desider L., 1950-</persName>
+  </agent>
+  <agent type="creator">
+    <persName>Prange, Winfred</persName>
+  </agent>
+  <agent type="creator">
+    <persName>Prange, Polly</persName>
+  </agent>
+  <agent type="provider">
+    <corpName>University of Maryland</corpName>
+  </agent>
+  <covPlace>
+    <geogName type="continent">North America</geogName>
+    <geogName type="country">United States of America</geogName>
+    <geogName type="region">Maryland</geogName>
+    <geogName type="settlement">College Park</geogName>
+  </covPlace>
+  <covTime>
+    <century era="ad">2001-2100</century>
+    <date era="ad" type="exact">2008</date>
+  </covTime>
+  <culture>American</culture>
+  <culture>Japanese</culture>
+  <language>en</language>
+  <description type="summary">Introduction of the Gordon W. Prange Collection, University of
+        Maryland Libraries. </description>
+  <subject type="browse">Government, Law, Politics</subject>
+  <subject type="browse">University of Maryland</subject>
+  <subject scheme="LCNAF" type="topical">Prange, Gordon W. (Gordon William), 1910-1980</subject>
+  <subject scheme="LCSH" type="topical">Gordon W. Prange Collection (University of Maryland at
+        College Park. Libraries)</subject>
+  <subject scheme="LCSH" type="topical">Japan -- History -- Allied occupation, 1945-1952 --
+        Library resources</subject>
+  <subject scheme="LCSH" type="topical">Japan -- History -- Allied occupation, 1945-1952 --
+        Censorship</subject>
+  <subject scheme="LCSH" type="topical">Supreme Commander for the Allied Powers. Civil Censorship
+        Detachment</subject>
+  <subject type="temporal">
+    <century>1901-2000</century>
+  </subject>
+  <physDesc>
+    <extent units="minutes">10</extent>
+    <color>color</color>
+  </physDesc>
+  <relationships></relationships>
+  <repository>
+    <corpName>Gordon W. Prange Collection</corpName>
+  </repository>
+  <rights type="copyrightowner">University of Maryland</rights>
+  <rights> This video or portions therein cannot be reproduced without the written permission of
+        the Gordon Prange Collection. Contact prangebunko@umd.edu for more information. </rights>
+</descMeta>

@@ -77,8 +77,6 @@ class Object:
         # not currently supported
         self.file = []  # (file, label)
 
-        self.handle = ''
-
     def process_umdm(self, umdm_path: Path) -> None:
         """ Gather data from the UMDM xml. """
 
@@ -222,14 +220,58 @@ class Object:
             self.date_issued = century_date_range
 
 
+class CsvColumnCounts:
+    '''
+    Value object holding counts for the "multicolumn" fields in the CSV output.
+    '''
+    def __init__(self, objects: List[Object]):
+        '''
+        Constructs a CsvColumnCounts using the given list of Objects to
+        calculate the generate the counts.
+
+        :param objects: a List of all Objects being output to the CSV.
+        '''
+
+        self.max_other_identifier = 1
+        self.max_creator = 1
+        self.max_contributor = 1
+        self.max_publisher = 1
+        self.max_genre = 1
+        self.max_related_item = 1
+        self.max_geographic_subject = 1
+        self.max_topical_subject = 1
+        self.max_temporal_subject = 1
+        self.max_note = 1
+        self.max_file = 1
+        self.max_language = 1
+
+        for obj in objects:
+            self.max_other_identifier = max(len(obj.other_identifier), self.max_other_identifier)
+            self.max_creator = max(len(obj.creator), self.max_creator)
+            self.max_contributor = max(len(obj.contributor), self.max_contributor)
+            self.max_publisher = max(len(obj.publisher), self.max_publisher)
+            self.max_genre = max(len(obj.genre), self.max_genre)
+            self.max_related_item = max(len(obj.related_item), self.max_related_item)
+            self.max_geographic_subject = max(len(obj.geographic_subject), self.max_geographic_subject)
+            self.max_topical_subject = max(len(obj.topical_subject), self.max_topical_subject)
+            self.max_temporal_subject = max(len(obj.temporal_subject), self.max_temporal_subject)
+            self.max_note = max(len(obj.note), self.max_note)
+            self.max_file = max(len(obj.file), self.max_file)
+            self.max_language = max(len(obj.language), self.max_language)
+
+
 class XmlUtils:
     '''Utilties for handling minidom XML elements'''
     @staticmethod
-    def collapse_whitespace_nodes(element: Element):
-        '''Collapses extraneous whitespace child elements in given element,
+    def collapse_whitespace_nodes(element: Element) -> None:
+        '''
+        Collapses extraneous whitespace child elements in given element,
         and normalizes. This method preserves the XML tag information.
         Largely taken from "remove_whitespace" method in
-        https://realpython.com/python-xml-parser/'''
+        https://realpython.com/python-xml-parser/
+
+        :param element: the Element to modify (element is modified in place)
+        '''
         if element.nodeType == Node.TEXT_NODE:
             if element.nodeValue.strip() == "":
                 element.nodeValue = ""
@@ -239,15 +281,32 @@ class XmlUtils:
 
     @staticmethod
     def get_text(nodelist: Iterable[Union[Element, Text]]) -> str:
-        '''Extract text from an XML node list'''
+        '''
+        Extract text from an XML node list
+
+        :param nodelist: an Iterable of Elements to extract the text from
+        '''
         return ''.join(node.data.strip().replace('\n', '') for node in nodelist if node.nodeType == node.TEXT_NODE)
 
 
 class BibRefToTextConverter:
-    '''Converts <bibRef> XML element into a text string'''
+    '''
+    Converts <bibRef> XML element into a text string.
+    '''
+
+    # Order to output bibScope types
+    BIBSCOPE_TYPE_OUTPUT_ORDER = [
+        'accession', 'series', 'subseries', 'box', 'folder', 'item'
+    ]
+
     @staticmethod
     def as_text(bib_ref: Element) -> str:
-        '''Converts <bibRef> nodes into multi-line text describing the bibRef'''
+        '''
+        Converts <bibRef> nodes into multi-line text describing the bibRef
+
+        :param bib_ref: the Element to convert
+        :return: a text string containing the information in the bibRef element
+        '''
         XmlUtils.collapse_whitespace_nodes(bib_ref)
 
         bib_ref_dict = BibRefToTextConverter.bib_ref_to_dict(bib_ref)
@@ -269,6 +328,10 @@ class BibRefToTextConverter:
         The value stored in the map is a list (as there could possibly be
         multiple instance of a tag or bibScope type) -- there will be one entry
         in the list for each instance.
+
+        :param bib_ref: the Element to convert
+        :return: A Dict of keys and values representing the information in the
+                bibRef
         '''
         bib_ref_items: Dict[str, List[str]] = {}
         for e in bib_ref.childNodes:
@@ -292,38 +355,169 @@ class BibRefToTextConverter:
         '''
         Converted the bibRef dict into a text string, ensuring that the
         text from the <title> tag (if present) appears first, followed by
-        the bibScope types in a defined order (skipping any missing types).
+        the bibScope types in the order defined by BIBSCOPE_TYPE_OUTPUT_ORDER
+        (skipping any missing types).
 
         Any other tags or bibScope types are placed at the end, in an undefined
         order.
+
+        :param bib_ref_dict: Dict from 'bib_ref_to_dict' method to convert
+        :return: a List of Strings representing the bibRef information
         '''
-        bibscope_output_order = ['accession', 'series', 'subseries', 'box', 'folder', 'item']
         text_elements = []
 
-        # Title is always first
+        bib_ref_dict_keys = list(bib_ref_dict)
+
+        # Title is always first - no caption is added
         if 'title' in bib_ref_dict:
             title_entries = bib_ref_dict['title']
             for title in title_entries:
                 text_elements.append(title)
 
-            del bib_ref_dict['title']
+            bib_ref_dict_keys.remove('title')
 
         # Bibscopes in provided order
-        for bibscope_type in bibscope_output_order:
+        for bibscope_type in BibRefToTextConverter.BIBSCOPE_TYPE_OUTPUT_ORDER:
             if bibscope_type in bib_ref_dict:
                 caption = bibscope_type.capitalize()
                 for entry in bib_ref_dict[bibscope_type]:
                     text_elements.append(f"{caption} {entry}")
 
-                del bib_ref_dict[bibscope_type]
+                bib_ref_dict_keys.remove(bibscope_type)
 
-        # Anything left in the bib_ref_items goes at the end
-        for key, value in bib_ref_dict.items():
+        # Anything left in the bib_ref_dict_keys goes at the end
+        for key in bib_ref_dict_keys:
+            value = bib_ref_dict[key]
             caption = key.capitalize()
             for entry in value:
                 text_elements.append(f"{caption} {entry}")
 
         return text_elements
+
+
+class ObjectToCsvConverter:
+    '''Converts an Object into format suitable for CSV'''
+    def __init__(self, column_counts: CsvColumnCounts):
+        '''
+        Constructs an ObjectToCsvConverter using the given CsvColumnCounts.
+
+        :param column_counts: the CsvColumnCounts object used to determine the
+                              type and number of columns in the CSV file.
+        '''
+        self.column_counts = column_counts
+
+        self.headers = \
+            ["Bibliographic ID Label", "Bibliographic ID"] \
+            + ["Other Identifier Type", "Other Identifier"] * column_counts.max_other_identifier \
+            + ["Title"] \
+            + ["Creator"] * column_counts.max_creator \
+            + ["Contributor"] * column_counts.max_contributor \
+            + ["Genre"] * column_counts.max_genre \
+            + ["Publisher"] * column_counts.max_publisher \
+            + ["Date Created", "Date Issued", "Abstract"] \
+            + ["Language"] * column_counts.max_language \
+            + ["Physical Description"] \
+            + ["Related Item Label", "Related Item URL"] * column_counts.max_related_item \
+            + ["Topical Subject"] * column_counts.max_topical_subject \
+            + ["Geographic Subject"] * column_counts.max_geographic_subject \
+            + ["Temporal Subject"] * column_counts.max_temporal_subject \
+            + ["Terms of Use", "Table of Contents"] \
+            + ["Note Type", "Note"] * column_counts.max_note \
+            + ["Publish", "Hidden"] \
+            + ["File", "Label"] * column_counts.max_file
+
+    def convert(self, obj: Object) -> List[str]:
+        '''
+        Converts the given Object into a List of strings for out as CSV row.
+
+        :param obj: the Object to output
+        :return: a List of Strings with entries matching the "headers" layout
+        '''
+        row = [
+            # "Bibliographic ID Label", "Bibliographic ID"
+            obj.bib_id_label,
+            obj.bib_id,
+
+            # "Other Identifier Type", Other Identifier"
+            *self.multicolumn(obj.other_identifier, 2, self.column_counts.max_other_identifier),
+
+            # "Title"
+            obj.title,
+
+            # "Creator"
+            *self.multicolumn(obj.creator, 1, self.column_counts.max_creator),
+
+            # "Contributor"
+            *self.multicolumn(obj.contributor, 1, self.column_counts.max_contributor),
+
+            # "Genre"
+            *self.multicolumn(obj.genre, 1, self.column_counts.max_genre),
+
+            # "Publisher"
+            *self.multicolumn(obj.publisher, 1, self.column_counts.max_publisher),
+
+            # "Date Created", "Date Issued", "Abstract"
+            obj.date_created,
+            obj.date_issued,
+            obj.abstract,
+
+            # "Language"
+            *self.multicolumn(obj.language, 1, self.column_counts.max_language),
+
+            # "Physical Description"
+            obj.physical_description,
+
+            # "Related Item Label", "Related Item URL"
+            *self.multicolumn(obj.related_item, 2, self.column_counts.max_related_item),
+
+            # "Topical Subject"
+            *self.multicolumn(obj.topical_subject, 1, self.column_counts.max_topical_subject),
+
+            # "Geographic Subject"
+            *self.multicolumn(obj.geographic_subject, 1, self.column_counts.max_geographic_subject),
+
+            # "Temporal Subject"
+            *self.multicolumn(obj.temporal_subject, 1, self.column_counts.max_temporal_subject),
+
+            # "Terms of Use", "Table of Contents"
+            obj.terms_of_use,
+            obj.table_of_contents,
+
+            # "Note Type", "Note"
+            *self.multicolumn(obj.note, 2, self.column_counts.max_note),
+
+            # "Publish", "Hidden"
+            obj.publish,
+            obj.hidden,
+
+            # "File", "Label"
+            *self.multicolumn(obj.file, 2, self.column_counts.max_file)
+        ]
+
+        return row
+
+    @staticmethod
+    def multicolumn(values: list, size: int, max_count: int) -> list:
+        """
+        Format multiple values, taking into account multi-column values.
+
+        :param values: list of values
+        :param size: number of columns for each value
+        :param max_count: total number of values to allocate space for
+        :return: list of columns
+        """
+
+        columns = []
+        for i in range(0, max_count):
+            if i < len(values):
+                if size == 1:
+                    columns.append(values[i])
+                else:
+                    columns.extend(values[i])
+            else:
+                columns.extend([''] * size)
+
+        return columns
 
 
 def process_args() -> Namespace:
@@ -354,58 +548,15 @@ def process_args() -> Namespace:
     return args
 
 
-def write_csv(title: str, email: str, manifest_path: Path, objects: Iterable) -> None:
+def write_csv(title: str, email: str, manifest_path: Path, objects: List[Object]) -> None:
     """ Write objects out to the CSV manifest file. """
 
     # Get column counts
-    max_other_identifier = 1
-    max_creator = 1
-    max_contributor = 1
-    max_publisher = 1
-    max_genre = 1
-    max_related_item = 1
-    max_geographic_subject = 1
-    max_topical_subject = 1
-    max_temporal_subject = 1
-    max_note = 1
-    max_file = 1
-    max_language = 1
-
-    for obj in objects:
-        max_other_identifier = max(len(obj.other_identifier), max_other_identifier)
-        max_creator = max(len(obj.creator), max_creator)
-        max_contributor = max(len(obj.contributor), max_contributor)
-        max_publisher = max(len(obj.publisher), max_publisher)
-        max_genre = max(len(obj.genre), max_genre)
-        max_related_item = max(len(obj.related_item), max_related_item)
-        max_geographic_subject = max(len(obj.geographic_subject), max_geographic_subject)
-        max_topical_subject = max(len(obj.topical_subject), max_topical_subject)
-        max_temporal_subject = max(len(obj.temporal_subject), max_temporal_subject)
-        max_note = max(len(obj.note), max_note)
-        max_file = max(len(obj.file), max_file)
-        max_language = max(len(obj.language), max_language)
+    column_counts = CsvColumnCounts(objects)
+    converter = ObjectToCsvConverter(column_counts)
 
     # Build the headers
-    headers = \
-        ["Bibliographic ID Label", "Bibliographic ID"] \
-        + ["Other Identifier Type", "Other Identifier"] * max_other_identifier \
-        + ["Handle"] \
-        + ["Title"] \
-        + ["Creator"] * max_creator \
-        + ["Contributor"] * max_contributor \
-        + ["Genre"] * max_genre \
-        + ["Publisher"] * max_publisher \
-        + ["Date Created", "Date Issued", "Abstract"] \
-        + ["Language"] * max_language \
-        + ["Physical Description"] \
-        + ["Related Item Label", "Related Item URL"] * max_related_item \
-        + ["Topical Subject"] * max_topical_subject \
-        + ["Geographic Subject"] * max_geographic_subject \
-        + ["Temporal Subject"] * max_temporal_subject \
-        + ["Terms of Use", "Table of Contents"] \
-        + ["Note Type", "Note"] * max_note \
-        + ["Publish", "Hidden"] \
-        + ["File", "Label"] * max_file
+    headers = converter.headers
 
     # Write the output CSV file
     with manifest_path.open(mode='w', newline='') as manifest_file:
@@ -419,95 +570,9 @@ def write_csv(title: str, email: str, manifest_path: Path, objects: Iterable) ->
 
         # Write each object row
         for obj in objects:
-            row = [
-                # "Bibliographic ID Label", "Bibliographic ID"
-                obj.bib_id_label,
-                obj.bib_id,
-
-                # "Other Identifier Type", Other Identifier"
-                *multicolumn(obj.other_identifier, 2, max_other_identifier),
-
-                # "Handle"
-                obj.handle,
-
-                # "Title"
-                obj.title,
-
-                # "Creator"
-                *multicolumn(obj.creator, 1, max_creator),
-
-                # "Contributor"
-                *multicolumn(obj.contributor, 1, max_contributor),
-
-                # "Genre"
-                *multicolumn(obj.genre, 1, max_genre),
-
-                # "Publisher"
-                *multicolumn(obj.publisher, 1, max_publisher),
-
-                # "Date Created", "Date Issued", "Abstract"
-                obj.date_created,
-                obj.date_issued,
-                obj.abstract,
-
-                # "Language"
-                *multicolumn(obj.language, 1, max_language),
-
-                # "Physical Description"
-                obj.physical_description,
-
-                # "Related Item Label", "Related Item URL"
-                *multicolumn(obj.related_item, 2, max_related_item),
-
-                # "Topical Subject"
-                *multicolumn(obj.topical_subject, 1, max_topical_subject),
-
-                # "Geographic Subject"
-                *multicolumn(obj.geographic_subject, 1, max_geographic_subject),
-
-                # "Temporal Subject"
-                *multicolumn(obj.temporal_subject, 1, max_temporal_subject),
-
-                # "Terms of Use", "Table of Contents"
-                obj.terms_of_use,
-                obj.table_of_contents,
-
-                # "Note Type", "Note"
-                *multicolumn(obj.note, 2, max_note),
-
-                # "Publish", "Hidden"
-                obj.publish,
-                obj.hidden,
-
-                # "File", "Label"
-                *multicolumn(obj.file, 2, max_file)
-            ]
-
+            row = converter.convert(obj)
             # Write the row
             manifest_csv.writerow(row)
-
-
-def multicolumn(values: list, size: int, max_count: int) -> list:
-    """
-    Format multiple values, taking into account multi-column values.
-
-    :param values: list of values
-    :param size: number of columns for each value
-    :param max_count: total number of values to allocate space for
-    :return: list of columns
-    """
-
-    columns = []
-    for i in range(0, max_count):
-        if i < len(values):
-            if size == 1:
-                columns.append(values[i])
-            else:
-                columns.extend(values[i])
-        else:
-            columns.extend([''] * size)
-
-    return columns
 
 
 def load_index(index_path: Path) -> Optional[dict]:
@@ -551,7 +616,8 @@ def main(args: Namespace) -> None:
 
                 obj.title = record['title']
                 obj.other_identifier.append(("local", umdm))
-                obj.handle = record['handle']
+                obj.other_identifier.append(('handle', record['handle']))
+
                 obj.process_umdm(target / record['location'] / 'umdm.xml')
 
                 objects.append(obj)
