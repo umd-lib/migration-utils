@@ -293,6 +293,12 @@ class BibRefToTextConverter:
     '''
     Converts <bibRef> XML element into a text string.
     '''
+
+    # Order to output bibScope types
+    BIBSCOPE_TYPE_OUTPUT_ORDER = [
+        'accession', 'series', 'subseries', 'box', 'folder', 'item'
+    ]
+
     @staticmethod
     def as_text(bib_ref: Element) -> str:
         '''
@@ -349,7 +355,8 @@ class BibRefToTextConverter:
         '''
         Converted the bibRef dict into a text string, ensuring that the
         text from the <title> tag (if present) appears first, followed by
-        the bibScope types in a defined order (skipping any missing types).
+        the bibScope types in the order defined by BIBSCOPE_TYPE_OUTPUT_ORDER
+        (skipping any missing types).
 
         Any other tags or bibScope types are placed at the end, in an undefined
         order.
@@ -357,28 +364,30 @@ class BibRefToTextConverter:
         :param bib_ref_dict: Dict from 'bib_ref_to_dict' method to convert
         :return: a List of Strings representing the bibRef information
         '''
-        bibscope_output_order = ['accession', 'series', 'subseries', 'box', 'folder', 'item']
         text_elements = []
 
-        # Title is always first
+        bib_ref_dict_keys = list(bib_ref_dict)
+
+        # Title is always first - no caption is added
         if 'title' in bib_ref_dict:
             title_entries = bib_ref_dict['title']
             for title in title_entries:
                 text_elements.append(title)
 
-            del bib_ref_dict['title']
+            bib_ref_dict_keys.remove('title')
 
         # Bibscopes in provided order
-        for bibscope_type in bibscope_output_order:
+        for bibscope_type in BibRefToTextConverter.BIBSCOPE_TYPE_OUTPUT_ORDER:
             if bibscope_type in bib_ref_dict:
                 caption = bibscope_type.capitalize()
                 for entry in bib_ref_dict[bibscope_type]:
                     text_elements.append(f"{caption} {entry}")
 
-                del bib_ref_dict[bibscope_type]
+                bib_ref_dict_keys.remove(bibscope_type)
 
-        # Anything left in the bib_ref_items goes at the end
-        for key, value in bib_ref_dict.items():
+        # Anything left in the bib_ref_dict_keys goes at the end
+        for key in bib_ref_dict_keys:
+            value = bib_ref_dict[key]
             caption = key.capitalize()
             for entry in value:
                 text_elements.append(f"{caption} {entry}")
