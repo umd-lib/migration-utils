@@ -12,3 +12,5 @@ exported-id-index/
 .settings
 
 pids.txt
+
+scripts/__pycache__

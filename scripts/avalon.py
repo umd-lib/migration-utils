@@ -5,8 +5,8 @@ import logging
 from argparse import ArgumentParser, Namespace
 from csv import DictReader, writer
 from pathlib import Path
-from typing import Optional, Iterable, Union
-from xml.dom.minidom import parse, Element, Text
+from typing import Dict, Iterable, List, Optional, Union
+from xml.dom.minidom import parse, Element, Node, Text
 
 # Convert Fedora exported objects to Avalon input format.
 #
@@ -95,7 +95,7 @@ class Object:
                 agent_type = e.getAttribute('type')
                 for node in e.childNodes:
                     if node.nodeName in ('persName', 'corpName'):
-                        text = get_text(node.childNodes)
+                        text = XmlUtils.get_text(node.childNodes)
                         if agent_type == 'contributor':
                             self.contributor.append(text)
                         elif agent_type == 'creator':
@@ -106,7 +106,7 @@ class Object:
             # covPlace
             elif e.nodeName == 'covPlace':
                 for geogName in e.getElementsByTagName('geogName'):
-                    text = get_text(geogName.childNodes)
+                    text = XmlUtils.get_text(geogName.childNodes)
                     if text != 'not captured':
                         self.geographic_subject.append(text)
 
@@ -114,7 +114,7 @@ class Object:
             elif e.nodeName == 'covTime':
 
                 for date in e.getElementsByTagName('date'):
-                    self.date_issued = get_text(date.childNodes)
+                    self.date_issued = XmlUtils.get_text(date.childNodes)
 
                 for dateRange in e.getElementsByTagName('dateRange'):
                     date_from = dateRange.getAttribute('from')
@@ -122,7 +122,7 @@ class Object:
                     self.date_issued = date_from + "/" + date_to
 
                 for century in e.getElementsByTagName('century'):
-                    text = get_text(century.childNodes)
+                    text = XmlUtils.get_text(century.childNodes)
 
                     # Save the century as date range, in case we need it for the
                     # date_issued
@@ -132,7 +132,7 @@ class Object:
             elif e.nodeName == 'description':
 
                 description_type = e.getAttribute('type')
-                text = get_text(e.childNodes)
+                text = XmlUtils.get_text(e.childNodes)
 
                 if description_type == 'summary':
                     if self.abstract:
@@ -145,7 +145,7 @@ class Object:
             # language
             elif e.nodeName == 'language':
 
-                text = get_text(e.childNodes)
+                text = XmlUtils.get_text(e.childNodes)
                 for value in text.split("; "):
                     if value in languageMap:
                         value = languageMap[value]
@@ -155,7 +155,7 @@ class Object:
             elif e.nodeName == 'subject':
 
                 subject_type = e.getAttribute('type')
-                text = get_text(e.childNodes)
+                text = XmlUtils.get_text(e.childNodes)
 
                 if subject_type == 'genre':
                     self.genre.append(text)
@@ -165,7 +165,7 @@ class Object:
 
             # culture
             elif e.nodeName == 'culture':
-                text = get_text(e.childNodes)
+                text = XmlUtils.get_text(e.childNodes)
                 if text != 'not captured':
                     self.topical_subject.append(text + ' Culture')
 
@@ -173,7 +173,7 @@ class Object:
             elif e.nodeName == 'identifier':
 
                 identifier_type = e.getAttribute('type')
-                text = get_text(e.childNodes)
+                text = XmlUtils.get_text(e.childNodes)
 
                 if identifier_type == 'oclc':
                     self.other_identifier.append(('oclc', text))
@@ -185,7 +185,7 @@ class Object:
             elif e.nodeName == 'physDesc':
 
                 for node in e.childNodes:
-                    text = get_text(node.childNodes)
+                    text = XmlUtils.get_text(node.childNodes)
 
                     if node.nodeName in ('color', 'format'):
                         if self.physical_description:
@@ -207,18 +207,123 @@ class Object:
                         if relation == 'archivalcollection':
                             for relationChild in node.childNodes:
                                 if relationChild.nodeName == 'bibRef':
-                                    note_text = relationChild.toxml().encode("unicode_escape").decode("utf-8")
-                                    self.note.append(('general', note_text))
+                                    note_text = BibRefToTextConverter.as_text(relationChild)
+                                    escaped_note_text = note_text.encode("unicode_escape").decode("utf-8")
+                                    self.note.append(('general', escaped_note_text))
 
             # rights
             elif e.nodeName == 'rights':
                 if self.terms_of_use:
                     self.terms_of_use += '; '
-                self.terms_of_use += get_text(e.childNodes)
+                self.terms_of_use += XmlUtils.get_text(e.childNodes)
 
         # Use century for date_issued, if necessary
         if not self.date_issued and century_date_range:
             self.date_issued = century_date_range
+
+
+class XmlUtils:
+    '''Utilties for handling minidom XML elements'''
+    @staticmethod
+    def collapse_whitespace_nodes(element: Element):
+        '''Collapses extraneous whitespace child elements in given element,
+        and normalizes. This method preserves the XML tag information.
+        Largely taken from "remove_whitespace" method in
+        https://realpython.com/python-xml-parser/'''
+        if element.nodeType == Node.TEXT_NODE:
+            if element.nodeValue.strip() == "":
+                element.nodeValue = ""
+        for child in element.childNodes:
+            XmlUtils.collapse_whitespace_nodes(child)
+        element.normalize()
+
+    @staticmethod
+    def get_text(nodelist: Iterable[Union[Element, Text]]) -> str:
+        '''Extract text from an XML node list'''
+        return ''.join(node.data.strip().replace('\n', '') for node in nodelist if node.nodeType == node.TEXT_NODE)
+
+
+class BibRefToTextConverter:
+    '''Converts <bibRef> XML element into a text string'''
+    @staticmethod
+    def as_text(bib_ref: Element) -> str:
+        '''Converts <bibRef> nodes into multi-line text describing the bibRef'''
+        XmlUtils.collapse_whitespace_nodes(bib_ref)
+
+        bib_ref_dict = BibRefToTextConverter.bib_ref_to_dict(bib_ref)
+        text_elements = BibRefToTextConverter.bib_ref_dict_to_text(bib_ref_dict)
+
+        result_text = ', '.join(text_elements)
+        return result_text
+
+    @staticmethod
+    def bib_ref_to_dict(bib_ref: Element) -> Dict[str, List[str]]:
+        '''
+        Converts a bibRef into a Dict with keys based on tag name or
+        bibScope type.
+
+        The key for each entry is either:
+          * the tag name (such as "title"),
+          * for "<bibScope>" tags only, the "type" attribute
+
+        The value stored in the map is a list (as there could possibly be
+        multiple instance of a tag or bibScope type) -- there will be one entry
+        in the list for each instance.
+        '''
+        bib_ref_items: Dict[str, List[str]] = {}
+        for e in bib_ref.childNodes:
+            item_text = XmlUtils.get_text(e.childNodes).strip()
+            if item_text == '':
+                continue
+
+            node_name = e.nodeName
+            key = node_name
+            if (node_name == 'bibScope'):
+                key = e.getAttribute('type')
+
+            entries = bib_ref_items.get(key, [])
+            entries.append(item_text)
+            bib_ref_items[key] = entries
+
+        return bib_ref_items
+
+    @staticmethod
+    def bib_ref_dict_to_text(bib_ref_dict: Dict[str, List[str]]) -> List[str]:
+        '''
+        Converted the bibRef dict into a text string, ensuring that the
+        text from the <title> tag (if present) appears first, followed by
+        the bibScope types in a defined order (skipping any missing types).
+
+        Any other tags or bibScope types are placed at the end, in an undefined
+        order.
+        '''
+        bibscope_output_order = ['accession', 'series', 'subseries', 'box', 'folder', 'item']
+        text_elements = []
+
+        # Title is always first
+        if 'title' in bib_ref_dict:
+            title_entries = bib_ref_dict['title']
+            for title in title_entries:
+                text_elements.append(title)
+
+            del bib_ref_dict['title']
+
+        # Bibscopes in provided order
+        for bibscope_type in bibscope_output_order:
+            if bibscope_type in bib_ref_dict:
+                caption = bibscope_type.capitalize()
+                for entry in bib_ref_dict[bibscope_type]:
+                    text_elements.append(f"{caption} {entry}")
+
+                del bib_ref_dict[bibscope_type]
+
+        # Anything left in the bib_ref_items goes at the end
+        for key, value in bib_ref_dict.items():
+            caption = key.capitalize()
+            for entry in value:
+                text_elements.append(f"{caption} {entry}")
+
+        return text_elements
 
 
 def process_args() -> Namespace:
@@ -380,11 +485,6 @@ def write_csv(title: str, email: str, manifest_path: Path, objects: Iterable) ->
 
             # Write the row
             manifest_csv.writerow(row)
-
-
-def get_text(nodelist: Iterable[Union[Element, Text]]) -> str:
-    """Extract text from an XML node list."""
-    return ''.join(node.data.strip().replace('\n', '') for node in nodelist if node.nodeType == node.TEXT_NODE)
 
 
 def multicolumn(values: list, size: int, max_count: int) -> list:
