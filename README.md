@@ -1,4 +1,4 @@
-# Migration Utilities 
+# Migration Utilities
 
 A framework to support migration of data from Fedora 3 to Fedora 6 repositories. This version of
 migration-utils has been adapted for UMD Libraries to extract Fedora 2 FOXML objects to an
@@ -24,36 +24,36 @@ objects have not been linked.
 * Output: info.json file with summary information for selected FOXML objects.
 
 [scripts/filter.py](scripts/filter.py) - Filter Fedora objects for export (by
-collection, status, etc.) and link UMDM with their related UMAM objects. For 
-each of the filtered UMDM objects, use the Fedora 2 handle lookup service to 
+collection, status, etc.) and link UMDM with their related UMAM objects. For
+each of the filtered UMDM objects, use the Fedora 2 handle lookup service to
 retrieve their handle.
 
 * Input - info.json format file
 * Output - export.json format file, similar to info.json file but filtered for
-  matching UMDM objects with their hasPart UMAM objects listed under the 
-  `hasPart` key in the UMDM object, and with the UMDM object's handle added 
+  matching UMDM objects with their hasPart UMAM objects listed under the
+  `hasPart` key in the UMDM object, and with the UMDM object's handle added
   under the `handle` key.
 
 [org.fcrepo.migration.PicocliMigratorFedora2](src/main/java/org/fcrepo/migration/PicocliMigratorFedora2.java),
 which is invoked with `--action=export` to extract FOXML objects and datastreams.
 
 * Input: export.json format file; fedora *objects* and *datastreams* directories
-* Output: export.csv file with summary information for selected FOXML objects; 
-  each UMDM and UMAM has its own row. Keys are `umdm`, `umam`, `pid`, 
+* Output: export.csv file with summary information for selected FOXML objects;
+  each UMDM and UMAM has its own row. Keys are `umdm`, `umam`, `pid`,
   `title`, and `handle`. Datastreams are also exported to directories
   `{target-dir}/umd_XXX` for each parent UMDM object.
 
-[scripts/inventory.py](scripts/inventory.py) - generate a lookup file 
-mapping the UMDM and UMAM PID combinations to the (relative) path of the 
+[scripts/inventory.py](scripts/inventory.py) - generate a lookup file
+mapping the UMDM and UMAM PID combinations to the (relative) path of the
 restored file
 
 * Input: inventory.csv from the file restoration process
-* Output: index.json file that maps a UMDM PID to its UMAM parts and their 
+* Output: index.json file that maps a UMDM PID to its UMAM parts and their
   associated binaries
 
 [scripts/avalon.py](scripts/avalon.py) - generate batch_manifest.csv which is
-ready for batch load into Avalon. If there is an index.json file present, 
-attempt to also link the objects in the batch manifest to their associated 
+ready for batch load into Avalon. If there is an index.json file present,
+attempt to also link the objects in the batch manifest to their associated
 files
 
 * Input: export.csv and exported objects and datastreams
@@ -113,7 +113,7 @@ java -jar target/migration-utils-*-driver.jar \
 scripts/inventory.py \
     --infile=export/inventory.csv \
     --outfile=export/index.json
-    
+
 # Use the contents of the export directory and the export.csv file to generate
 # batch_manifest.csv for import into Avalon.
 #
@@ -122,4 +122,18 @@ scripts/avalon.py \
      --title='Films@UM Migration' \
      --email='wallberg@umd.edu' \
      --target-dir=export
+
+# Performs an rsync for files listed in a CSV file, creating any intermediate
+# directories needed in the destination.
+#
+# The CSV file is assumed to consist of:
+#   A header row (with two entries). The actual entries are ignored.
+#   Comma-separated rows where the first entry is the relative location of the
+#   source file, and the second entry is the relative location of the
+#   destination file.
+
+python3 csv_rsync.py \
+    --input_file=<CSV_FILE>
+    --source-dir-prefix=<SOURCE_PREFIX>
+    --dest-dir-prefix=<DEST_PREFIX>
 ```
