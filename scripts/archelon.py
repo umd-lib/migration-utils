@@ -44,32 +44,38 @@ class Object:
     """ Class to store metadata and files for a single media object. """
 
     def __init__(self):
-        self.bib_id_label = ""
-        self.bib_id = ""
-        self.other_identifier = []  # (type, value)
+        # Required
+        self.object_type = "http://purl.org/dc/dcmitype/Image"
+        self.identifier = ""
+        self.rights_statement = "http://rightsstatements.org/vocab/UND/1.0/"
         self.title = ""
-        self.creator = []
-        self.contributor = []
-        self.genre = []
-        self.publisher = []
-        self.date_created = ""
-        self.date_issued = ""
-        self.abstract = ""
-        self.language = []
-        self.physical_description = ""
-        self.related_item = []  # (label, url)
-        self.geographic_subject = []
-        self.topical_subject = []
-        self.temporal_subject = []
-        self.terms_of_use = ""
-        self.table_of_contents = ""
-        self.note = []  # (type, value)
-        self.publish = "No"
-        self.hidden = "No"
 
-        # Offset, Skip Transcoding, Absolute Location, and Date Ingested are
-        # not currently supported
-        self.file = []  # (file, label)
+        # Optional
+        self.handle = ""
+        self.format = ""
+        self.archival_collection = ""
+        self.date = ""
+        self.description = ""
+        self.alternate_title = ""
+        self.creator = []
+        self.creator_uri = []
+        self.contributor = []
+        self.contributor_uri = []
+        self.publisher = ""
+        self.publisher_uri = ""
+        self.location = []
+        self.extent = ""
+        self.subject = []
+        self.language = []
+        self.rights_holder = ""
+        self.collection_information = ""
+        self.accession_number = ""
+        self.files = []
+
+        # Fedora 2 Extras
+        self.f2_type = ""
+        self.f2_status = ""
+
 
     def process_umdm(self, umdm_path: Path) -> None:
         """ Gather data from the UMDM xml. """
@@ -81,137 +87,138 @@ class Object:
         century_date_range = ""
 
         for e in desc_meta.childNodes:
+            None
 
-            # agent
-            if e.nodeName == 'agent':
-                agent_type = e.getAttribute('type')
-                for node in e.childNodes:
-                    if node.nodeName in ('persName', 'corpName'):
-                        text = XmlUtils.get_text(node.childNodes)
-                        if agent_type == 'contributor':
-                            self.contributor.append(text)
-                        elif agent_type == 'creator':
-                            self.creator.append(text)
-                        elif agent_type == 'provider':
-                            self.publisher.append(text)
+#             # agent
+#             if e.nodeName == 'agent':
+#                 agent_type = e.getAttribute('type')
+#                 for node in e.childNodes:
+#                     if node.nodeName in ('persName', 'corpName'):
+#                         text = XmlUtils.get_text(node.childNodes)
+#                         if agent_type == 'contributor':
+#                             self.contributor.append(text)
+#                         elif agent_type == 'creator':
+#                             self.creator.append(text)
+#                         elif agent_type == 'provider':
+#                             self.publisher.append(text)
 
-            # covPlace
-            elif e.nodeName == 'covPlace':
-                for geogName in e.getElementsByTagName('geogName'):
-                    text = XmlUtils.get_text(geogName.childNodes)
-                    if text != 'not captured':
-                        self.geographic_subject.append(text)
+#             # covPlace
+#             elif e.nodeName == 'covPlace':
+#                 for geogName in e.getElementsByTagName('geogName'):
+#                     text = XmlUtils.get_text(geogName.childNodes)
+#                     if text != 'not captured':
+#                         self.geographic_subject.append(text)
 
-            # covTime
-            elif e.nodeName == 'covTime':
+#             # covTime
+#             elif e.nodeName == 'covTime':
 
-                for date in e.getElementsByTagName('date'):
-                    self.date_issued = XmlUtils.get_text(date.childNodes)
+#                 for date in e.getElementsByTagName('date'):
+#                     self.date_issued = XmlUtils.get_text(date.childNodes)
 
-                for dateRange in e.getElementsByTagName('dateRange'):
-                    date_from = dateRange.getAttribute('from')
-                    date_to = dateRange.getAttribute('to')
-                    self.date_issued = date_from + "/" + date_to
+#                 for dateRange in e.getElementsByTagName('dateRange'):
+#                     date_from = dateRange.getAttribute('from')
+#                     date_to = dateRange.getAttribute('to')
+#                     self.date_issued = date_from + "/" + date_to
 
-                for century in e.getElementsByTagName('century'):
-                    text = XmlUtils.get_text(century.childNodes)
+#                 for century in e.getElementsByTagName('century'):
+#                     text = XmlUtils.get_text(century.childNodes)
 
-                    # Save the century as date range, in case we need it for the
-                    # date_issued
-                    century_date_range = text.replace("-", "/")
+#                     # Save the century as date range, in case we need it for the
+#                     # date_issued
+#                     century_date_range = text.replace("-", "/")
 
-            # description
-            elif e.nodeName == 'description':
+#             # description
+#             elif e.nodeName == 'description':
 
-                description_type = e.getAttribute('type')
-                text = XmlUtils.get_text(e.childNodes)
+#                 description_type = e.getAttribute('type')
+#                 text = XmlUtils.get_text(e.childNodes)
 
-                if description_type == 'summary':
-                    if self.abstract:
-                        self.abstract += "; "
-                    self.abstract += text
+#                 if description_type == 'summary':
+#                     if self.abstract:
+#                         self.abstract += "; "
+#                     self.abstract += text
 
-                elif description_type == 'credits':
-                    self.note.append(('creation/production credits', text))
+#                 elif description_type == 'credits':
+#                     self.note.append(('creation/production credits', text))
 
-            # language
-            elif e.nodeName == 'language':
+#             # language
+#             elif e.nodeName == 'language':
 
-                text = XmlUtils.get_text(e.childNodes)
-                for value in text.split("; "):
-                    if value in languageMap:
-                        value = languageMap[value]
-                    self.language.append(value)
+#                 text = XmlUtils.get_text(e.childNodes)
+#                 for value in text.split("; "):
+#                     if value in languageMap:
+#                         value = languageMap[value]
+#                     self.language.append(value)
 
-            # subject
-            elif e.nodeName == 'subject':
+#             # subject
+#             elif e.nodeName == 'subject':
 
-                subject_type = e.getAttribute('type')
-                text = XmlUtils.get_text(e.childNodes)
+#                 subject_type = e.getAttribute('type')
+#                 text = XmlUtils.get_text(e.childNodes)
 
-                if subject_type == 'genre':
-                    self.genre.append(text)
+#                 if subject_type == 'genre':
+#                     self.genre.append(text)
 
-                else:
-                    self.topical_subject.append(text)
+#                 else:
+#                     self.topical_subject.append(text)
 
-            # culture
-            elif e.nodeName == 'culture':
-                text = XmlUtils.get_text(e.childNodes)
-                if text != 'not captured':
-                    self.topical_subject.append(text + ' Culture')
+#             # culture
+#             elif e.nodeName == 'culture':
+#                 text = XmlUtils.get_text(e.childNodes)
+#                 if text != 'not captured':
+#                     self.topical_subject.append(text + ' Culture')
 
-            # identifier
-            elif e.nodeName == 'identifier':
+#             # identifier
+#             elif e.nodeName == 'identifier':
 
-                identifier_type = e.getAttribute('type')
-                text = XmlUtils.get_text(e.childNodes)
+#                 identifier_type = e.getAttribute('type')
+#                 text = XmlUtils.get_text(e.childNodes)
 
-                if identifier_type == 'oclc':
-                    self.other_identifier.append(('oclc', text))
+#                 if identifier_type == 'oclc':
+#                     self.other_identifier.append(('oclc', text))
 
-                else:
-                    self.other_identifier.append(('local', text))
+#                 else:
+#                     self.other_identifier.append(('local', text))
 
-            # physDesc
-            elif e.nodeName == 'physDesc':
+#             # physDesc
+#             elif e.nodeName == 'physDesc':
 
-                for node in e.childNodes:
-                    text = XmlUtils.get_text(node.childNodes)
+#                 for node in e.childNodes:
+#                     text = XmlUtils.get_text(node.childNodes)
 
-                    if node.nodeName in ('color', 'format'):
-                        if self.physical_description:
-                            self.physical_description += '; '
-                        self.physical_description += text
+#                     if node.nodeName in ('color', 'format'):
+#                         if self.physical_description:
+#                             self.physical_description += '; '
+#                         self.physical_description += text
 
-                    if node.nodeName in ('extent', 'size'):
-                        if self.physical_description:
-                            self.physical_description += '; '
-                        text += " " + node.getAttribute('units')
-                        self.physical_description += text
+#                     if node.nodeName in ('extent', 'size'):
+#                         if self.physical_description:
+#                             self.physical_description += '; '
+#                         text += " " + node.getAttribute('units')
+#                         self.physical_description += text
 
-            # relationships
-            elif e.nodeName == 'relationships':
+#             # relationships
+#             elif e.nodeName == 'relationships':
 
-                for node in e.childNodes:
-                    if node.nodeName == 'relation':
-                        relation = node.getAttribute('label')
-                        if relation == 'archivalcollection':
-                            for relationChild in node.childNodes:
-                                if relationChild.nodeName == 'bibRef':
-                                    note_text = BibRefToTextConverter.as_text(relationChild)
-                                    escaped_note_text = note_text.encode("unicode_escape").decode("utf-8")
-                                    self.note.append(('general', escaped_note_text))
+#                 for node in e.childNodes:
+#                     if node.nodeName == 'relation':
+#                         relation = node.getAttribute('label')
+#                         if relation == 'archivalcollection':
+#                             for relationChild in node.childNodes:
+#                                 if relationChild.nodeName == 'bibRef':
+#                                     note_text = BibRefToTextConverter.as_text(relationChild)
+#                                     escaped_note_text = note_text.encode("unicode_escape").decode("utf-8")
+#                                     self.note.append(('general', escaped_note_text))
 
-            # rights
-            elif e.nodeName == 'rights':
-                if self.terms_of_use:
-                    self.terms_of_use += '; '
-                self.terms_of_use += XmlUtils.get_text(e.childNodes)
+#             # rights
+#             elif e.nodeName == 'rights':
+#                 if self.terms_of_use:
+#                     self.terms_of_use += '; '
+#                 self.terms_of_use += XmlUtils.get_text(e.childNodes)
 
-        # Use century for date_issued, if necessary
-        if not self.date_issued and century_date_range:
-            self.date_issued = century_date_range
+#         # Use century for date_issued, if necessary
+#         if not self.date_issued and century_date_range:
+#             self.date_issued = century_date_range
 
 
 class XmlUtils:
@@ -357,24 +364,9 @@ class ObjectToCsvConverter:
         '''
 
         self.headers = \
-            ["Bibliographic ID Label", "Bibliographic ID"] \
-            + ["Other Identifier Type", "Other Identifier"] \
-            + ["Title"] \
-            + ["Creator"] \
-            + ["Contributor"] \
-            + ["Genre"] \
-            + ["Publisher"] \
-            + ["Date Created", "Date Issued", "Abstract"] \
-            + ["Language"] \
-            + ["Physical Description"] \
-            + ["Related Item Label", "Related Item URL"] \
-            + ["Topical Subject"] \
-            + ["Geographic Subject"] \
-            + ["Temporal Subject"] \
-            + ["Terms of Use", "Table of Contents"] \
-            + ["Note Type", "Note"] \
-            + ["Publish", "Hidden"] \
-            + ["File", "Label"]
+            ["Object Type", "Identifier", "Rights Statement", "Title"] \
+            + ["Handle/Link"] \
+            + ["F2 TYPE", "F2 STATUS"]
 
     def convert(self, obj: Object) -> List[str]:
         '''
@@ -384,68 +376,30 @@ class ObjectToCsvConverter:
         :return: a List of Strings with entries matching the "headers" layout
         '''
         row = [
-            # "Bibliographic ID Label", "Bibliographic ID"
-            obj.bib_id_label,
-            obj.bib_id,
+            # Object Type
+            obj.object_type,
 
-            # "Other Identifier Type", Other Identifier"
-            self.multicolumn(list(item[0] for item in obj.other_identifier)),
-            self.multicolumn(list(item[1] for item in obj.other_identifier)),
+            # Identifier
+            obj.identifier,
 
-            # "Title"
+            # Rights Statement
+            obj.rights_statement,
+
+            # # "Other Identifier Type", Other Identifier"
+            # self.multicolumn(list(item[0] for item in obj.other_identifier)),
+            # self.multicolumn(list(item[1] for item in obj.other_identifier)),
+
+            # Title
             obj.title,
 
-            # "Creator"
-            self.multicolumn(obj.creator),
+            # Handle/Link
+            obj.handle,
 
-            # "Contributor"
-            self.multicolumn(obj.contributor),
+            # F2 TYPE
+            obj.f2_type,
 
-            # "Genre"
-            self.multicolumn(obj.genre),
-
-            # "Publisher"
-            self.multicolumn(obj.publisher),
-
-            # "Date Created", "Date Issued", "Abstract"
-            obj.date_created,
-            obj.date_issued,
-            obj.abstract,
-
-            # "Language"
-            self.multicolumn(obj.language),
-
-            # "Physical Description"
-            obj.physical_description,
-
-            # "Related Item Label", "Related Item URL"
-            self.multicolumn(list(item[0] for item in obj.related_item)),
-            self.multicolumn(list(item[1] for item in obj.related_item)),
-
-            # "Topical Subject"
-            self.multicolumn(obj.topical_subject),
-
-            # "Geographic Subject"
-            self.multicolumn(obj.geographic_subject),
-
-            # "Temporal Subject"
-            self.multicolumn(obj.temporal_subject),
-
-            # "Terms of Use", "Table of Contents"
-            obj.terms_of_use,
-            obj.table_of_contents,
-
-            # "Note Type", "Note"
-            self.multicolumn(list(item[0] for item in obj.note)),
-            self.multicolumn(list(item[1] for item in obj.note)),
-
-            # "Publish", "Hidden"
-            obj.publish,
-            obj.hidden,
-
-            # "File", "Label"
-            self.multicolumn([item[0] for item in obj.file]),
-            self.multicolumn([item[1] for item in obj.file]),
+            # F2 STATUS
+            obj.f2_status,
         ]
 
         return row
@@ -516,6 +470,15 @@ def load_index(index_path: Path) -> Optional[dict]:
                 index.update(json.loads(line))
         return index
 
+def load_filter(filter_data_path: Path) -> Optional[dict]:
+    """ Load in filter.json """
+    filter_data = {}
+    with filter_data_path.open(mode='r') as filter_data_file:
+        logging.info(f'Reading filter data from {filter_data_path}')
+        for line in filter_data_file:
+            record = json.loads(line)
+            filter_data[record['pid']] = record
+    return filter_data
 
 def main(args: Namespace) -> None:
     """ Main conversion loop. """
@@ -525,8 +488,12 @@ def main(args: Namespace) -> None:
 
     target = Path(args.target_dir)
 
+    # Load index information
     index_path = Path(args.index_path) if args.index_path else target / 'index.json'
     index = load_index(index_path)
+
+    # Load filter.json data
+    filter_data = load_filter(target / 'filter.json')
 
     # Read in objects
     export_path = target / 'export.csv'
@@ -544,8 +511,11 @@ def main(args: Namespace) -> None:
                 obj = Object()
 
                 obj.title = record['title']
-                obj.other_identifier.append(("local", umdm))
-                obj.other_identifier.append(('handle', record['handle']))
+                obj.identifier = umdm
+                obj.handle = 'https://hdl.handle.net/' + record['handle'][4:]
+
+                obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
+                obj.f2_status = filter_data[umdm]['ds']['doInfo']['status']
 
                 obj.process_umdm(target / record['location'] / 'umdm.xml')
 
