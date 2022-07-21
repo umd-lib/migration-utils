@@ -9,35 +9,12 @@ from typing import Dict, Iterable, List, Optional, Union
 from xml.dom.minidom import parse, Element, Node, Text
 from xml.etree import ElementTree
 
+import iso639
+
+
 # Convert Fedora exported and filtered objects to Archelon input format.
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
-
-languageMap = {
-    "ar": "Arabic",
-    "da": "Danish",
-    "de": "German",
-    "dut": "Dutch",
-    "el": "Greek",
-    "en-GB": "English",
-    "en-US": "English",
-    "en": "English",
-    "es": "Spanish",
-    "fr": "French",
-    "fre": "French",
-    "ger": "German",
-    "he": "Hebrew",
-    "it": "Italian",
-    "ja": "Japanese",
-    "jpn": "Japanese",
-    "ko": "Korean",
-    "la": "Latin",
-    "lat": "Latin",
-    "pl": "Polish",
-    "pt": "Portuguese",
-    "spa": "Spanish",
-    "zh": "Chinese",
-}
 
 
 class Object:
@@ -45,25 +22,32 @@ class Object:
 
     def __init__(self):
         # Required
-        self.object_type = "http://purl.org/dc/dcmitype/Image"
-        self.identifier = ""
+        self.object_type = ""
+        self.identifier = []
         self.rights_statement = "http://rightsstatements.org/vocab/UND/1.0/"
         self.title = ""
 
         # Optional
         self.handle = ""
+        self.resource_type = ""
         self.format = ""
         self.archival_collection = ""
         self.date = ""
+        self.temporal = []
         self.description = ""
+        self.bibliographic_citation = ""
         self.alternate_title = ""
         self.creator = []
         self.creator_uri = []
+        self.author = []
+        self.recipient = []
         self.contributor = []
         self.contributor_uri = []
-        self.publisher = ""
-        self.publisher_uri = ""
+        self.publisher = []
+        self.publisher_uri = []
         self.location = []
+        self.longitude = ""
+        self.latitude = ""
         self.extent = ""
         self.subject = []
         self.language = []
@@ -72,9 +56,6 @@ class Object:
         self.accession_number = ""
         self.files = []
 
-        # Fedora 2 Extras
-        self.f2_type = ""
-        self.f2_status = ""
 
 
     def process_umdm(self, umdm_path: Path) -> None:
@@ -87,138 +68,223 @@ class Object:
         century_date_range = ""
 
         for e in desc_meta.childNodes:
-            None
 
-#             # agent
-#             if e.nodeName == 'agent':
-#                 agent_type = e.getAttribute('type')
-#                 for node in e.childNodes:
-#                     if node.nodeName in ('persName', 'corpName'):
-#                         text = XmlUtils.get_text(node.childNodes)
-#                         if agent_type == 'contributor':
-#                             self.contributor.append(text)
-#                         elif agent_type == 'creator':
-#                             self.creator.append(text)
-#                         elif agent_type == 'provider':
-#                             self.publisher.append(text)
+            # agent
+            if e.nodeName == 'agent':
+                agent_type = e.getAttribute('type')
+                agent_role = e.getAttribute('role')
 
-#             # covPlace
-#             elif e.nodeName == 'covPlace':
-#                 for geogName in e.getElementsByTagName('geogName'):
-#                     text = XmlUtils.get_text(geogName.childNodes)
-#                     if text != 'not captured':
-#                         self.geographic_subject.append(text)
+                for child in e.childNodes:
+                    text = XmlUtils.get_text(child.childNodes)
 
-#             # covTime
-#             elif e.nodeName == 'covTime':
+                    if child.nodeName == 'agent':
+                        self.creator.append(text)
 
-#                 for date in e.getElementsByTagName('date'):
-#                     self.date_issued = XmlUtils.get_text(date.childNodes)
+                    elif child.nodeName == 'unknown':
+                        self.contributor.append(text)
 
-#                 for dateRange in e.getElementsByTagName('dateRange'):
-#                     date_from = dateRange.getAttribute('from')
-#                     date_to = dateRange.getAttribute('to')
-#                     self.date_issued = date_from + "/" + date_to
+                    elif (agent_type == 'creator' and
+                          (
+                            child.nodeName == 'corpName' and (agent_role is None or agent_role == 'author')
+                            or child.nodeName == 'persName' and (agent_role is None or agent_role == 'author')
+                            or child.nodeName == 'other'
+                          )):
+                        self.creator.append(text)
 
-#                 for century in e.getElementsByTagName('century'):
-#                     text = XmlUtils.get_text(century.childNodes)
+                    elif (agent_type == 'contributor' and
+                          (
+                            child.nodeName == 'corpName' and (agent_role is None or agent_role in ('illustrator', 'editor'))
+                            or child.nodeName == 'persName' and (agent_role is None or agent_role in ('illustrator', 'editor'))
+                            or child.nodeName == 'other'
+                          )):
+                        self.contributor.append(text)
 
-#                     # Save the century as date range, in case we need it for the
-#                     # date_issued
-#                     century_date_range = text.replace("-", "/")
+                    elif (agent_type == 'provider'
+                          and child.nodeName in ('corpName', 'persName', 'other')):
+                        self.publisher.append(text)
 
-#             # description
-#             elif e.nodeName == 'description':
+            # covPlace
+            elif e.nodeName == 'covPlace':
+                for geogName in e.getElementsByTagName('geogName'):
+                    type = geogName.getAttribute('type')
+                    if type in ('continent', 'country', 'region', 'settlement', 'zone', 'bloc'):
+                        text = XmlUtils.get_text(geogName.childNodes)
+                        if text != 'not captured':
+                            self.location.append(text)
 
-#                 description_type = e.getAttribute('type')
-#                 text = XmlUtils.get_text(e.childNodes)
+            # covTime
+            elif e.nodeName == 'covTime':
 
-#                 if description_type == 'summary':
-#                     if self.abstract:
-#                         self.abstract += "; "
-#                     self.abstract += text
+                # TODO: determine Archelon date range format
 
-#                 elif description_type == 'credits':
-#                     self.note.append(('creation/production credits', text))
+                for date in e.getElementsByTagName('date'):
+                    self.date = XmlUtils.get_text(date.childNodes)
 
-#             # language
-#             elif e.nodeName == 'language':
+                for dateRange in e.getElementsByTagName('dateRange'):
+                    date_from = dateRange.getAttribute('from')
+                    date_to = dateRange.getAttribute('to')
+                    self.date = date_from + "/" + date_to
 
-#                 text = XmlUtils.get_text(e.childNodes)
-#                 for value in text.split("; "):
-#                     if value in languageMap:
-#                         value = languageMap[value]
-#                     self.language.append(value)
+                for century in e.getElementsByTagName('century'):
+                    text = XmlUtils.get_text(century.childNodes)
+                    # Save for later, if no other date is found
+                    century_date_range = text.replace("-", "/")
 
-#             # subject
-#             elif e.nodeName == 'subject':
+            # description
+            elif e.nodeName == 'description':
 
-#                 subject_type = e.getAttribute('type')
-#                 text = XmlUtils.get_text(e.childNodes)
+                text = XmlUtils.get_text(e.childNodes)
 
-#                 if subject_type == 'genre':
-#                     self.genre.append(text)
+                if self.description:
+                    self.description += "; "
+                self.description += text
 
-#                 else:
-#                     self.topical_subject.append(text)
+            # identifier
+            elif e.nodeName == 'identifier':
 
-#             # culture
-#             elif e.nodeName == 'culture':
-#                 text = XmlUtils.get_text(e.childNodes)
-#                 if text != 'not captured':
-#                     self.topical_subject.append(text + ' Culture')
+                text = XmlUtils.get_text(e.childNodes)
 
-#             # identifier
-#             elif e.nodeName == 'identifier':
+                self.identifier.append(text)
 
-#                 identifier_type = e.getAttribute('type')
-#                 text = XmlUtils.get_text(e.childNodes)
+            # language
+            elif e.nodeName == 'language':
 
-#                 if identifier_type == 'oclc':
-#                     self.other_identifier.append(('oclc', text))
+                text = XmlUtils.get_text(e.childNodes)
+                for value in text.split("; "):
+                    if (match := iso639.find(whatever=value)) is not None:
+                        value = match['iso639_2_b']
+                    self.language.append(value)
 
-#                 else:
-#                     self.other_identifier.append(('local', text))
+            # mediaType
+            elif e.nodeName == 'mediaType':
+                mediaType = e.getAttribute('type')
+                self.object_type = mediaType
 
-#             # physDesc
-#             elif e.nodeName == 'physDesc':
+                for form in e.getElementsByTagName('form'):
+                    self.resource_type = XmlUtils.get_text(form.childNodes)
 
-#                 for node in e.childNodes:
-#                     text = XmlUtils.get_text(node.childNodes)
+            # physDesc
+            elif e.nodeName == 'physDesc':
 
-#                     if node.nodeName in ('color', 'format'):
-#                         if self.physical_description:
-#                             self.physical_description += '; '
-#                         self.physical_description += text
+                for node in e.childNodes:
+                    text = XmlUtils.get_text(node.childNodes)
 
-#                     if node.nodeName in ('extent', 'size'):
-#                         if self.physical_description:
-#                             self.physical_description += '; '
-#                         text += " " + node.getAttribute('units')
-#                         self.physical_description += text
+                    if node.nodeName in ('color', 'format'):
+                        if self.extent:
+                            self.extent += '; '
+                        self.extent += text
 
-#             # relationships
-#             elif e.nodeName == 'relationships':
+                    elif node.nodeName in ('extent', 'size'):
+                        if self.extent:
+                            self.extent += '; '
+                        text += " " + node.getAttribute('units')
+                        self.extent += text
 
-#                 for node in e.childNodes:
-#                     if node.nodeName == 'relation':
-#                         relation = node.getAttribute('label')
-#                         if relation == 'archivalcollection':
-#                             for relationChild in node.childNodes:
-#                                 if relationChild.nodeName == 'bibRef':
-#                                     note_text = BibRefToTextConverter.as_text(relationChild)
-#                                     escaped_note_text = note_text.encode("unicode_escape").decode("utf-8")
-#                                     self.note.append(('general', escaped_note_text))
+                    elif node.nodeName == 'documents':
+                        if node.getAttribute('type') == 'pbccd':
+                            text = XmlUtils.get_text(node.childNodes)
 
-#             # rights
-#             elif e.nodeName == 'rights':
-#                 if self.terms_of_use:
-#                     self.terms_of_use += '; '
-#                 self.terms_of_use += XmlUtils.get_text(e.childNodes)
+                            if self.description:
+                                self.description += "; "
+                            self.description += f'{text} pbccd'
 
-#         # Use century for date_issued, if necessary
-#         if not self.date_issued and century_date_range:
-#             self.date_issued = century_date_range
+            # relationships
+            elif e.nodeName == 'relationships':
+
+                for node in e.childNodes:
+                    if node.nodeName == 'relation':
+
+                        relation = node.getAttribute('label')
+                        rtype = node.getAttribute('type')
+
+                        if relation == 'archivalcollection':
+
+                            for relationChild in node.childNodes:
+                                if relationChild.nodeName == 'bibRef':
+
+                                    note_text = BibRefToTextConverter.as_text(relationChild)
+                                    escaped_note_text = note_text.encode("unicode_escape").decode("utf-8")
+                                    self.bibliographic_citation = escaped_note_text
+
+                                    for bibRefChild in relationChild.childNodes:
+                                        if bibRefChild.nodeName == 'title':
+                                            if bibRefChild.getAttribute('type') == 'main':
+                                                titleText = XmlUtils.get_text(bibRefChild.childNodes)
+                                                self.archival_collection = titleText
+
+                        elif relation in ('fair', 'component', 'category', 'series', 'subcode#'):
+                            text = XmlUtils.get_text(node.childNodes)
+
+                            if self.bibliographic_citation:
+                                self.bibliographic_citation += ', '
+                            self.bibliographic_citation += relation.capitalize() + " " + text
+
+                        elif not relation and rtype == 'isPartOf':
+                            text = XmlUtils.get_text(node.childNodes)
+
+                            if self.bibliographic_citation:
+                                self.bibliographic_citation += ', '
+                            self.bibliographic_citation += text
+
+                        for relationChild in node.childNodes:
+                            if relationChild.nodeName == 'identifier':
+                                text = XmlUtils.get_text(relationChild.childNodes)
+
+                                if self.bibliographic_citation:
+                                    self.bibliographic_citation += ', '
+                                self.bibliographic_citation += text
+
+            # rights
+            elif e.nodeName == 'rights':
+
+                if e.getAttribute('type') == 'copyrightowner':
+                    self.rights_holder = XmlUtils.get_text(e.childNodes)
+
+                else:
+                    self.rights_statement = XmlUtils.get_text(e.childNodes)
+
+            # subject
+            elif e.nodeName == 'subject':
+                text = XmlUtils.get_text(e.childNodes)
+                if text:
+                    self.subject.append(text)
+
+                for node in e.childNodes:
+                    text = XmlUtils.get_text(node.childNodes)
+
+                    if node.nodeName in ('browse', 'corpName', 'other', 'persName'):
+                        self.subject.append(text)
+
+                    elif node.nodeName in ('geogName'):
+                        self.location.append(text)
+
+                    elif node.nodeName in ('date', 'decade'):
+                        self.temporal.append(text)
+
+            # title
+            elif e.nodeName == 'title':
+
+                if e.getAttribute('type') == 'alternate':
+                    text = XmlUtils.get_text(e.childNodes)
+
+                    if self.alternate_title:
+                        self.alternate_title += " / "
+                    self.alternate_title += text
+
+            # repository
+            elif e.nodeName == 'repository':
+
+                for node in e.childNodes:
+                    if node.nodeName == 'corpName':
+
+                        text = XmlUtils.get_text(node.childNodes)
+                        if self.bibliographic_citation:
+                            self.bibliographic_citation += ', '
+                        self.bibliographic_citation += text
+
+        # Use century for date, if necessary
+        if not self.date and century_date_range:
+            self.temporal.append(century_date_range)
 
 
 class XmlUtils:
@@ -248,6 +314,15 @@ class XmlUtils:
         :param nodelist: an Iterable of Elements to extract the text from
         '''
         return ''.join(node.data.strip().replace('\n', '') for node in nodelist if node.nodeType == node.TEXT_NODE)
+
+    @staticmethod
+    def descendentNodes(parent: Node, nodes: List) -> List:
+        ''' Return all descendent nodes of parent. '''
+        for child in parent.childNodes:
+            nodes.append(child)
+            XmlUtils.descendentNodes(child, nodes)
+
+        return nodes
 
 
 class BibRefToTextConverter:
@@ -296,7 +371,7 @@ class BibRefToTextConverter:
         '''
         bib_ref_items: Dict[str, List[str]] = {}
         for e in bib_ref.childNodes:
-            item_text = XmlUtils.get_text(e.childNodes).strip()
+            item_text = XmlUtils.get_text(XmlUtils.descendentNodes(e, [])).strip()
             if item_text == '':
                 continue
 
@@ -364,9 +439,14 @@ class ObjectToCsvConverter:
         '''
 
         self.headers = \
-            ["Object Type", "Identifier", "Rights Statement", "Title"] \
-            + ["Handle/Link"] \
-            + ["F2 TYPE", "F2 STATUS"]
+            ["F2 PID", "F2 TYPE", "F2 STATUS"] \
+            + ["Object Type", "Identifier", "Rights Statement", "Title", "Handle/Link"] \
+            + ["Resource Type"] \
+            + ["Format", "Archival Collection", "Date", "dcterms:temporal"] \
+            + ["Description", "Bibliographic Citation", "Alternate Title"] \
+            + ["Creator", "Creator URI", "Contributor", "Author", "Recipient", "Contributor URI", "Publisher", "Publisher URI"] \
+            + ["Location", "Longitude", "Latitude", "Extent", "Subject", "Language", "Rights Holder", "Collection Information"] \
+            + ["Accession Number", "FILES"]
 
     def convert(self, obj: Object) -> List[str]:
         '''
@@ -376,18 +456,23 @@ class ObjectToCsvConverter:
         :return: a List of Strings with entries matching the "headers" layout
         '''
         row = [
+            # F2 PID
+            obj.f2_pid,
+
+            # F2 TYPE
+            obj.f2_type,
+
+            # F2 STATUS
+            obj.f2_status,
+
             # Object Type
             obj.object_type,
 
             # Identifier
-            obj.identifier,
+            self.multicolumn(obj.identifier),
 
             # Rights Statement
             obj.rights_statement,
-
-            # # "Other Identifier Type", Other Identifier"
-            # self.multicolumn(list(item[0] for item in obj.other_identifier)),
-            # self.multicolumn(list(item[1] for item in obj.other_identifier)),
 
             # Title
             obj.title,
@@ -395,11 +480,83 @@ class ObjectToCsvConverter:
             # Handle/Link
             obj.handle,
 
-            # F2 TYPE
-            obj.f2_type,
+            # Resource Type
+            obj.resource_type,
 
-            # F2 STATUS
-            obj.f2_status,
+            # Format
+            obj.format,
+
+            # Archival Collection
+            obj.archival_collection,
+
+            # Date
+            obj.date,
+
+            # Temporal
+            self.multicolumn(obj.temporal),
+
+            # Description
+            obj.description,
+
+            # Bibliographic Citation
+            obj.bibliographic_citation,
+
+            # Alternate Title
+            obj.alternate_title,
+
+            # Creator
+            self.multicolumn(obj.creator),
+
+            # Creator URI
+            self.multicolumn(obj.creator_uri),
+
+            # Contributor
+            self.multicolumn(obj.contributor),
+
+            # Contributor URI
+            self.multicolumn(obj.contributor_uri),
+
+            # Author
+            self.multicolumn(obj.author),
+
+            # Recipient
+            self.multicolumn(obj.recipient),
+
+            # Publisher
+            self.multicolumn(obj.publisher),
+
+            # Publisher URI
+            self.multicolumn(obj.publisher_uri),
+
+            # Location
+            self.multicolumn(obj.location),
+
+            # Longitude
+            obj.longitude,
+
+            # Latitude
+            obj.latitude,
+
+            # Extent
+            obj.extent,
+
+            # Subject
+            self.multicolumn(obj.subject),
+
+            # Language
+            self.multicolumn(obj.language),
+
+            # Rights Holder
+            obj.rights_holder,
+
+            # Collection Information
+            obj.collection_information,
+
+            # Accession Number
+            obj.accession_number,
+
+            # FILES
+            self.multicolumn(obj.files),
         ]
 
         return row
@@ -511,9 +668,10 @@ def main(args: Namespace) -> None:
                 obj = Object()
 
                 obj.title = record['title']
-                obj.identifier = umdm
+                obj.identifier.append(umdm)
                 obj.handle = 'https://hdl.handle.net/' + record['handle'][4:]
 
+                obj.f2_pid = umdm
                 obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
                 obj.f2_status = filter_data[umdm]['ds']['doInfo']['status']
 
