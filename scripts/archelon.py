@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Union
 from xml.dom.minidom import parse, Element, Node, Text
 from xml.etree import ElementTree
+import os
 
 import iso639
 
@@ -683,20 +684,33 @@ def main(args: Namespace) -> None:
                 if obj is None:
                     # UMAM occurred before a UMDM
                     raise Exception(f'File {export_path} is not formatted correctly')
-                if index is None:
-                    logging.debug(f'No restored files index configured; skipping file linking for {umdm}/{umam}')
-                    continue
 
                 umdm_umam_path = Path(umdm.replace(":", "_"), umam.replace(":", "_"))
-                try:
-                    filename = index[umdm][umam]
-                    obj.file.append([f'{umdm_umam_path}/{filename}', umam])
-                except KeyError:
-                    doc = ElementTree.parse(target / umdm_umam_path / 'umam.xml')
-                    filename = doc.getroot().findtext('./technical/fileName') or doc.getroot().findtext('./identifier')
-                    obj.file.append(['MISSING', filename or ''])
-                    missing_files.append(f'{umdm}/{umam}')
-                    logging.warning(f'File for {umdm}/{umam} not found in restored files index')
+
+                # add any files provided by the restored files index
+                if index is not None:
+
+                    try:
+                        filename = index[umdm][umam]
+                        obj.files.append([f'{umdm_umam_path}/{filename}', umam])
+                    except KeyError:
+                        doc = ElementTree.parse(target / umdm_umam_path / 'umam.xml')
+                        filename = doc.getroot().findtext('./technical/fileName') or doc.getroot().findtext('./identifier')
+                        obj.files.append(['MISSING', filename or ''])
+                        missing_files.append(f'{umdm}/{umam}')
+                        logging.warning(f'File for {umdm}/{umam} not found in restored files index')
+
+                # add any files provided by the Fedora 2 export
+                for file in os.listdir(target / umdm_umam_path):
+
+                    # ignore these files
+                    if file in ('amInfo-properties.json', 'amInfo.xml', 'foxml.xml', 'properties.json',
+                                'umam-properties.json', 'umam.xml') \
+                               or file.endswith('-properties.json'):
+                        continue
+
+                    # add this file
+                    obj.files.append(f'{umdm_umam_path}/{file}')
 
     # Write output csv
     manifest_path = target / 'batch_manifest.csv'
