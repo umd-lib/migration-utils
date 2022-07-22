@@ -676,9 +676,18 @@ def main(args: Namespace) -> None:
                 obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
                 obj.f2_status = filter_data[umdm]['ds']['doInfo']['status']
 
-                obj.process_umdm(target / record['location'] / 'umdm.xml')
+                umdm_file = target / record['location'] / 'umdm.xml'
+
+                try:
+                    obj.process_umdm(umdm_file)
+
+                except Exception as e:
+                    text = f'Error reading umdm.xml: {e}'
+                    logging.error(text)
+                    obj.title = text
 
                 objects.append(obj)
+
             else:
                 # add UMAM to the current UMDM
                 if obj is None:
