@@ -58,7 +58,6 @@ class Object:
         self.files = []
 
 
-
     def process_umdm(self, umdm_path: Path) -> None:
         """ Gather data from the UMDM xml. """
 
@@ -440,7 +439,7 @@ class ObjectToCsvConverter:
         '''
 
         self.headers = \
-            ["F2 PID", "F2 TYPE", "F2 STATUS"] \
+            ["F2 PID", "F2 TYPE", "F2 STATUS", "F2 COLLECTIONS"] \
             + ["Object Type", "Identifier", "Rights Statement", "Title", "Handle/Link"] \
             + ["Resource Type"] \
             + ["Format", "Archival Collection", "Date", "dcterms:temporal"] \
@@ -465,6 +464,9 @@ class ObjectToCsvConverter:
 
             # F2 STATUS
             obj.f2_status,
+
+            # F2 COLLECTIONS
+            self.multicolumn(obj.f2_collections),
 
             # Object Type
             obj.object_type,
@@ -676,6 +678,12 @@ def main(args: Namespace) -> None:
                 obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
                 obj.f2_status = filter_data[umdm]['ds']['doInfo']['status']
 
+                obj.f2_collections = []
+                rels = filter_data[umdm]['ds']['rels-mets']['rels']
+                if 'isMemberOfCollection' in rels:
+                    for collection in rels['isMemberOfCollection']:
+                        obj.f2_collections.append(collection)
+
                 umdm_file = target / record['location'] / 'umdm.xml'
 
                 try:
@@ -710,12 +718,17 @@ def main(args: Namespace) -> None:
                         logging.warning(f'File for {umdm}/{umam} not found in restored files index')
 
                 # add any files provided by the Fedora 2 export
-                for file in os.listdir(target / umdm_umam_path):
+                try:
+                    umam_files = os.listdir(target / umdm_umam_path)
+                except FileNotFoundError:
+                    # the umam directory may be missing, if umam files are suppressed from extract
+                    continue
 
+                for file in umam_files:
                     # ignore these files
                     if file in ('amInfo-properties.json', 'amInfo.xml', 'foxml.xml', 'properties.json',
                                 'umam-properties.json', 'umam.xml') \
-                               or file.endswith('-properties.json'):
+                            or file.endswith('-properties.json'):
                         continue
 
                     # add this file
