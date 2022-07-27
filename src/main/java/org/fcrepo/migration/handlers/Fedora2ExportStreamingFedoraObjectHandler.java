@@ -75,14 +75,17 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
 
     private File objectDir;
 
+    private Set<String> datastreamsInclude;
+
     final static Set<String> includeDsId = new HashSet<>(
         Arrays.asList("doInfo", "amInfo", "umdm", "umam", "rels-mets", "image", "ocr", "hocr", "tei"));
 
     JsonFactory factory = null;
 
-    public Fedora2ExportStreamingFedoraObjectHandler() {
+    public Fedora2ExportStreamingFedoraObjectHandler(final Set<String> datastreamsInclude) {
         factory = new JsonFactory();
         factory.configure(Feature.AUTO_CLOSE_TARGET, true);
+        this.datastreamsInclude = datastreamsInclude;
     }
 
     /**
@@ -103,26 +106,28 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
         }
 
         // Make a copy of the FOXML file itself
-        InputStream is = null;
-        OutputStream os = null;
-        final File foxml = new File(objectDir, "foxml.xml");
-        try {
-            is = new FileInputStream(object.getFile());
-            os = new FileOutputStream(foxml);
+        if (this.datastreamsInclude == null || datastreamsInclude.contains("foxml.xml")) {
+            InputStream is = null;
+            OutputStream os = null;
+            final File foxml = new File(objectDir, "foxml.xml");
+            try {
+                is = new FileInputStream(object.getFile());
+                os = new FileOutputStream(foxml);
 
-            final byte[] buffer = new byte[8 * 1024];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-        } catch (Exception e) {
-            System.out.println("IO exception writing " + foxml.toPath() + " in beginObject: " + e);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (Exception e) {
-                    System.out.println("IO exception writing " + foxml.toPath() + " in beginObject: " + e);
+                final byte[] buffer = new byte[8 * 1024];
+                int bytesRead;
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
+                }
+            } catch (Exception e) {
+                System.out.println("IO exception writing " + foxml.toPath() + " in beginObject: " + e);
+            } finally {
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (Exception e) {
+                        System.out.println("IO exception writing " + foxml.toPath() + " in beginObject: " + e);
+                    }
                 }
             }
         }
@@ -132,34 +137,36 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
     public void processObjectProperties(final ObjectProperties properties) {
 
         // Write all Object Properties out to properties.json
+        if (this.datastreamsInclude == null || datastreamsInclude.contains("properties.json")) {
 
-        JsonGenerator json = null;
-        try {
-            final Writer jsonWriter = new BufferedWriter(new FileWriter(new File(objectDir, "properties.json")));
-            json = factory.createGenerator(jsonWriter);
+            JsonGenerator json = null;
+            try {
+                final Writer jsonWriter = new BufferedWriter(new FileWriter(new File(objectDir, "properties.json")));
+                json = factory.createGenerator(jsonWriter);
 
-            json.writeStartObject();
+                json.writeStartObject();
 
-            // Iterate over each property
-            for (final ObjectProperty p : properties.listProperties()) {
-                String name = p.getName();
-                if (propertiesMap.containsKey(name)) {
-                    name = propertiesMap.get(name);
+                // Iterate over each property
+                for (final ObjectProperty p : properties.listProperties()) {
+                    String name = p.getName();
+                    if (propertiesMap.containsKey(name)) {
+                        name = propertiesMap.get(name);
+                    }
+
+                    json.writeFieldName(name);
+                    json.writeString(p.getValue());
                 }
 
-                json.writeFieldName(name);
-                json.writeString(p.getValue());
-            }
-
-            json.writeEndObject();
-        } catch (Exception e) {
-            System.out.println("json exception in processObjectProperties: " + e);
-        } finally {
-            if (json != null) {
-                try {
-                    json.close();
-                } catch (Exception e) {
-                    System.out.println("json exception in processObjectProperties: " + e);
+                json.writeEndObject();
+            } catch (Exception e) {
+                System.out.println("json exception in processObjectProperties: " + e);
+            } finally {
+                if (json != null) {
+                    try {
+                        json.close();
+                    } catch (Exception e) {
+                        System.out.println("json exception in processObjectProperties: " + e);
+                    }
                 }
             }
         }
@@ -177,64 +184,68 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
         }
 
         // Write all Datastream Properties out to <id>-properties.json
+        final String propertiesName = id + "-properties.json";
 
-        JsonGenerator json = null;
-        try {
-            final Writer jsonWriter = new BufferedWriter(new FileWriter(new File(objectDir, id + "-properties.json")));
-            json = factory.createGenerator(jsonWriter);
+        if (this.datastreamsInclude == null || datastreamsInclude.contains(propertiesName)) {
 
-            json.writeStartObject();
+            JsonGenerator json = null;
+            try {
+                final Writer jsonWriter = new BufferedWriter(new FileWriter(new File(objectDir, propertiesName)));
+                json = factory.createGenerator(jsonWriter);
 
-            json.writeFieldName(id);
-            json.writeStartObject();
-
-            json.writeFieldName("version");
-            json.writeString(ds.getVersionId());
-
-            json.writeFieldName("label");
-            json.writeString(ds.getLabel());
-
-            json.writeFieldName("state");
-            json.writeString(info.getState());
-
-            json.writeFieldName("controlGroup");
-            json.writeString(info.getControlGroup());
-
-            json.writeFieldName("created");
-            json.writeString(ds.getCreated());
-
-            json.writeFieldName("formatUri");
-            json.writeString(ds.getFormatUri());
-
-            json.writeFieldName("mimeType");
-            json.writeString(ds.getMimeType());
-
-            json.writeFieldName("size");
-            json.writeNumber(ds.getSize());
-
-            json.writeFieldName("location");
-            json.writeString(ds.getContentLocation());
-
-            final ContentDigest digest = ds.getContentDigest();
-            if (digest != null) {
-                json.writeFieldName("digest");
                 json.writeStartObject();
-                json.writeFieldName("type");
-                json.writeString(digest.getType());
-                json.writeFieldName("value");
-                json.writeString(digest.getDigest());
-                json.writeEndObject();
-            }
 
-            json.writeEndObject();
-        } catch (Exception e) {
-            System.out.println("json exception in processDatastreamVersion: " + e);
-        } finally {
-            if (json != null) {
-                try {
-                    json.close();
-                } catch (Exception e) {
-                    System.out.println("json exception in processDatastreamVersion: " + e);
+                json.writeFieldName(id);
+                json.writeStartObject();
+
+                json.writeFieldName("version");
+                json.writeString(ds.getVersionId());
+
+                json.writeFieldName("label");
+                json.writeString(ds.getLabel());
+
+                json.writeFieldName("state");
+                json.writeString(info.getState());
+
+                json.writeFieldName("controlGroup");
+                json.writeString(info.getControlGroup());
+
+                json.writeFieldName("created");
+                json.writeString(ds.getCreated());
+
+                json.writeFieldName("formatUri");
+                json.writeString(ds.getFormatUri());
+
+                json.writeFieldName("mimeType");
+                json.writeString(ds.getMimeType());
+
+                json.writeFieldName("size");
+                json.writeNumber(ds.getSize());
+
+                json.writeFieldName("location");
+                json.writeString(ds.getContentLocation());
+
+                final ContentDigest digest = ds.getContentDigest();
+                if (digest != null) {
+                    json.writeFieldName("digest");
+                    json.writeStartObject();
+                    json.writeFieldName("type");
+                    json.writeString(digest.getType());
+                    json.writeFieldName("value");
+                    json.writeString(digest.getDigest());
+                    json.writeEndObject();
+                }
+
+                json.writeEndObject();
+            } catch (Exception e) {
+                System.out.println("json exception in processDatastreamVersion: " + e);
+            } finally {
+                if (json != null) {
+                    try {
+                        json.close();
+                    } catch (Exception e) {
+                        System.out.println("json exception in processDatastreamVersion: " + e);
+                    }
                 }
             }
         }
@@ -257,29 +268,33 @@ public class Fedora2ExportStreamingFedoraObjectHandler implements StreamingFedor
             dsName = ".dat";
         }
         dsName += extension;
-        final File dsFile = new File(objectDir, dsName);
 
-        // Write the datastream
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = ds.getContent();
-            os = new FileOutputStream(dsFile);
+        if (this.datastreamsInclude == null || datastreamsInclude.contains(dsName)) {
 
-            final byte[] buffer = new byte[8 * 1024];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-        } catch (Exception e) {
-            System.out.println("IO exception writing " + dsFile.toPath() + " in processDatastreamVersion: " + e);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (Exception e) {
-                    System.out.println("IO exception writing " + dsFile.toPath() +
-                                       " in processDatastreamVersion: " + e);
+            final File dsFile = new File(objectDir, dsName);
+
+            // Write the datastream
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                is = ds.getContent();
+                os = new FileOutputStream(dsFile);
+
+                final byte[] buffer = new byte[8 * 1024];
+                int bytesRead;
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
+                }
+            } catch (Exception e) {
+                System.out.println("IO exception writing " + dsFile.toPath() + " in processDatastreamVersion: " + e);
+            } finally {
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (Exception e) {
+                        System.out.println("IO exception writing " + dsFile.toPath() +
+                                        " in processDatastreamVersion: " + e);
+                    }
                 }
             }
         }
