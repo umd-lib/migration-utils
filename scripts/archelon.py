@@ -11,6 +11,7 @@ from xml.etree import ElementTree
 import os
 
 import iso639
+import requests
 
 
 # Convert Fedora exported and filtered objects to Archelon input format.
@@ -56,6 +57,25 @@ class Object:
         self.collection_information = ""
         self.accession_number = ""
         self.files = []
+
+
+    def get_tei_umdm(self, umdm_file: Path) -> None:
+        """ Get dynamically generated TEI UMDM """
+
+        try:
+            logging.info(f"Getting TEI UMDM for {self.f2_pid}")
+
+            response = requests.get(f'https://fedora.lib.umd.edu/fedora/get/{self.f2_pid}/umd-bdef:umdm/getUMDM/')
+            if not response.ok:
+                logging.warning(f'No UMDM found for {self.f2_pid}')
+                return
+
+            with open(str(umdm_file), 'w') as umdm:
+                logging.info(f"Writing TEI UMDM to {umdm_file}")
+                umdm.write(response.text)
+
+        except Exception as e:
+            logging.error(f"Error getting TEI UMD: {e}")
 
 
     def process_umdm(self, umdm_path: Path) -> None:
@@ -263,6 +283,13 @@ class Object:
 
             # title
             elif e.nodeName == 'title':
+
+                if e.getAttribute('type') == 'main':
+                    text = XmlUtils.get_text(e.childNodes)
+
+                    if self.title:
+                        self.title += " / "
+                    self.title += text
 
                 if e.getAttribute('type') == 'alternate':
                     text = XmlUtils.get_text(e.childNodes)
@@ -670,7 +697,7 @@ def main(args: Namespace) -> None:
                 # Process UMDM, start new object
                 obj = Object()
 
-                obj.title = record['title']
+                obj.title = ""
                 obj.identifier.append(umdm)
                 obj.handle = 'https://hdl.handle.net/' + record['handle'][4:]
 
@@ -685,6 +712,9 @@ def main(args: Namespace) -> None:
                         obj.f2_collections.append(collection)
 
                 umdm_file = target / record['location'] / 'umdm.xml'
+
+                if obj.f2_type == 'UMD_TEI' and not umdm_file.exists():
+                    obj.get_tei_umdm(umdm_file)
 
                 try:
                     obj.process_umdm(umdm_file)
