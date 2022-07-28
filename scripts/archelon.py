@@ -471,7 +471,7 @@ class ObjectToCsvConverter:
             + ["Resource Type"] \
             + ["Format", "Archival Collection", "Date", "dcterms:temporal"] \
             + ["Description", "Bibliographic Citation", "Alternate Title"] \
-            + ["Creator", "Creator URI", "Contributor", "Author", "Recipient", "Contributor URI", "Publisher", "Publisher URI"] \
+            + ["Creator", "Creator URI", "Contributor", "Author", "Recipient", "Recipient URI", "Publisher", "Publisher URI"] \
             + ["Location", "Longitude", "Latitude", "Extent", "Subject", "Language", "Rights Holder", "Collection Information"] \
             + ["Accession Number", "FILES"]
 
@@ -699,7 +699,10 @@ def main(args: Namespace) -> None:
 
                 obj.title = ""
                 obj.identifier.append(umdm)
-                obj.handle = 'https://hdl.handle.net/' + record['handle'][4:]
+
+                if record['handle'].startswith("hdl:"):
+                    obj.handle = 'https://hdl.handle.net/' + record['handle'][4:]
+                    obj.identifier.append(record['handle'])
 
                 obj.f2_pid = umdm
                 obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
