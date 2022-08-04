@@ -708,11 +708,15 @@ def main(args: Namespace) -> None:
                 obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
                 obj.f2_status = filter_data[umdm]['ds']['doInfo']['status']
 
-                obj.f2_collections = []
+                collections = set()
                 rels = filter_data[umdm]['ds']['rels-mets']['rels']
                 if 'isMemberOfCollection' in rels:
                     for collection in rels['isMemberOfCollection']:
-                        obj.f2_collections.append(collection)
+                        collections.add(collection)
+                if len(collections) > 1 and "umd:3392" in collections:
+                    # Remove Digital Collections, if there a more than one collection
+                    collections.remove("umd:3392")
+                obj.f2_collections = list(collections)
 
                 umdm_file = target / record['location'] / 'umdm.xml'
 
