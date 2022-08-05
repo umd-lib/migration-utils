@@ -23,14 +23,23 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 class Object:
     """ Class to store metadata and files for a single media object. """
 
-    def __init__(self):
-        # Required
+    def __init__(self, args: Namespace):
+
+        self.args = args
+
+        # Fedora 2 Columns
+        self.f2_pid = ""
+        self.f2_type = ""
+        self.f2_status = ""
+        self.f2_collections = ""
+
+        # Required Columns
         self.object_type = ""
         self.identifier = []
         self.rights_statement = "http://rightsstatements.org/vocab/UND/1.0/"
         self.title = ""
 
-        # Optional
+        # Optional Columns
         self.handle = ""
         self.resource_type = ""
         self.format = ""
@@ -81,6 +90,9 @@ class Object:
 
     def get_edtf(self, date: str) -> str:
         """ Get Extended Data/Time Format (EDTF) string """
+
+        if self.args.fast_mode:
+            return date
 
         date = date \
             .replace('no date', '') \
@@ -201,8 +213,9 @@ class Object:
 
                 text = XmlUtils.get_text(e.childNodes)
                 for value in text.split("; "):
-                    if (match := iso639.find(whatever=value)) is not None:
-                        value = match['iso639_2_b']
+                    if not self.args.fast_mode:
+                        if (match := iso639.find(whatever=value)) is not None:
+                            value = match['iso639_2_b']
                     self.language.append(value)
 
             # mediaType
@@ -647,6 +660,10 @@ def process_args() -> Namespace:
                         type=str,
                         help='JSON file mapping UMDM/UMAM PIDs to file paths')
 
+    parser.add_argument('-f', '--fast-mode',
+                        default=False, action='store_true',
+                        help='Fast mode: disable some slower computations')
+
     # Process command line arguments
     args = parser.parse_args()
 
@@ -710,7 +727,8 @@ def main(args: Namespace) -> None:
     index = load_index(index_path)
 
     # Load filter.json data
-    filter_data = load_filter(target / 'filter.json')
+    if not args.fast_mode:
+        filter_data = load_filter(target / 'filter.json')
 
     # Read in objects
     export_path = target / 'export.csv'
@@ -725,7 +743,7 @@ def main(args: Namespace) -> None:
             umdm = record['umdm']
             if not umam:
                 # Process UMDM, start new object
-                obj = Object()
+                obj = Object(args)
 
                 obj.title = ""
                 obj.identifier.append(umdm)
@@ -735,18 +753,20 @@ def main(args: Namespace) -> None:
                     obj.identifier.append(record['handle'])
 
                 obj.f2_pid = umdm
-                obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
-                obj.f2_status = filter_data[umdm]['ds']['doInfo']['status']
 
-                collections = set()
-                rels = filter_data[umdm]['ds']['rels-mets']['rels']
-                if 'isMemberOfCollection' in rels:
-                    for collection in rels['isMemberOfCollection']:
-                        collections.add(collection)
-                if len(collections) > 1 and "umd:3392" in collections:
-                    # Remove Digital Collections, if there a more than one collection
-                    collections.remove("umd:3392")
-                obj.f2_collections = list(collections)
+                if not args.fast_mode:
+                    obj.f2_type = filter_data[umdm]['ds']['doInfo']['type']
+                    obj.f2_status = filter_data[umdm]['ds']['doInfo']['status']
+
+                    collections = set()
+                    rels = filter_data[umdm]['ds']['rels-mets']['rels']
+                    if 'isMemberOfCollection' in rels:
+                        for collection in rels['isMemberOfCollection']:
+                            collections.add(collection)
+                    if len(collections) > 1 and "umd:3392" in collections:
+                        # Remove Digital Collections, if there a more than one collection
+                        collections.remove("umd:3392")
+                    obj.f2_collections = list(collections)
 
                 umdm_file = target / record['location'] / 'umdm.xml'
 
