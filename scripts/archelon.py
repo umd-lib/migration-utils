@@ -51,15 +51,11 @@ class Object:
         self.alternate_title = ""
         self.creator = []
         self.creator_uri = []
-        self.author = []
-        self.recipient = []
         self.contributor = []
         self.contributor_uri = []
         self.publisher = []
         self.publisher_uri = []
         self.location = []
-        self.longitude = ""
-        self.latitude = ""
         self.extent = ""
         self.subject = []
         self.language = []
@@ -514,8 +510,8 @@ class ObjectToCsvConverter:
             + ["Resource Type"] \
             + ["Format", "Archival Collection", "Date", "dcterms:temporal"] \
             + ["Description", "Bibliographic Citation", "Alternate Title"] \
-            + ["Creator", "Creator URI", "Contributor", "Author", "Recipient", "Recipient URI", "Publisher", "Publisher URI"] \
-            + ["Location", "Longitude", "Latitude", "Extent", "Subject", "Language", "Rights Holder", "Collection Information"] \
+            + ["Creator", "Creator URI", "Contributor", "Contributor URI", "Publisher", "Publisher URI"] \
+            + ["Location", "Extent", "Subject", "Language", "Rights Holder", "Collection Information"] \
             + ["Accession Number", "FILES"]
 
     def convert(self, obj: Object) -> List[str]:
@@ -589,12 +585,6 @@ class ObjectToCsvConverter:
             # Contributor URI
             self.multicolumn(obj.contributor_uri),
 
-            # Author
-            self.multicolumn(obj.author),
-
-            # Recipient
-            self.multicolumn(obj.recipient),
-
             # Publisher
             self.multicolumn(obj.publisher),
 
@@ -603,12 +593,6 @@ class ObjectToCsvConverter:
 
             # Location
             self.multicolumn(obj.location),
-
-            # Longitude
-            obj.longitude,
-
-            # Latitude
-            obj.latitude,
 
             # Extent
             obj.extent,
