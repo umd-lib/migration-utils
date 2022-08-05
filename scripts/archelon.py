@@ -12,6 +12,7 @@ import os
 
 import iso639
 import requests
+import edtf
 
 
 # Convert Fedora exported and filtered objects to Archelon input format.
@@ -78,6 +79,35 @@ class Object:
             logging.error(f"Error getting TEI UMD: {e}")
 
 
+    def get_edtf(self, date: str) -> str:
+        """ Get Extended Data/Time Format (EDTF) string """
+
+        date = date \
+            .replace('no date', '') \
+            .replace('unknown', '') \
+            .replace('不明', '') \
+            .replace('-?', '')
+
+        # Process dates in an interval separately
+        dates = date.split('/')
+        for i in range(len(dates)):
+
+            dates[i] = dates[i].strip()
+
+            try:
+                # Some natural language can be converted to EDTF
+                if (edtf_date := edtf.text_to_edtf(dates[i])) is not None:
+                    dates[i] = edtf_date
+
+                # Parse to make sure it is properly EDTF formatted
+                dates[i] = str(edtf.parse_edtf(dates[i]))
+
+            except Exception:
+                return 'Invalid EDTF:' + date
+
+        return '/'.join(dates)
+
+
     def process_umdm(self, umdm_path: Path) -> None:
         """ Gather data from the UMDM xml. """
 
@@ -138,12 +168,12 @@ class Object:
                 # TODO: determine Archelon date range format
 
                 for date in e.getElementsByTagName('date'):
-                    self.date = XmlUtils.get_text(date.childNodes)
+                    self.date = self.get_edtf(XmlUtils.get_text(date.childNodes))
 
                 for dateRange in e.getElementsByTagName('dateRange'):
                     date_from = dateRange.getAttribute('from')
                     date_to = dateRange.getAttribute('to')
-                    self.date = date_from + "/" + date_to
+                    self.date = self.get_edtf(date_from + "/" + date_to)
 
                 for century in e.getElementsByTagName('century'):
                     text = XmlUtils.get_text(century.childNodes)
