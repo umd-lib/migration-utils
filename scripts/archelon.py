@@ -41,7 +41,6 @@ class Object:
 
         # Optional Columns
         self.handle = ""
-        self.resource_type = ""
         self.format = ""
         self.archival_collection = ""
         self.date = ""
@@ -220,7 +219,7 @@ class Object:
                 self.object_type = mediaType
 
                 for form in e.getElementsByTagName('form'):
-                    self.resource_type = XmlUtils.get_text(form.childNodes)
+                    self.format = XmlUtils.get_text(form.childNodes)
 
             # physDesc
             elif e.nodeName == 'physDesc':
@@ -507,7 +506,6 @@ class ObjectToCsvConverter:
         self.headers = \
             ["F2 PID", "F2 TYPE", "F2 STATUS", "F2 COLLECTIONS"] \
             + ["Object Type", "Identifier", "Rights Statement", "Title", "Handle/Link"] \
-            + ["Resource Type"] \
             + ["Format", "Archival Collection", "Date", "dcterms:temporal"] \
             + ["Description", "Bibliographic Citation", "Alternate Title"] \
             + ["Creator", "Creator URI", "Contributor", "Contributor URI", "Publisher", "Publisher URI"] \
@@ -548,9 +546,6 @@ class ObjectToCsvConverter:
 
             # Handle/Link
             obj.handle,
-
-            # Resource Type
-            obj.resource_type,
 
             # Format
             obj.format,
