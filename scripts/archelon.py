@@ -801,7 +801,11 @@ def main(args: Namespace) -> None:
                     obj.files.append(f'{umdm_umam_path}/{file}')
 
     # Write output csv
-    manifest_path = target / 'batch_manifest.csv'
+    if args.fast_mode:
+        manifest_path = target / 'fast.csv'
+    else:
+        manifest_path = target / 'batch_manifest.csv'
+
     logging.info(f"Writing output {manifest_path}")
     logging.info(f"  {len(objects)} objects")
     logging.info(f'  {len(missing_files)} missing files')
