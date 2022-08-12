@@ -224,7 +224,12 @@ class Object:
                     self.object_type = f'Not Mapped: {mediaType}'
 
                 for form in e.getElementsByTagName('form'):
-                    self.format = XmlUtils.get_text(form.childNodes)
+                    form = XmlUtils.get_text(form.childNodes)
+
+                    if form in self.mapping['format']:
+                        self.format = self.mapping['format'][form]
+                    else:
+                        self.format = f'Not Mapped: {form}'
 
             # physDesc
             elif e.nodeName == 'physDesc':
@@ -273,7 +278,13 @@ class Object:
                                         if bibRefChild.nodeName == 'title':
                                             if bibRefChild.getAttribute('type') == 'main':
                                                 titleText = XmlUtils.get_text(bibRefChild.childNodes)
-                                                self.archival_collection = titleText
+                                                ac = titleText
+
+                                                if ac in self.mapping['archival_collection']:
+                                                    self.archival_collection = self.mapping['archival_collection'][ac]
+                                                else:
+                                                    self.archival_collection = f'Not Mapped: {ac}'
+
 
                         elif relation in ('fair', 'component', 'category', 'series', 'subcode#'):
                             text = XmlUtils.get_text(node.childNodes)
