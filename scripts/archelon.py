@@ -13,7 +13,7 @@ import os
 import iso639
 import requests
 import edtf
-
+import yaml
 
 # Convert Fedora exported and filtered objects to Archelon input format.
 
@@ -23,9 +23,10 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 class Object:
     """ Class to store metadata and files for a single media object. """
 
-    def __init__(self, args: Namespace):
+    def __init__(self, args: Namespace, mapping: dict):
 
         self.args = args
+        self.mapping = mapping
 
         # Fedora 2 Columns
         self.f2_pid = ""
@@ -216,7 +217,11 @@ class Object:
             # mediaType
             elif e.nodeName == 'mediaType':
                 mediaType = e.getAttribute('type')
-                self.object_type = mediaType
+
+                if mediaType in self.mapping['object_type']:
+                    self.object_type = self.mapping['object_type'][mediaType]
+                else:
+                    self.object_type = f'Not Mapped: {mediaType}'
 
                 for form in e.getElementsByTagName('form'):
                     self.format = XmlUtils.get_text(form.childNodes)
@@ -683,6 +688,7 @@ def load_index(index_path: Path) -> Optional[dict]:
                 index.update(json.loads(line))
         return index
 
+
 def load_filter(filter_data_path: Path) -> Optional[dict]:
     """ Load in filter.json """
     filter_data = {}
@@ -692,6 +698,20 @@ def load_filter(filter_data_path: Path) -> Optional[dict]:
             record = json.loads(line)
             filter_data[record['pid']] = record
     return filter_data
+
+
+def load_mapping() -> Optional[dict]:
+    """ Load in data/archelon-mapping.yml """
+
+    # Assume cwd is the migration-utils directory)
+    mapping_file = 'data/archelon-mapping.yml'
+
+    logging.info(f'Reading mapping data from {mapping_file}')
+    with open(mapping_file, 'r') as mapping_file:
+        mapping = yaml.safe_load(mapping_file)
+
+    return mapping
+
 
 def main(args: Namespace) -> None:
     """ Main conversion loop. """
@@ -709,6 +729,9 @@ def main(args: Namespace) -> None:
     if not args.fast_mode:
         filter_data = load_filter(target / 'filter.json')
 
+    # Load mapping document (assumes cwd is the migration-utils directory)
+    mapping = load_mapping()
+
     # Read in objects
     export_path = target / 'export.csv'
     logging.info(f"Reading input objects from {export_path}")
@@ -722,7 +745,7 @@ def main(args: Namespace) -> None:
             umdm = record['umdm']
             if not umam:
                 # Process UMDM, start new object
-                obj = Object(args)
+                obj = Object(args, mapping)
 
                 obj.title = ""
                 obj.identifier.append(umdm)

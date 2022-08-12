@@ -1,0 +1,3 @@
+object_type:
+  image: <http://purl.org/dc/dcmitype/Image>
+  text: <http://purl.org/dc/dcmitype/Text>
