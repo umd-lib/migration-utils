@@ -35,14 +35,14 @@ class Object:
         self.f2_collections = ""
 
         # Required Columns
-        self.object_type = ""
+        self.object_type = "<unknown>"
         self.identifier = []
         self.rights_statement = "http://rightsstatements.org/vocab/UND/1.0/"
         self.title = ""
 
         # Optional Columns
         self.handle = ""
-        self.format = ""
+        self.format = "<unknown>"
         self.archival_collection = ""
         self.date = ""
         self.temporal = []
