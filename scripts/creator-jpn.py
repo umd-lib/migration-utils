@@ -59,6 +59,9 @@ for record in csvinput:
         creator = record['Creator'].split('|')
         row = [pid, record['Creator']]
 
+        if len(creator) % 2 == 1:
+            print(f'Error: odd creator count: {creator}')
+
         i = 0
         while i+1 < len(creator):
             jpn = creator[i]
