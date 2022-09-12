@@ -1,34 +1,36 @@
 object_type:
-  # event
+  event: http://purl.org/dc/dcmitype/Event
   image: http://purl.org/dc/dcmitype/Image
-  # movingImage
-  # sound
+  movingImage: http://purl.org/dc/dcmitype/MovingImage # these items should be in Avalon
+  sound: http://purl.org/dc/dcmitype/Sound # these items should be in Avalon
   text: http://purl.org/dc/dcmitype/Text
 
 format:
   "Photograph, artistic": http://vocab.lib.umd.edu/form#photographs
   "Photograph, documentary": http://vocab.lib.umd.edu/form#photographs
-  Architecture: http://vocab.lib.umd.edu/form#architectural_drawings
+  "Architecture": http://vocab.lib.umd.edu/form#architectural_drawings
   "Decorative art": http://vocab.lib.umd.edu/form#art
-  Diaries: http://vocab.lib.umd.edu/form#diaries
-  # Drama
+  "Diaries": http://vocab.lib.umd.edu/form#diaries
+  "Drama": http://vocab.lib.umd.edu/form#drama
   "Drawing. Design. Illustration": http://vocab.lib.umd.edu/form#drawings
   "Drawing. Design. Illustration.": http://vocab.lib.umd.edu/form#drawings
-  # Essays
-  Letters: http://vocab.lib.umd.edu/form#personal_correspondence
-  # Oratory
-  Painting: http://vocab.lib.umd.edu/form#art
+  "Essays": http://vocab.lib.umd.edu/form#essays
+  "Letters": http://vocab.lib.umd.edu/form#personal_correspondence
+  "Oratory": http://vocab.lib.umd.edu/form#speeches
+  "Painting": http://vocab.lib.umd.edu/form#paintings
   "Photograph.documentary": http://vocab.lib.umd.edu/form#photographs
-  # Poetry
-  # Print
-  # Prose
-  Scores: http://vocab.lib.umd.edu/form#scores
-  Sculpture: http://vocab.lib.umd.edu/form#art
-  # "electronic music"
-  # "nonfiction film"
-  # "spoken word"
+  "Poetry": http://vocab.lib.umd.edu/form#poetry
+  "Print": http://vocab.lib.umd.edu/form#prints
+  # Prose there is no such term in LCGFT. Items in the sample that have this format encompass a wide range- need more specificity.
+  "Scores": http://vocab.lib.umd.edu/form#scores 
+  "Sculpture": http://vocab.lib.umd.edu/form#sculpture
+  # "electronic music" #Scores? if recording, should be in Avalon
+  "nonfiction film": http://vocab.lib.umd.edu/form#nonfiction_films
+  "spoken word": http://vocab.lib.umd.edu/form#spoken_word
 
 rights_statement:
+  # See separate spreadsheet #
+  
   # "The photographic print pictured below and corresponding to the ID number listed below has been taken directly from the historic Baltimore Sun archives. Because this print is from a working archive, it may contain notes, marks, labels, clippings and/or retouching put in place by the staff in the process of publication. The copyrights remain solely with the Baltimore Sun or with the issuing agency or photographer. This print is available as a collectible only and may not be reproduced in any form whatsoever without prior written consent from the copyright holder."
   # "Back of photo stamped: ""3rd Photo Section Bolling Field, Wash. D.C., Property of the U.S. Army Air Service."""
   # "Baroness Elsa von Freytag-Loringhoven's poetry is printed here with the support of the University of Maryland Libraries. Permission to reproduce images of Freytag-Loringhoven's manuscripts has also been generously granted by the libraries.This poem and manuscript drafts are available from this site for demonstration purposes only. Though the intellectual property of Elsa von Freytag-Loringhoven is in the public domain, all annotations and editorial commentary are copyrighted. They may not be reproduced without explicit permission from the copyright holder. For copyright information, please contact Tanya Clement."
@@ -165,7 +167,7 @@ rights_statement:
   # "foobar"
   # "foobarbaz"
   # "http://photography.nationalgeographic.com/photography/photos/life-color-blue/#/blue-penguins-hopkins_1339_600x450.jpg"
-  # "http://rightsstatements.org/vocab/UND/1.0/"
+  "http://rightsstatements.org/vocab/UND/1.0/": http://rightsstatements.org/vocab/UND/1.0/
   # "lalalal"
   # "open"
   # "out of copyright"
@@ -180,6 +182,7 @@ rights_statement:
   # "この画像の原本は著作権によって保護されています。アメリカ合衆国著作権法（タイトル17、107条）に則り、学術的目的、研究、批評、解説、教育といった公正な理由（フェア・ユース）の範囲内で個人的使用の目的のためだけにこの画像を複製することができます。複製が合衆国著作権法に合致するものであるかどうかの判断と使用違反の責任は、複製を行う利用者に委ねられます。合衆国外での複製に関しては、当該国の著作権法が適用され複製の妥当性と違反責任は複製を行う利用者に委ねられます。掲載資料の著作権の帰属に関するご質問は：prangebunko@umd.edu"
 
 archival_collection:
+  # Do I need to change labels to conform with the collection name as stated in ArchivesSpace? #
   # "1918 Reveille Yearbook"
   # "1969 Yearbook"
   # "1994-085"
@@ -192,530 +195,529 @@ archival_collection:
   # "Acc. 72-41"
   # "acc.2006-133"
   "Adele H. Stamp papers": http://vocab.lib.umd.edu/collection#0282-UA
-  "Adele Stamp collection": http://vocab.lib.umd.edu/collection#0282-UA
-  "Adele Stamp Collection": http://vocab.lib.umd.edu/collection#0282-UA
-  "Adele Stamp": http://vocab.lib.umd.edu/collection#0282-UA
-  # "AFL and AFL-CIO International Affairs Department records, International Labor Organizations"
-  # "AFL and AFL-CIO International Affairs Department, Jay Lovestone Files"
-  # "AFL and AFL-CIO Office of the President, George Meany papers"
+  "Adele Stamp collection": http://vocab.lib.umd.edu/collection#0282-UA #Adele H. Stamp papers
+  "Adele Stamp Collection": http://vocab.lib.umd.edu/collection#0282-UA #Adele H. Stamp papers
+  "Adele Stamp": http://vocab.lib.umd.edu/collection#0282-UA #Adele H. Stamp papers
+  "AFL and AFL-CIO International Affairs Department records, International Labor Organizations": http://vocab.lib.umd.edu/collection#0077-LBR-RG18-007
+  "AFL and AFL-CIO International Affairs Department, Jay Lovestone Files": http://vocab.lib.umd.edu/collection#0073-LBR-RG18-003
+  "AFL and AFL-CIO Office of the President, George Meany papers": http://vocab.lib.umd.edu/collection#0062-LBR-RG1-038
   # "AFL-CIO Artifact Collection"
-  # "AFL-CIO Civil Rights Department Records, 1946-2000"
-  # "AFL-CIO Civil Rights Department records"
-  # "AFL-CIO Civil Rights Department. Records, 1946-2000"
-  # "AFL-CIO Economic Research Department, Office of Wage and Industrial Relations Records, Anne Draper records"
-  # "AFL-CIO Information Department, AFL-CIO News Cartoons"
-  # "AFL-CIO Information Department, AFL-CIO News Cartoons"
-  # "AFL-CIO Information Department, Photographic Prints collection"
-  # "AFL-CIO Information Department. CIO, AFL-CIO Press Releases, 1937-1995"
-  # "AFL-CIO International Affairs Department, Country Files"
-  # "AFL-CIO Legislation Department records"
-  # "AFL-CIO Merger Oral History Project collection"
+  "AFL-CIO Civil Rights Department Records, 1946-2000": http://vocab.lib.umd.edu/collection#0068-LBR-RG9-003 #AFL-CIO Civil Rights Department records
+  "AFL-CIO Civil Rights Department records": http://vocab.lib.umd.edu/collection#0068-LBR-RG9-003
+  "AFL-CIO Civil Rights Department. Records, 1946-2000": http://vocab.lib.umd.edu/collection#0068-LBR-RG9-003 #AFL-CIO Civil Rights Department records
+  "AFL-CIO Economic Research Department, Office of Wage and Industrial Relations Records, Anne Draper records": http://vocab.lib.umd.edu/collection#0041-LBR-RG13-006
+  "AFL-CIO Information Department, AFL-CIO News Cartoons": http://vocab.lib.umd.edu/collection#0079-LBR-RG20-004
+  "AFL-CIO Information Department, AFL-CIO News Cartoons": http://vocab.lib.umd.edu/collection#0079-LBR-RG20-004
+  "AFL-CIO Information Department, Photographic Prints collection": http://vocab.lib.umd.edu/collection#0088-LBR-RG96-001
+  "AFL-CIO Information Department. CIO, AFL-CIO Press Releases, 1937-1995": http://vocab.lib.umd.edu/collection#0048-LBR-RG20-003 #CIO and AFL-CIO Information Department, Press Releases
+  "AFL-CIO International Affairs Department, Country Files": http://vocab.lib.umd.edu/collection#0043-LBR-RG18-010
+  "AFL-CIO Legislation Department records": http://vocab.lib.umd.edu/collection#0055-LBR-RG21-001
+  "AFL-CIO Merger Oral History Project collection": http://vocab.lib.umd.edu/collection#0012-LBR-RG98-005
   # "AFL-CIO Miscellaneous items"
-  # "AFL-CIO Office of the President, President's Files, George Meany"
-  # "AFL-CIO Photographic Print collection"
-  # "AFL-CIO Photographic Prints - Photographs, 1890-1993"
-  # "AFL-CIO Photographic Prints"
-  # "AFL-CIO Support Services Department, Publication collection"
-  # "AFL-CIO Support Services Department. Publications"
-  # "AFL-CIO. Artificial Collections. AFL-CIO Merger Oral History Project, 1978-1980"
+  "AFL-CIO Office of the President, President's Files, George Meany": http://vocab.lib.umd.edu/collection#0061-LBR-RG1-027
+  "AFL-CIO Photographic Print collection": http://vocab.lib.umd.edu/collection#0088-LBR-RG96-001 #AFL-CIO Information Department, Photographic Prints collection
+  "AFL-CIO Photographic Prints - Photographs, 1890-1993": http://vocab.lib.umd.edu/collection#0088-LBR-RG96-001 #AFL-CIO Information Department, Photographic Prints collection
+  "AFL-CIO Photographic Prints": http://vocab.lib.umd.edu/collection#0088-LBR-RG96-001 #AFL-CIO Information Department, Photographic Prints collection
+  "AFL-CIO Support Services Department, Publication collection": http://vocab.lib.umd.edu/collection#0053-LBR-RG34-002
+  "AFL-CIO Support Services Department. Publications": http://vocab.lib.umd.edu/collection#0053-LBR-RG34-002 #FL-CIO Support Services Department, Publication collection
+  "AFL-CIO. Artificial Collections. AFL-CIO Merger Oral History Project, 1978-1980": http://vocab.lib.umd.edu/collection#0012-LBR-RG98-005 #AFL-CIO Merger Oral History Project collection
   # "AFL-CIO. Artificial Collections. Miscellaneous Items"
-  # "AFL, CIO, and AFL-CIO Civil Rights Department records"
-  # "AFL, CIO, and AFL-CIO Civil Rights Department, Discrimination Case Files"
-  # "AFL, CIO, and AFL-CIO Scrapbook collection"
-  # "Agnew Papers Acc. 94-67"
-  # "Al Danegger Collection"
-  # "Alan Kistler papers"
-  # "Albert W. Hilberg collection"
-  # "Alonzo W. Phillips Papers"
-  # "Alumni Office [UMCP]"
-  # "Alumni Office records"
-  # "American Bandmasters Association Archives"
-  # "American Bandmasters Association Photograph Files"
-  # "American News Women's Club archives"
+  "AFL, CIO, and AFL-CIO Civil Rights Department records": http://vocab.lib.umd.edu/collection#0044-LBR-RG9-001
+  "AFL, CIO, and AFL-CIO Civil Rights Department, Discrimination Case Files": http://vocab.lib.umd.edu/collection#0054-LBR-RG9-002
+  "AFL, CIO, and AFL-CIO Scrapbook collection": http://vocab.lib.umd.edu/collection#0094-LBR-RG98-004
+  "Agnew Papers Acc. 94-67": http://vocab.lib.umd.edu/collection#0010-MDHC #Spiro T. Agnew papers
+  "Al Danegger Collection": http://vocab.lib.umd.edu/collection#0113-UA #Al Danegger photographs
+  "Albert W. Hilberg collection": http://vocab.lib.umd.edu/collection#0009-GWP #Albert W. Hilberg Atomic Bomb Casualty Commission collection
+  "Alonzo W. Phillips Papers": http://vocab.lib.umd.edu/collection#0364-MDHC
+  "Alumni Office [UMCP]": http://vocab.lib.umd.edu/collection#0021-UA #Alumni Office records
+  "Alumni Office records": http://vocab.lib.umd.edu/collection#0021-UA
+  "American Bandmasters Association Archives": http://vocab.lib.umd.edu/collection#0016-SCPA #American Bandmasters Association official records
+  "American Bandmasters Association Photograph Files": http://vocab.lib.umd.edu/collection#0016-SCPA #American Bandmasters Association official records
+  "American News Women's Club archives": http://vocab.lib.umd.edu/collection#0194-MDHC #American News Women's Club records
   # "AMR"
-  # "Ann Heintze papers"
+  "Ann Heintze papers": http://vocab.lib.umd.edu/collection#0005-LIT
   # "Archival Collection"
-  # "Archives of The Midwest Clinic, An International Band and Orchestra Conference"
-  # "Arthur Van Reuth collection"
-  # "Association for Childhood Education International (ACEI) archives"
-  # "Association for Childhood Education International archives"
-  # "Association for Intercollegiate Athletics for Women archives"
-  # "Association of University Women (AAUW), Maryland"
-  # "Athletic Media Relations records"
-  # "Athletic Media Relations, ACC 2004-16"
-  # "Athletic Media Relations"
-  # "Bakery, Confectionery, Tobacco Workers and Grain Millers International Union (BCTGM) records"
+  "Archives of The Midwest Clinic, An International Band and Orchestra Conference": http://vocab.lib.umd.edu/collection#0026-SCPA
+  "Arthur Van Reuth collection": http://vocab.lib.umd.edu/collection#0216-UA  #Arthur Van Reuth photographs and penant
+  "Association for Childhood Education International (ACEI) archives": http://vocab.lib.umd.edu/collection#0056-MDHC #Association for Childhood Education International (ACEI) records
+  "Association for Childhood Education International archives": http://vocab.lib.umd.edu/collection#0056-MDHC #Association for Childhood Education International (ACEI) records
+  "Association for Intercollegiate Athletics for Women archives": http://vocab.lib.umd.edu/collection#0192-MDHC #Association for Intercollegiate Athletics for Women (AIAW) records
+  "Association of University Women (AAUW), Maryland": http://vocab.lib.umd.edu/collection#0014-MDHC #Maryland Division of the American Association of University Women (AAUW) records
+  "Athletic Media Relations records": http://vocab.lib.umd.edu/collection#0089-UA
+  "Athletic Media Relations, ACC 2004-16": http://vocab.lib.umd.edu/collection#0089-UA #Athletic Media Relations records
+  "Athletic Media Relations": http://vocab.lib.umd.edu/collection#0089-UA #Athletic Media Relations records
+  "Bakery, Confectionery, Tobacco Workers and Grain Millers International Union (BCTGM) records": http://vocab.lib.umd.edu/collection#0101-LBR
   # "Baltimore Contractors, Inc. photographs"
-  # "Baltimore News American collection"
-  # "Baltimore News American Photograph Collection, 1916-1980"
-  # "Baltimore News American Photograph Collection, 1925-1972"
-  # "Baltimore News American Photograph Collection"
-  # "Barnes Family Papers"
-  # "BCTGM Photographic Prints collection"
+  "Baltimore News American collection": http://vocab.lib.umd.edu/collection#0378-MDHC
+  "Baltimore News American Photograph Collection, 1916-1980": http://vocab.lib.umd.edu/collection#0378-MDHC #Baltimore News American collection
+  "Baltimore News American Photograph Collection, 1925-1972": http://vocab.lib.umd.edu/collection#0378-MDHC #Baltimore News American collection
+  "Baltimore News American Photograph Collection": http://vocab.lib.umd.edu/collection#0378-MDHC #Baltimore News American collection
+  "Barnes Family Papers": http://vocab.lib.umd.edu/collection#0022-LIT
+  "BCTGM Photographic Prints collection": http://vocab.lib.umd.edu/collection#0101-LBR #Bakery, Confectionery, Tobacco Workers and Grain Millers International Union (BCTGM) records
   # "Betty Amos Bull papers"
   # "Bibliographic Print Files"
   # "Bibliographical Print Files"
-  # "Bill Weems collection"
+  "Bill Weems collection": http://vocab.lib.umd.edu/collection#0179-UA
   # "Bio Print File"
-  # "Biographical Photographs - Print File"
-  # "Biographical Photographs -- Print File"
-  # "Board of Regents"
-  # "Brooke Family papers"
-  # "Brooke Family Papers"
-  # "Buildings and Grounds"
-  # "Burhaus Family papers"
-  # "Byron Family papers"
-  # "Byron Family Papers"
+  # "Biographical Photographs - Print File" http://hdl.handle.net/1903.1/11030
+  # "Biographical Photographs -- Print File" http://hdl.handle.net/1903.1/11030
+  "Board of Regents": http://vocab.lib.umd.edu/collection#0063-UA #Board of Regents records
+  "Brooke Family papers": http://vocab.lib.umd.edu/collection#0006-MDHC
+  "Brooke Family Papers": http://vocab.lib.umd.edu/collection#0006-MDHC
+  "Buildings and Grounds": http://vocab.lib.umd.edu/collection#0061-UA #Department of Physical Plant records
+  "Burhaus Family papers": http://vocab.lib.umd.edu/collection#0068-MDHC
+  "Byron Family papers": http://vocab.lib.umd.edu/collection#0357-MDHC
+  "Byron Family Papers": http://vocab.lib.umd.edu/collection#0357-MDHC
   # "Campus Photo Contact Sheets"
   # "Campus Photo Service Photographs"
   # "Campus Photo Services"
   # "Campus Photo"
-  # "Campus Unrest collection"
-  # "Campus Unrest Collection"
+  "Campus Unrest collection": http://vocab.lib.umd.edu/collection#0219-UA #History of the University of Maryland - Campus Unrest records
+  "Campus Unrest Collection": http://vocab.lib.umd.edu/collection#0219-UA #History of the University of Maryland - Campus Unrest records
   # "Campus Views"
   # "Cecelia McGrain papers"
-  # "Celia Holland papers"
-  # "Charles E. Bishop papers"
-  # "Charles E. Peterson papers"
-  # "Charles Wallace Collins papers"
-  # "Chester E. Whiting collection"
-  # "Chris Baronner digital collection on D.C. music"
-  # "Chris Baronner digital collection on D.C. punk"
-  # "Chris Baronner digital collection on D.C. Punk"
-  # "Chris Baronner digital collection on DC Punk"
-  # "Chris Baronner digital collectionon D.C. Punk"
-  # "Cigar Makers' International Union archives"
-  # "Cigar Makers' International Union of America records"
-  # "CIO and AFL-CIO Information Department, Press Releases"
-  # "Civil War-Era Pictorial Envelopes Collection"
-  # "Clara Barton papers"
-  # "Clara Rockmore Collection"
-  # "Clara Rockmore papers"
-  # "Claude T. Smith Collection"
-  # "Claude-Gray-Hughes-Tuck-Whittington Family papers"
-  # "Claude, Tuck Hughes, Gray Whittington Family papers"
+  "Celia Holland papers": http://vocab.lib.umd.edu/collection#0031-MDHC #Celia M. Holland papers
+  # "Charles E. Bishop papers" Charles E. Bishop photographs or Officer of the Chancellor records?
+  "Charles E. Peterson papers": http://vocab.lib.umd.edu/collection#0295-MDHC
+  "Charles Wallace Collins papers": http://vocab.lib.umd.edu/collection#0022-MDHC
+  "Chester E. Whiting collection": http://vocab.lib.umd.edu/collection#0333-SCPA
+  "Chris Baronner digital collection on D.C. music": http://vocab.lib.umd.edu/collection#0374-SCPA #Chris Baronner digital collection on D.C. punk
+  "Chris Baronner digital collection on D.C. punk": http://vocab.lib.umd.edu/collection#0374-SCPA
+  "Chris Baronner digital collection on D.C. Punk": http://vocab.lib.umd.edu/collection#0374-SCPA
+  "Chris Baronner digital collection on DC Punk": http://vocab.lib.umd.edu/collection#0374-SCPA
+  "Chris Baronner digital collectionon D.C. Punk": http://vocab.lib.umd.edu/collection#0374-SCPA
+  "Cigar Makers' International Union archives": http://vocab.lib.umd.edu/collection#0097-LBR #Cigar Makers' International Union of America records
+  "Cigar Makers' International Union of America records": http://vocab.lib.umd.edu/collection#0097-LBR
+  "CIO and AFL-CIO Information Department, Press Releases": http://vocab.lib.umd.edu/collection#0048-LBR-RG20-003
+  "Civil War-Era Pictorial Envelopes Collection": http://vocab.lib.umd.edu/collection#0370-MDHC #Civil War-Era Pictorial envelopes and song sheets
+  "Clara Barton papers": http://vocab.lib.umd.edu/collection#0015-MDHC
+  "Clara Rockmore Collection": http://vocab.lib.umd.edu/collection#0047-SCPA #Clara Rockmore papers
+  "Clara Rockmore papers": http://vocab.lib.umd.edu/collection#0047-SCPA
+  "Claude T. Smith Collection": http://vocab.lib.umd.edu/collection#0013-SCPA
+  "Claude-Gray-Hughes-Tuck-Whittington Family papers": http://vocab.lib.umd.edu/collection#0076-MDHC
+  "Claude, Tuck Hughes, Gray Whittington Family papers": http://vocab.lib.umd.edu/collection#0076-MDHC #Claude-Gray-Hughes-Tuck-Whittington Family papers 
   # "Cole Field House - Intercollegiate Athletics - Baseball Alumni"
   # "Collection may be protected under Title 17 of the U.S. Copyright Law. To obtain permission to publish or reproduce, please contact the University of Maryland Libraries at http://www.lib.umd.edu/special/contact/home."
-  # "College of Library and Information Studies"
+  "College of Library and Information Studies": http://vocab.lib.umd.edu/collection#0078-UA #College of Library and Information Services (CLIS) records
   # "Colteryahn Family collection"
   # "Commencement Collections"
-  # "Cooperative Extension Service Records"
-  # "Cooperative Extension Service"
-  # "Cuba Company archives"
+  "Cooperative Extension Service Records": http://vocab.lib.umd.edu/collection#0012-UA #Cooperative Extension Service (CES) records
+  "Cooperative Extension Service": http://vocab.lib.umd.edu/collection#0012-UA #Cooperative Extension Service (CES) records
+  "Cuba Company archives": http://vocab.lib.umd.edu/collection#0104-LBR #Cuba Company records
   # "D. Earl Newsom Photograph Collection"
   "D.C. Punk and Indie Fanzine Collection": http://vocab.lib.umd.edu/collection#0195-SCPA
-  "D.C. punk collection": http://vocab.lib.umd.edu/collection#0195-SCPA
-  "D.C. Punk collection": http://vocab.lib.umd.edu/collection#0195-SCPA
-  # "Daniel Prescott Papers"
-  # "David and Elizabeth Scull papers"
-  # "David and Elizabeth Scull Papers"
-  # "Davis Family papers"
-  # "DBk Photo Morgue"
-  # "DC Punk collection"
-  # "Department of Botany Records"
-  # "Department of Entomology records"
-  # "Department of Entomology Records"
-  # "Department of Intercollegiate Athletics records"
-  # "Diamondback collection"
-  # "Diamondback Photo Morge"
-  # "Diamondback Photo Morgue"
-  # "Diamondback photograph collection"
-  # "Diamondback Photograph Collection"
-  # "Diamondback Photos"
-  # "Djuna Barnes papers"
-  # "Djuna Barnes Papers"
-  # "DMBK Photo Morgue"
-  # "Don Hamerman collection of performing arts photographs"
-  # "Don Hamerman collection of performing arts photography"
-  # "Don Hamerman performing arts photography collection"
-  # "Don West Broadcasting and Cable Photo Archives"
-  # "Donald Maley papers"
-  # "Donald Pond Papers"
+  "D.C. punk collection": http://vocab.lib.umd.edu/collection#0364-SCPA-DCPUNK
+  "D.C. Punk collection": http://vocab.lib.umd.edu/collection#0364-SCPA-DCPUNK
+  "Daniel Prescott Papers": http://vocab.lib.umd.edu/collection#0160-UA
+  "David and Elizabeth Scull papers": http://vocab.lib.umd.edu/collection#0176-MDHC
+  "David and Elizabeth Scull Papers": http://vocab.lib.umd.edu/collection#0176-MDHC
+  "Davis Family papers": http://vocab.lib.umd.edu/collection#0008-MDHC
+  "DBk Photo Morgue": http://vocab.lib.umd.edu/collection#0211-UA #Diamondback photographs
+  "DC Punk collection": http://vocab.lib.umd.edu/collection#0364-SCPA-DCPUNK
+  "Department of Botany Records": http://vocab.lib.umd.edu/collection#0024-UA
+  "Department of Entomology records": http://vocab.lib.umd.edu/collection#0008-UA
+  "Department of Entomology Records": http://vocab.lib.umd.edu/collection#0008-UA
+  "Department of Intercollegiate Athletics records": http://vocab.lib.umd.edu/collection#0052-UA
+  # "Diamondback collection" Diamondback photos?
+  "Diamondback Photo Morge": http://vocab.lib.umd.edu/collection#0211-UA #Diamondback photographs
+  "Diamondback Photo Morgue": http://vocab.lib.umd.edu/collection#0211-UA #Diamondback photographs
+  "Diamondback photograph collection": http://vocab.lib.umd.edu/collection#0211-UA #Diamondback photographs
+  "Diamondback Photograph Collection": http://vocab.lib.umd.edu/collection#0211-UA #Diamondback photographs
+  "Diamondback Photos": http://vocab.lib.umd.edu/collection#0211-UA
+  "Djuna Barnes papers": http://vocab.lib.umd.edu/collection#0021-LIT
+  "Djuna Barnes Papers": http://vocab.lib.umd.edu/collection#0021-LIT
+  "DMBK Photo Morgue": http://vocab.lib.umd.edu/collection#0211-UA #Diamondback photographs
+  "Don Hamerman collection of performing arts photographs": http://vocab.lib.umd.edu/collection#0428-SCPA-HAMERMAN
+  "Don Hamerman collection of performing arts photography": http://vocab.lib.umd.edu/collection#0428-SCPA-HAMERMAN
+  "Don Hamerman performing arts photography collection": http://vocab.lib.umd.edu/collection#0428-SCPA-HAMERMAN
+  "Don West Broadcasting and Cable Photo Archives": http://vocab.lib.umd.edu/collection#0103-MMC
+  "Donald Maley papers": http://vocab.lib.umd.edu/collection#0201-UA
+  "Donald Pond Papers": http://vocab.lib.umd.edu/collection#0049-SCPA #Donald Pond collection
   # "Duplicated photo collection"
-  # "Early Printing Collection"
-  # "Edward L. Longley Collection on Jim Henson"
-  # "Edwin Franko Goldman Collection, Special Collections in Performing Arts, University of Maryland Libraries"
-  # "Edwin Franko Goldman Collection"
-  # "Edwin Powell papers"
-  # "Elsa von Freytag-Loringhoven papers"
-  # "Emerson Chapin Slides and Photographs"
-  # "Emory Harmon collection"
-  # "Ernest Hemingway Collection"
+  "Early Printing Collection": http://vocab.lib.umd.edu/collection#0539-LIT #Early Printed and Manuscript Leaf collection
+  "Edward L. Longley Collection on Jim Henson": http://vocab.lib.umd.edu/collection#0129-SCPA #Edward L. Longley papers
+  "Edwin Franko Goldman Collection, Special Collections in Performing Arts, University of Maryland Libraries": http://vocab.lib.umd.edu/collection#0020-SCPA #Edwin Franko Goldman papers
+  "Edwin Franko Goldman Collection": http://vocab.lib.umd.edu/collection#0020-SCPA #Edwin Franko Goldman papers
+  "Edwin Powell papers": http://vocab.lib.umd.edu/collection#0105-UA
+  "Elsa von Freytag-Loringhoven papers": http://vocab.lib.umd.edu/collection#0009-LIT
+  "Emerson Chapin Slides and Photographs": http://vocab.lib.umd.edu/collection#0005-GWP #Emerson Chapin photographs and slides
+  "Emory Harmon collection": http://vocab.lib.umd.edu/collection#0101-UA #Emory A. Harman, Sr. collection
+  "Ernest Hemingway Collection": http://vocab.lib.umd.edu/collection#0065-LIT
   # "Fake collection"
   # "Family Weekend Exhibit"
-  # "Felix Agnus papers"
-  # "Fletcher Pearre Veitch Papers"
-  # "Folder 15 - International Unions, ACTWU, include ACWA"
-  # "Frances McCullough papers"
+  "Felix Agnus papers": http://vocab.lib.umd.edu/collection#0012-MDHC
+  "Fletcher Pearre Veitch Papers": http://vocab.lib.umd.edu/collection#0153-MDHC
+  "Folder 15 - International Unions, ACTWU, include ACWA": http://vocab.lib.umd.edu/collection#0088-LBR-RG96-001 #AFL-CIO Information Department, Photographic Prints collection
+  "Frances McCullough papers": http://vocab.lib.umd.edu/collection#0071-LIT
   # "Frances White Walker Collection"
   # "Frank Alexander Negative collection"
   # "Frank Alexander Photographic Negative collection"
-  # "Geary Eppley papers"
-  # "George Koonce collection"
-  # "George Meany Memorial Archives, Vertical File collection"
-  # "George Meany Memorial Archives. Vertical Files, 1882-1990"
-  # "George Tremblay Collection"
-  # "Gilbert Mitchell Collection"
-  # "Gordon W. Prange papers"
-  # "Gordon W. Prange Papers"
+  "Geary Eppley papers": http://vocab.lib.umd.edu/collection#0082-MDHC
+  "George Koonce collection": http://vocab.lib.umd.edu/collection#0249-MDHC
+  "George Meany Memorial Archives, Vertical File collection": http://vocab.lib.umd.edu/collection#0249-MDHC
+  "George Meany Memorial Archives. Vertical Files, 1882-1990": http://vocab.lib.umd.edu/collection#0249-MDHC #George Meany Memorial Archives, Vertical File collection
+  "George Tremblay Collection": http://vocab.lib.umd.edu/collection#0117-SCPA #George Tremblay papers
+  "Gilbert Mitchell Collection": http://vocab.lib.umd.edu/collection#0080-SCPA #Gilbert H. Mitchell Collection
+  "Gordon W. Prange papers": http://vocab.lib.umd.edu/collection#0193-MDHC
+  "Gordon W. Prange Papers": http://vocab.lib.umd.edu/collection#0193-MDHC
   # "Grete Sultan Collection"
-  # "Grimes Family papers"
-  # "Gymkana records"
-  # "H. Burton Shipley papers"
-  # "Hamilton Family papers"
+  "Grimes Family papers": http://vocab.lib.umd.edu/collection#0004-MDHC
+  "Gymkana records": http://vocab.lib.umd.edu/collection#0166-UA
+  "H. Burton Shipley papers": http://vocab.lib.umd.edu/collection#0146-UA
+  "Hamilton Family papers": http://vocab.lib.umd.edu/collection#0026-MDHC
   # "Harry A. Silberman collection"
-  # "Harry Clifton Byrd papers"
+  "Harry Clifton Byrd papers": http://vocab.lib.umd.edu/collection#0260-UA
   # "Harry L. Anderson Collection at the International Piano Archives at Maryland"
-  # "Helen Sioussat papers"
-  # "Helen Sioussat Papers"
-  # "Helmut Landsberg papers"
-  # "Hendricks and Hamilton families papers"
-  # "Henry Chandlee Forman papers"
-  # "Henry Powell Hopkins papers"
-  # "Hepburn Family Papers"
-  # "History of University of Maryland Campus Unrest"
-  # "Homecoming"
-  # "Howard F. Bridges Collection"
-  # "Hubert Kelly Waldron papers"
-  # "Hubert Kelly Waldron Papers"
-  # "Ian MacKaye digital collection of punk fanzines"
+  "Helen Sioussat papers": http://vocab.lib.umd.edu/collection#0014-MMC-LAB
+  "Helen Sioussat Papers": http://vocab.lib.umd.edu/collection#0014-MMC-LAB
+  "Helmut Landsberg papers": http://vocab.lib.umd.edu/collection#0261-UA
+  "Hendricks and Hamilton families papers": http://vocab.lib.umd.edu/collection#0044-MDHC
+  "Henry Chandlee Forman papers": http://vocab.lib.umd.edu/collection#0207-MDHC
+  "Henry Powell Hopkins papers": http://vocab.lib.umd.edu/collection#0180-MDHC
+  "Hepburn Family Papers": http://vocab.lib.umd.edu/collection#0278-MDHC
+  "History of University of Maryland Campus Unrest": http://vocab.lib.umd.edu/collection#0219-UA #History of the University of Maryland - Campus Unrest records
+  "Homecoming": http://vocab.lib.umd.edu/collection#0183-UA #Homecoming collection 
+  "Howard F. Bridges Collection": http://vocab.lib.umd.edu/collection#0108-UA #Howard F. Bridges photographs
+  "Hubert Kelly Waldron papers": http://vocab.lib.umd.edu/collection#0154-MDHC
+  "Hubert Kelly Waldron Papers": http://vocab.lib.umd.edu/collection#0154-MDHC
+  # "Ian MacKaye digital collection of punk fanzines" to be added?
   # "Ian MacKaye digital collection on punk fanzines"
-  # "Institute of American Deltiology postcard collection"
-  # "Institute of American Deltiology Postcard collection"
-  # "Institute of American Deltiology Postcard Collection"
-  # "Int. Atletics 2013-48"
-  # "Intercollegiate Athletics records"
-  # "Intercollegiate Athletics"
-  # "International Association of Siderographers records"
-  # "International Clarinet Association Research Center Score Collection: Select Solo de Concours Compositions"
-  # "International Clarinet Association Research Center Score Collection"
+  "Institute of American Deltiology postcard collection": http://vocab.lib.umd.edu/collection#0007-MDHC
+  "Institute of American Deltiology Postcard collection": http://vocab.lib.umd.edu/collection#0007-MDHC
+  "Institute of American Deltiology Postcard Collection": http://vocab.lib.umd.edu/collection#0007-MDHC
+  "Int. Atletics 2013-48": http://vocab.lib.umd.edu/collection#0052-UA #Department of Intercollegiate Athletics records
+  "Intercollegiate Athletics records": http://vocab.lib.umd.edu/collection#0052-UA #Department of Intercollegiate Athletics records
+  "Intercollegiate Athletics": http://vocab.lib.umd.edu/collection#0052-UA #Department of Intercollegiate Athletics records
+  "International Association of Siderographers records": http://vocab.lib.umd.edu/collection#0103-LBR
+  "International Clarinet Association Research Center Score Collection: Select Solo de Concours Compositions": http://vocab.lib.umd.edu/collection#0018-SCPA #International Clarinet Association Research Center
+  "International Clarinet Association Research Center Score Collection": http://vocab.lib.umd.edu/collection#0018-SCPA #International Clarinet Association Research Center
   # "IPAM manuscript collections"
-  # "Irvin Otto Wolf"
-  # "Isaiah S. and Martha Lang papers"
-  # "Jack Zane collection"
-  # "Jack Zane Collection"
-  # "Jacob M. Coopersmith Collection"
-  # "James Bruce papers"
-  # "James F. Stepter papers"
-  # "Jason Farrell collection"
-  # "Jean Spencer papers"
-  # "Jennie Forehand papers"
-  # "Joan Hult collection"
-  # "joe blair Collection"
-  # "Joe F. Blair collection"
-  # "Joe F. Blair Collection"
-  # "Johannes Martinus Burgers papers"
-  # "John B. Gray, Jr. collection"
-  # "John Curwen Manuscripts"
-  # "John Davis collection on punk"
-  # "John Davis"
-  # "John E. Rastall papers"
-  # "John McConnel collection"
-  # "John McDowell papers"
-  # "John T. Whalen papers"
-  # "John William Stewart Family papers"
-  # "Jonas Rappeport collection"
-  # "Joseph D. Tydings papers"
-  # "Joseph Raynes papers"
-  # "Joseph Spence Papers"
-  # "Joseph Uehlein papers"
-  # "Julie Andrews Collection"
-  # "Julius Bassin Papers"
-  # "Justin Williams Papers"
-  # "Karl Shapiro Papers"
-  # "Katherine Anne Porter P"
-  # "Katherine Anne Porter papers"
-  # "Katherine Anne Porter Papers"
+  "Irvin Otto Wolf": http://vocab.lib.umd.edu/collection#0214-UA
+  "Isaiah S. and Martha Lang papers": http://vocab.lib.umd.edu/collection#0096-MDHC #Isaiah and Martha Lang papers
+  "Jack Zane collection": http://vocab.lib.umd.edu/collection#0217-UA
+  "Jack Zane Collection": http://vocab.lib.umd.edu/collection#0217-UA
+  "Jacob M. Coopersmith Collection": http://vocab.lib.umd.edu/collection#0089-SCPA
+  "James Bruce papers": http://vocab.lib.umd.edu/collection#0065-MDHC
+  "James F. Stepter papers": http://vocab.lib.umd.edu/collection#0140-MDHC #James F. Stepter and the Steptoe Family papers
+  "Jason Farrell collection": http://vocab.lib.umd.edu/collection#0223-SCPA
+  "Jean Spencer papers": http://vocab.lib.umd.edu/collection#0178-MDHC
+  "Jennie Forehand papers": http://vocab.lib.umd.edu/collection#0328-MDHC #Jennie M. Forehand papers
+  "Joan Hult collection": http://vocab.lib.umd.edu/collection#0161-UA #Joan S. Hult papers
+  "joe blair Collection": http://vocab.lib.umd.edu/collection#0097-UA #Joe F. Blair collection
+  "Joe F. Blair collection": http://vocab.lib.umd.edu/collection#0097-UA
+  "Joe F. Blair Collection": http://vocab.lib.umd.edu/collection#0097-UA
+  "Johannes Martinus Burgers papers": http://vocab.lib.umd.edu/collection#0373-UA
+  "John B. Gray, Jr. collection": http://vocab.lib.umd.edu/collection#0100-UA #John B. Gray, Jr. papers
+  "John Curwen Manuscripts": http://vocab.lib.umd.edu/collection#0019-SCPA
+  "John Davis collection on punk": http://vocab.lib.umd.edu/collection#0334-SCPA-DAVIS
+  "John Davis": http://vocab.lib.umd.edu/collection#0334-SCPA-DAVIS #John Davis collection on punk
+  "John E. Rastall papers": http://vocab.lib.umd.edu/collection#0173-MDHC
+  "John McConnel collection": http://vocab.lib.umd.edu/collection#0181-MDHC #John McConnell papers
+  "John McDowell papers": http://vocab.lib.umd.edu/collection#0104-MDHC
+  "John T. Whalen papers": http://vocab.lib.umd.edu/collection#0188-MDHC
+  "John William Stewart Family papers": http://vocab.lib.umd.edu/collection#0308-MDHC
+  "Jonas Rappeport collection": http://vocab.lib.umd.edu/collection#0178-UA
+  "Joseph D. Tydings papers": http://vocab.lib.umd.edu/collection#0149-MDHC
+  "Joseph Raynes papers": http://vocab.lib.umd.edu/collection#0182-MDHC
+  "Joseph Spence Papers": http://vocab.lib.umd.edu/collection#0514-MDHC
+  "Joseph Uehlein papers": http://vocab.lib.umd.edu/collection#0100-LBR
+  "Julie Andrews Collection": http://vocab.lib.umd.edu/collection#0116-UA #Julie Andrews photographs
+  "Julius Bassin Papers": http://vocab.lib.umd.edu/collection#0562-GWP
+  "Justin Williams Papers": http://vocab.lib.umd.edu/collection#0016-GWP
+  "Karl Shapiro Papers": http://vocab.lib.umd.edu/collection#0035-LIT
+  "Katherine Anne Porter P": http://vocab.lib.umd.edu/collection#0041-LIT
+  "Katherine Anne Porter papers": http://vocab.lib.umd.edu/collection#0041-LIT
+  "Katherine Anne Porter Papers": http://vocab.lib.umd.edu/collection#0041-LIT
   # "Kirwan Traveling Exhibit 5/98"
-  # "Kodaly Center of America Archives (SCPA)"
-  # "Krulik Collection"
-  # "LAB Collections"
-  # "Laban/Bartenieff Institute for Movement Studies (LIMS) records"
+  "Kodaly Center of America Archives (SCPA)": http://vocab.lib.umd.edu/collection#0163-SCPA
+  "Krulik Collection": http://vocab.lib.umd.edu/collection#0018-MMC #Jeff Krulik papers
+  # "LAB Collections" Library of American Broadcasting Scripts collection?
+  "Laban/Bartenieff Institute for Movement Studies (LIMS) records": http://vocab.lib.umd.edu/collection#0339-SCPA
   # "Labor in America"
-  # "Labor Posters, Broadsides, and Art collection"
-  # "Lane Kirkland papers"
-  # "Lawrence Hogan Collection"
-  # "Lee Lawrence Papers"
-  # "Leland Scott collection"
-  # "Leon Major Collection"
-  # "Leon Washington Condol papers"
-  # "Leon Washington Condol Papers"
-  # "Leonidas Dodson papers"
-  # "Library of American Broadcasting"
-  # "LIMS collection"
-  # "LIMS Collection"
+  "Labor Posters, Broadsides, and Art collection": http://vocab.lib.umd.edu/collection#0095-LBR-RG99-001
+  "Lane Kirkland papers": http://vocab.lib.umd.edu/collection#0040-LBR-RG95-007
+  "Lawrence Hogan Collection": http://vocab.lib.umd.edu/collection#0256-MDHC #Lawrence Joseph Hogan papers
+  "Lee Lawrence Papers": http://vocab.lib.umd.edu/collection#0006-MMC-LAB
+  "Leland Scott collection": http://vocab.lib.umd.edu/collection#0332-MDHC
+  "Leon Major Collection": http://vocab.lib.umd.edu/collection#0209-SCPA #Leon Major papers
+  "Leon Washington Condol papers": http://vocab.lib.umd.edu/collection#0077-MDHC
+  "Leon Washington Condol Papers": http://vocab.lib.umd.edu/collection#0077-MDHC
+  "Leonidas Dodson papers": http://vocab.lib.umd.edu/collection#0045-MDHC
+  "Library of American Broadcasting": http://vocab.lib.umd.edu/collection#0189-MMC #Library of American Broadcasting Scripts collection
+  "LIMS collection": http://vocab.lib.umd.edu/collection#0339-SCPA #Laban/Bartenieff Institute of Movement Studies archives
+  "LIMS Collection": http://vocab.lib.umd.edu/collection#0339-SCPA #Laban/Bartenieff Institute of Movement Studies archives
   # "Literary Manuscripts  (Miscellaneous)"
   # "Literary Manuscripts (Miscellaneous)"
   # "Loan from Jack Letzer"
-  # "Lowell Mason Collection"
+  "Lowell Mason Collection": http://vocab.lib.umd.edu/collection#0007-SCPA
   # "Lunch Lady Collection"
-  # "M Club photos, 1960s-1970s"
-  # "Magon de la Ballus Letterbook"
-  # "Margery Morgan Lowens Collection"
-  # "Marion Theresa (M. T.) Biddle papers"
-  # "Mark M. Shoemaker Prints"
-  # "Mark Shoemaker papers"
-  # "Martha Tabor photographs"
-  # "Mary Eliza Bradbury papers"
-  # "Mary Louis Doherty papers"
-  # "Mary S. Shorb papers"
-  # "Mary W. Stewart papers"
-  # "Maryland 4-H Center records"
-  # "Maryland Agricultural College collection"
-  # "Maryland Agricultural College. Office of Registration records"
-  # "Maryland Agricultural College"
-  # "Maryland Agricultural Experiment Station records"
-  # "Maryland Cooperative Extension records"
-  # "Maryland Dance Theater collection"
-  # "Maryland Dance Theater Collection"
-  # "Maryland Extension Homemakers Council archives"
-  # "Maryland Manuscripts collection"
-  # "Maryland Manuscripts Collection"
-  # "Maryland Manuscripts"
+  "M Club photos, 1960s-1970s": http://vocab.lib.umd.edu/collection#0236-UA #M Club records
+  "Magon de la Ballus Letterbook": http://vocab.lib.umd.edu/collection#0052-MDHC
+  "Margery Morgan Lowens Collection": http://vocab.lib.umd.edu/collection#0350-SCPA #Margery Morgan Lowens collection on Edward MacDowell
+  "Marion Theresa (M. T.) Biddle papers": http://vocab.lib.umd.edu/collection#0266-MDHC
+  "Mark M. Shoemaker Prints": http://vocab.lib.umd.edu/collection#0267-UA #Mark Shoemaker papers
+  "Mark Shoemaker papers": http://vocab.lib.umd.edu/collection#0267-UA
+  "Martha Tabor photographs": http://vocab.lib.umd.edu/collection#0536-LBR
+  "Mary Eliza Bradbury papers": http://vocab.lib.umd.edu/collection#0062-MDHC
+  "Mary Louis Doherty papers": http://vocab.lib.umd.edu/collection#0015-LIT
+  "Mary S. Shorb papers": http://vocab.lib.umd.edu/collection#0268-UA
+  "Mary W. Stewart papers": http://vocab.lib.umd.edu/collection#0289-MDHC
+  "Maryland 4-H Center records": http://vocab.lib.umd.edu/collection#0081-UA
+  "Maryland Agricultural College collection": http://vocab.lib.umd.edu/collection#0222-UA
+  "Maryland Agricultural College. Office of Registration records": http://vocab.lib.umd.edu/collection#0041-UA #Office of Registration records
+  "Maryland Agricultural College": http://vocab.lib.umd.edu/collection#0222-UA
+  "Maryland Agricultural Experiment Station records": http://vocab.lib.umd.edu/collection#0019-UA
+  "Maryland Cooperative Extension records": http://vocab.lib.umd.edu/collection#0012-UA #Cooperative Extension Service (CES) records
+  "Maryland Dance Theater collection": http://vocab.lib.umd.edu/collection#0012-SCPA #Maryland Dance Theater records
+  "Maryland Dance Theater Collection": http://vocab.lib.umd.edu/collection#0012-SCPA #Maryland Dance Theater records
+  "Maryland Extension Homemakers Council archives": http://vocab.lib.umd.edu/collection#0220-MDHC #Maryland Association for Family and Community Education (MDAFCE) records
+  "Maryland Manuscripts collection": http://vocab.lib.umd.edu/collection#0047-MDHC
+  "Maryland Manuscripts Collection": http://vocab.lib.umd.edu/collection#0047-MDHC
+  "Maryland Manuscripts": http://vocab.lib.umd.edu/collection#0047-MDHC
   # "Maryland Map collection"
   # "Maryland Map Collection"
-  # "Maryland Men's Basketball collection"
-  # "Maryland MSS Collection"
-  # "Maryland Photographs - Biographical File"
-  # "Maryland Sheet Music collection"
-  # "Maryland WPA Photographic Collection"
-  # "May Day Collections"
-  # "MD 4-H"
+  "Maryland Men's Basketball collection": http://vocab.lib.umd.edu/collection#0172-UA
+  "Maryland MSS Collection": http://vocab.lib.umd.edu/collection#0047-MDHC #Maryland Manuscripts collection
+  "Maryland Photographs - Biographical File": http://vocab.lib.umd.edu/collection#0354-MDHC #Biographical Photographs -- Print File
+  "Maryland Sheet Music collection": http://vocab.lib.umd.edu/collection#0366-SCPA-MSMC
+  "Maryland WPA Photographic Collection": http://vocab.lib.umd.edu/collection#0009-MDHC #Work Projects Administration in Maryland records
+  "May Day Collections": http://vocab.lib.umd.edu/collection#0184-UA
+  "MD 4-H": http://vocab.lib.umd.edu/collection#0081-UA #Maryland 4-H Center records
   # "MD Map Collection"
   # "MD: 096"
-  # "Memorabilia collection"
-  # "Memorabilia Collection"
-  # "Memorial Chapel (College Park, Md.) records"
-  # "Mercer Literary Society records"
-  # "Messrs. Freeman and Almy archives"
-  # "Michel-Dmitri Calvocoressi manuscripts"
-  # "Mid-Atlantic Regional Archives Conference archives"
-  # "Milton A. Reckord Papers"
-  # "Milton M. Holden collection"
-  # "Mollee Coppell Kruger papers"
-  # "Morley A. Jull papers"
-  # "Morris B. Schnapper collection"
+  "Memorabilia collection": http://vocab.lib.umd.edu/collection#0106-MDHC
+  "Memorabilia Collection": http://vocab.lib.umd.edu/collection#0106-MDHC
+  "Memorial Chapel (College Park, Md.) records": http://vocab.lib.umd.edu/collection#0088-UA #Memorial Chapel records
+  "Mercer Literary Society records": http://vocab.lib.umd.edu/collection#0058-UA
+  "Messrs. Freeman and Almy archives": http://vocab.lib.umd.edu/collection#0303-MDHC
+  "Michel-Dmitri Calvocoressi manuscripts": http://vocab.lib.umd.edu/collection#0087-SCPA
+  "Mid-Atlantic Regional Archives Conference archives": http://vocab.lib.umd.edu/collection#0108-MDHC # Mid-Atlantic Regional Archives Conference (MARAC) records 
+  "Milton A. Reckord Papers": http://vocab.lib.umd.edu/collection#0127-MDHC #Milton Reckord papers
+  "Milton M. Holden collection": http://vocab.lib.umd.edu/collection#0137-UA
+  "Mollee Coppell Kruger papers": http://vocab.lib.umd.edu/collection#0048-LIT
+  "Morley A. Jull papers": http://vocab.lib.umd.edu/collection#0256-UA #Morley Jull papers
+  "Morris B. Schnapper collection": http://vocab.lib.umd.edu/collection#0090-LBR-RG96-004
   # "Mortar Board Collection"
   # "Mortar Board Collections"
-  # "Music Library Association Archives"
-  # "National Association for Music Education Historical Center"
-  # "National Organization for Women, Maryland Chapter archives"
+  "Music Library Association Archives": http://vocab.lib.umd.edu/collection#0028-SCPA
+  "National Association for Music Education Historical Center": http://vocab.lib.umd.edu/collection#0017-SCPA
+  "National Organization for Women, Maryland Chapter archives": http://vocab.lib.umd.edu/collection#0226-MDHC #National Organization for Women, Maryland Chapter records
   # "National Trust for Historic Preservation Library Collection"
   # "National Trust Library Photograph Collection"
-  # "National Trust Library postcard collection"
-  # "National Trust Library Postcard Collection"
-  # "News American Photo Archives"
-  # "Off Our Backs archives"
-  # "Office of Institutional Advancement records"
-  # "Office of Registration"
-  # "Office of the Chancellor records"
-  # "Office of the Director of Libraries records"
-  # "Office of University Publications"
-  # "Official Records of the American Composers Alliance"
-  # "Original Newspaper Collection"
-  # "Osburn Family papers"
+  "National Trust Library postcard collection": http://vocab.lib.umd.edu/collection#0001-MDHC-NTL #National Trust Library Historic Postcard collection
+  "National Trust Library Postcard Collection": http://vocab.lib.umd.edu/collection#0001-MDHC-NTL #National Trust Library Historic Postcard collection
+  "News American Photo Archives": http://vocab.lib.umd.edu/collection#0378-MDHC #Baltimore News American collection
+  "Off Our Backs archives": http://vocab.lib.umd.edu/collection#0341-MDHC #Off Our Backs records
+  "Office of Institutional Advancement records": http://vocab.lib.umd.edu/collection#0077-UA
+  "Office of Registration": http://vocab.lib.umd.edu/collection#0041-UA #Office of Registration records
+  "Office of the Chancellor records": http://vocab.lib.umd.edu/collection#0002-UA
+  "Office of the Director of Libraries records": http://vocab.lib.umd.edu/collection#0056-UA
+  "Office of University Publications": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "Official Records of the American Composers Alliance": http://vocab.lib.umd.edu/collection#0201-SCPA #Official Records of the American Composers Alliance (ACA)
+  "Original Newspaper Collection": http://vocab.lib.umd.edu/collection#0002-MDHC
+  "Osburn Family papers": http://vocab.lib.umd.edu/collection#0117-MDHC
   # "Page One Photography, Inc. collection"
   # "Page One Photography, Inc. Collection"
-  # "Papers of Aaron S. Oberly"
-  # "Papers of Adele Stamp"
-  # "Papers of Donald Maley"
-  # "Papers of Eleanor Tydings-Ditzen"
-  # "Papers of Elsa von Freytag-Loringhoven"
-  # "Papers of Fletcher Pearre Veitch"
-  # "Papers of Harry Clifton Byrd"
+  "Papers of Aaron S. Oberly": http://vocab.lib.umd.edu/collection#0282-MDHC #Aaron S. Oberly papers
+  "Papers of Adele Stamp": http://vocab.lib.umd.edu/collection#0282-UA #Adele H. Stamp papers
+  "Papers of Donald Maley": http://vocab.lib.umd.edu/collection#0201-UA #Donald Maley papers
+  "Papers of Eleanor Tydings-Ditzen": http://vocab.lib.umd.edu/collection#0365-MDHC #Eleanor Tydings Ditzen papers
+  "Papers of Elsa von Freytag-Loringhoven": http://vocab.lib.umd.edu/collection#0009-LIT #Elsa von Freytag-Loringhoven papers
+  "Papers of Fletcher Pearre Veitch": http://vocab.lib.umd.edu/collection#0153-MDHC #Fletcher Pearre Veitch papers
+  "Papers of Harry Clifton Byrd": http://vocab.lib.umd.edu/collection#0260-UA #Harry Clifton Byrd papers
   # "Papers of Ida G. Ruben"
-  # "Papers of Millard E. Tydings"
-  # "Papers of T.B. Symons"
-  # "Papers of Thomas B. Symons"
-  # "Patrick Gilmore Collection"
-  # "Patrick M. Olmert photographs"
-  # "Paul Bushmiller collection on punk, 1979-1992"
-  # "Paul Bushmiller collection on punk, 1981-1992"
-  # "Paul Porter papers"
+  "Papers of Millard E. Tydings": http://vocab.lib.umd.edu/collection#0150-MDHC #Millard E. Tydings papers
+  "Papers of T.B. Symons": http://vocab.lib.umd.edu/collection#0144-MDHC #Thomas B. Symons papers
+  "Papers of Thomas B. Symons": http://vocab.lib.umd.edu/collection#0144-MDHC #Thomas B. Symons papers
+  "Patrick Gilmore Collection": http://vocab.lib.umd.edu/collection#0006-SCPA
+  "Patrick M. Olmert photographs": http://vocab.lib.umd.edu/collection#0142-UA #Patrick M. Olmert collection
+  "Paul Bushmiller collection on punk, 1979-1992": http://vocab.lib.umd.edu/collection#0346-SCPA-BUSHMILLER
+  "Paul Bushmiller collection on punk, 1981-1992": http://vocab.lib.umd.edu/collection#0346-SCPA-BUSHMILLER #Paul Bushmiller collection on punk, 1979-1992
+  "Paul Porter papers": http://vocab.lib.umd.edu/collection#0040-LIT
   # "Personal Collection"
-  # "Philip Geraci collection"
+  "Philip Geraci collection": http://vocab.lib.umd.edu/collection#0099-UA #Philip Geraci photographs
   # "Portraits collection"
-  # "President's Files"
-  # "President's Office (UMS)"
-  # "President's Office records"
-  # "President's Office"
-  # "Preston Family papers"
-  # "Preston Family Papers"
-  # "Pride at Work records"
-  # "Pride at Work Records"
+  "President's Files": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  "President's Office (UMS)": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  "President's Office records": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  "President's Office": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  "Preston Family papers": http://vocab.lib.umd.edu/collection#0124-MDHC
+  "Preston Family Papers": http://vocab.lib.umd.edu/collection#0124-MDHC
+  "Pride at Work records": http://vocab.lib.umd.edu/collection#0551-LBR
+  "Pride at Work Records": http://vocab.lib.umd.edu/collection#0551-LBR
   # "Print Files"
   # "Queen Anne's Collection"
-  # "Queen's Game Collection"
-  # "R. Sumter Griffith papers"
-  # "Records of Gymkana"
-  # "Records of the Agricultural Experiment Station"
+  "Queen's Game Collection": http://vocab.lib.umd.edu/collection#0092-UA
+  "R. Sumter Griffith papers": http://vocab.lib.umd.edu/collection#0257-UA
+  "Records of Gymkana": http://vocab.lib.umd.edu/collection#0166-UA #Gymkana records
+  "Records of the Agricultural Experiment Station": http://vocab.lib.umd.edu/collection#0019-UA #Maryland Agricultural Experiment Station records
   # "Records of the Amateur Radio Association"
   # "Records of the Band"
   # "REcords of the Band"
-  # "Records of the College of Engineering"
-  # "Records of the Department of Botany"
-  # "Records of the Office of Sports Information"
-  # "Records of the President, University of Maryland"
-  # "Records of the President's Office"
-  # "Records of the UMS President's Office"
-  # "Records of the University Publications Office"
-  # "Reed Whittemore papers"
+  "Records of the College of Engineering": http://vocab.lib.umd.edu/collection#0066-UA #College of Engineering records
+  "Records of the Department of Botany": http://vocab.lib.umd.edu/collection#0024-UA #Department of Botany records
+  "Records of the Office of Sports Information": http://vocab.lib.umd.edu/collection#0080-UA #Sports Information Office records
+  "Records of the President, University of Maryland": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  "Records of the President's Office": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  "Records of the UMS President's Office": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  "Records of the University Publications Office": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "Reed Whittemore papers": http://vocab.lib.umd.edu/collection#0074-UA
   # "Reserve Officer Training Corps Records"
-  # "Reuben Gilder papers"
-  # "RG96-001. Photographic Prints"
-  # "Richard P. Newton Papers"
-  # "Rita M. Cacas Filipino American Community Archives"
-  # "Robbie White collection on the Slickee Boys"
-  # "Robert Fergusson and Alexander Hamilton papers"
-  # "Robert Gilmor and William Trippe Papers"
-  # "Robert Sherman papers"
-  # "Roland Flint papers"
-  # "Rose Marie Grentzer papers"
-  # "Roy Hoopes papers"
-  # "Satis Coleman papers"
-  # "Saxon Barnes papers"
+  "Reuben Gilder papers": http://vocab.lib.umd.edu/collection#0187-MDHC
+  "RG96-001. Photographic Prints": http://vocab.lib.umd.edu/collection#0088-LBR-RG96-001 #AFL-CIO Information Department, Photographic Prints collection
+  "Richard P. Newton Papers": http://vocab.lib.umd.edu/collection#0098-MDHC
+  "Rita M. Cacas Filipino American Community Archives": http://vocab.lib.umd.edu/collection#0371-MDHC #The Rita M. Cacas Filipino American Community Archives collection
+  "Robbie White collection on the Slickee Boys": http://vocab.lib.umd.edu/collection#0381-SCPA
+  "Robert Fergusson and Alexander Hamilton papers": http://vocab.lib.umd.edu/collection#0185-MDHC
+  "Robert Gilmor and William Trippe Papers": http://vocab.lib.umd.edu/collection#0147-MDHC
+  "Robert Sherman papers": http://vocab.lib.umd.edu/collection#0081-SCPA
+  "Roland Flint papers": http://vocab.lib.umd.edu/collection#0068-LIT
+  "Rose Marie Grentzer papers": http://vocab.lib.umd.edu/collection#0052-SCPA
+  "Roy Hoopes papers": http://vocab.lib.umd.edu/collection#0067-LIT
+  "Satis Coleman papers": http://vocab.lib.umd.edu/collection#0164-SCPA #Satis Coleman Collection
+  "Saxon Barnes papers": http://vocab.lib.umd.edu/collection#0020-LIT
   # "SCPA Serials collection"
-  # "Sellman Family papers"
+  "Sellman Family papers": http://vocab.lib.umd.edu/collection#0309-MDHC
   # "SESSMUS collection"
-  # "Sharon Cheslow Punk Flyers collection, 1979-1991"
-  # "Sharon Cheslow Punk Flyers collection, 1979-2003"
-  # "Sharon Cheslow Punk Flyers collection, 1979-2004"
-  # "Skip Groff papers"
-  # "Slide Collection, University Archives"
+  "Sharon Cheslow Punk Flyers collection, 1979-1991": http://vocab.lib.umd.edu/collection#0221-SCPA
+  "Sharon Cheslow Punk Flyers collection, 1979-2003": http://vocab.lib.umd.edu/collection#0221-SCPA #The Sharon Cheslow Punk Flyers collection, 1979-1991
+  "Sharon Cheslow Punk Flyers collection, 1979-2004": http://vocab.lib.umd.edu/collection#0221-SCPA #The Sharon Cheslow Punk Flyers collection, 1979-1991
+  "Skip Groff papers": http://vocab.lib.umd.edu/collection#0298-SCPA-GROFF
+  "Slide Collection, University Archives": http://vocab.lib.umd.edu/collection#0042-LBR-RG96-003 #Keystone Lantern photographic slide collection
   # "Special Collections and University Archives"
   # "Special Collections in Performing Arts"
-  # "Spiro T. Agnew papers"
-  # "Stan Barouh collection"
-  # "Sterling Byrd Collection"
-  # "Sterling Family papers"
-  # "Student Entertainment Events records"
-  # "Student Entertainment Events"
-  # "Student Union"
-  # "Subject Photographs - Print File"
+  "Spiro T. Agnew papers": http://vocab.lib.umd.edu/collection#0010-MDHC
+  "Stan Barouh collection": http://vocab.lib.umd.edu/collection#0136-SCPA #The Stanford Barouh Collection
+  "Sterling Byrd Collection": http://vocab.lib.umd.edu/collection#0289-UA
+  "Sterling Family papers": http://vocab.lib.umd.edu/collection#0141-MDHC
+  "Student Entertainment Events records": http://vocab.lib.umd.edu/collection#0135-UA #Records of Student Entertainment Events (SEE) records [sic]
+  "Student Entertainment Events": http://vocab.lib.umd.edu/collection#0135-UA #Records of Student Entertainment Events (SEE) records
+  "Student Union": http://vocab.lib.umd.edu/collection#0037-UA #Student Union records
+  "Subject Photographs - Print File": http://vocab.lib.umd.edu/collection#0299-MDHC
   # "Terrapin Rocket collection"
-  # "Terrapin Trail Club Records"
+  "Terrapin Trail Club Records": http://vocab.lib.umd.edu/collection#0163-UA
   # "Test collection"
   # "test"
   # "Test"
   # "Testudo"
-  # "The George Meany Memorial AFL-CIO Archive"
+  "The George Meany Memorial AFL-CIO Archive": http://vocab.lib.umd.edu/collection#0051-LBR-RG98-002 #George Meany Memorial Archives, Vertical File collection
   # "The Les Arries Collection"
-  # "The Michel-Dmitri Calvocoressi Manuscripts"
+  "The Michel-Dmitri Calvocoressi Manuscripts": http://vocab.lib.umd.edu/collection#0087-SCPA
   # "The original cookbook was returned to the Lloyd-Tilghman family. The Archives and Manuscripts Department only has these digital files and a color photocopy."
   # "The Paper"
-  # "The Papers of George Geesey"
-  # "The Records of the Madrigal Singers"
-  # "The Rita M. Cacas Filipino American Community Archives collection"
-  # "The Studio Theatre Archives"
-  # "The Wouter Keesing Collection on Fats Domino and New Orleans R&B"
-  # "Theodore Bissell papers"
-  # "Theodore McCann papers"
-  # "Theodore Roosevelt McKeldin papers"
-  # "Thom Gunn papers"
-  # "Thomas Bray papers"
-  # "Thomas Kensett Family papers"
-  # "Tom McMillen papers"
+  "The Papers of George Geesey": http://vocab.lib.umd.edu/collection#0140-MMC-NPBA #George Geesey papers
+  "The Records of the Madrigal Singers": http://vocab.lib.umd.edu/collection#0082-SCPA
+  "The Rita M. Cacas Filipino American Community Archives collection": http://vocab.lib.umd.edu/collection#0371-MDHC
+  "The Studio Theatre Archives": http://vocab.lib.umd.edu/collection#0146-SCPA
+  "The Wouter Keesing Collection on Fats Domino and New Orleans R&B": http://vocab.lib.umd.edu/collection#0070-SCPA
+  "Theodore Bissell papers": http://vocab.lib.umd.edu/collection#0250-UA #Theodore L. Bissell papers
+  "Theodore McCann papers": http://vocab.lib.umd.edu/collection#0183-MDHC #Theodore R. McCann papers
+  "Theodore Roosevelt McKeldin papers": http://vocab.lib.umd.edu/collection#0105-MDHC #Theodore R. McKeldin papers
+  "Thom Gunn papers": http://vocab.lib.umd.edu/collection#0007-LIT
+  "Thomas Bray papers": http://vocab.lib.umd.edu/collection#0063-MDHC
+  "Thomas Kensett Family papers": http://vocab.lib.umd.edu/collection#0301-MDHC
+  "Tom McMillen papers": http://vocab.lib.umd.edu/collection#0218-MDHC #C. Thomas McMillen papers
   # "UMCP portraits"
   # "UMCP Slide Collection"
-  # "UMCP Student Union"
-  # "UMD Print File, Photographs"
-  # "UMD Print File"
-  # "Union Label and Service Trades Department, Secretary-Treasurer's records"
-  # "United Brotherhood of Carpenters and Joiners (UBCJ) archives"
-  # "United Brotherhood of Carpenters and Joiners (UBCJ)"
-  # "United Brotherhood of Carpenters and Joiners America (UBCJA) archives"
-  # "United Brotherhood of Carpenters and Joiners of America (UBCJA) archives"
-  # "United Brotherhood of Carpenters and Joiners of America archives"
-  # "United Brotherhood of Carpenters and Joiners of America Archives"
-  # "United Brotherhood of Carpenters and Joiners of America"
+  "UMCP Student Union": http://vocab.lib.umd.edu/collection#0037-UA #Student Union records
+  "UMD Print File, Photographs": http://vocab.lib.umd.edu/collection#0085-UA #University of Maryland Print File photographs
+  "UMD Print File": http://vocab.lib.umd.edu/collection#0085-UA #University of Maryland Print File photographs
+  "Union Label and Service Trades Department, Secretary-Treasurer's records": http://vocab.lib.umd.edu/collection#0038-LBR-RG40-001
+  "United Brotherhood of Carpenters and Joiners (UBCJ) archives": http://vocab.lib.umd.edu/collection#0120-LBR #United Brotherhood of Carpenters and Joiners of America (UBCJA) archives
+  "United Brotherhood of Carpenters and Joiners (UBCJ)": http://vocab.lib.umd.edu/collection#0120-LBR #United Brotherhood of Carpenters and Joiners of America (UBCJA) archives
+  "United Brotherhood of Carpenters and Joiners America (UBCJA) archives": http://vocab.lib.umd.edu/collection#0120-LBR
+  "United Brotherhood of Carpenters and Joiners of America (UBCJA) archives": http://vocab.lib.umd.edu/collection#0120-LBR
+  "United Brotherhood of Carpenters and Joiners of America archives": http://vocab.lib.umd.edu/collection#0120-LBR #United Brotherhood of Carpenters and Joiners of America (UBCJA) archives
+  "United Brotherhood of Carpenters and Joiners of America Archives": http://vocab.lib.umd.edu/collection#0120-LBR #United Brotherhood of Carpenters and Joiners of America (UBCJA) archives
+  "United Brotherhood of Carpenters and Joiners of America": http://vocab.lib.umd.edu/collection#0120-LBR #United Brotherhood of Carpenters and Joiners of America (UBCJA) archives
   # "Univ. Pubs. 2010-104"
   # "univarch"
-  # "University Archives Print Files"
-  # "University Archives Vertical Files"
+  "University Archives Print Files": http://vocab.lib.umd.edu/collection#0085-UA #University of Maryland Print File photographs
+  "University Archives Vertical Files": http://vocab.lib.umd.edu/collection#0094-UA #University of Maryland Vertical File Collection
   # "University Archives"
   # "University Communications 2007-37"
   # "University Communications"
-  # "University of Maryland (College Park, Md.). Architecture, Engineering, and Construction records"
-  # "University of Maryland (College Park, Md.). College of Agriculture and Natural Resources records"
-  # "University of Maryland (College Park, Md.). Dept. of Intercollegiate Athletics records"
-  # "University of Maryland (College Park, Md.). Dept. of Intercollegiate Athletics. Campus Photo"
-  # "University of Maryland (College Park, Md.). Dept. of Intercollegiate Athletics. Media Relations records"
+  "University of Maryland (College Park, Md.). Architecture, Engineering, and Construction records": http://vocab.lib.umd.edu/collection#0151-UA #Department of Architecture, Engineering, and Construction records
+  "University of Maryland (College Park, Md.). College of Agriculture and Natural Resources records": http://vocab.lib.umd.edu/collection#0047-UA #College of Agriculture records
+  "University of Maryland (College Park, Md.). Dept. of Intercollegiate Athletics records": http://vocab.lib.umd.edu/collection#0052-UA #Department of Intercollegiate Athletics records
+  # "University of Maryland (College Park, Md.). Dept. of Intercollegiate Athletics. Campus Photo" Athletic Media Relations records?
+  "University of Maryland (College Park, Md.). Dept. of Intercollegiate Athletics. Media Relations records": http://vocab.lib.umd.edu/collection#0089-UA #Athletic Media Relations records
   # "University of Maryland (College Park, Md.). Friends of the Libraries"
-  # "University of Maryland (College Park, Md.). M Club records"
-  # "University of Maryland (College Park, Md.). Office of University Publications records"
+  "University of Maryland (College Park, Md.). M Club records": http://vocab.lib.umd.edu/collection#0236-UA #M Club records
+  "University of Maryland (College Park, Md.). Office of University Publications records": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
   # "University of Maryland (College Park, Md.). Photo Services photographs"
   # "University of Maryland (College Park, Md.). Photo Services"
-  # "University of Maryland (College Park, Md.). President's Office records"
-  # "University of Maryland (College Park, Md.). University Theatre"
+  "University of Maryland (College Park, Md.). President's Office records": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
+  # "University of Maryland (College Park, Md.). University Theatre": http://vocab.lib.umd.edu/collection#0242-UA #University Theater records
   # "University of Maryland (College Park, Md.)"
-  # "University of Maryland (System). Office of the President records"
+  "University of Maryland (System). Office of the President records": http://vocab.lib.umd.edu/collection#0062-UA #Office of the President, University of Maryland records
   # "University of Maryland aerial photograph collection"
-  # "University of Maryland at College Park. Dept. of Intercollegiate Athletics. Media Relations records"
-  # "University of Maryland at College Park. Office of Institutional Advancement records"
-  # "University of Maryland at College Park. Sports Information records"
-  # "University of Maryland Band records"
-  # "University of Maryland buildings and grounds collection"
-  # "University of Maryland Department of Dance records"
-  # "University of Maryland Extension records"
-  # "University of Maryland fraternities and sororities collection"
+  "University of Maryland at College Park. Dept. of Intercollegiate Athletics. Media Relations records": http://vocab.lib.umd.edu/collection#0089-UA #Athletic Media Relations records
+  "University of Maryland at College Park. Office of Institutional Advancement records": http://vocab.lib.umd.edu/collection#0077-UA #Office of Institutional Advancement records
+  "University of Maryland at College Park. Sports Information records": http://vocab.lib.umd.edu/collection#0080-UA #Sports Information Office records
+  "University of Maryland Band records": http://vocab.lib.umd.edu/collection#0090-UA
+  "University of Maryland buildings and grounds collection": http://vocab.lib.umd.edu/collection#0061-UA #Department of Physical Plant records
+  "University of Maryland Department of Dance records": http://vocab.lib.umd.edu/collection#0211-SCPA #Records of the University of Maryland Department of Dance
+  # "University of Maryland Extension records" CES records?
+  "University of Maryland fraternities and sororities collection": http://vocab.lib.umd.edu/collection#0297-UA #Fraternities and Sororities collection
   # "University of Maryland Libraries and Special Collections and University Archives"
-  # "University of Maryland memorabilia collection"
-  # "University of Maryland Photographs - Biographical File"
-  # "University of Maryland Photographs - Print File"
-  # "University of Maryland Photographs, Print File, Oversize"
-  # "University of Maryland Photographs, Print File"
-  # "University of Maryland Photographs"
-  # "University of Maryland Posters and Broadsides"
-  # "University of Maryland Print Files Photograph Collection"
-  # "University of Maryland scrapbooks collection"
+  "University of Maryland memorabilia collection": http://vocab.lib.umd.edu/collection#0106-MDHC #Memorabilia collection
+  "University of Maryland Photographs - Biographical File": http://vocab.lib.umd.edu/collection#0354-MDHC #Biographical Photographs -- Print File
+  "University of Maryland Photographs - Print File": http://vocab.lib.umd.edu/collection#0085-UA #University of Maryland Print File photographs
+  "University of Maryland Photographs, Print File, Oversize": http://vocab.lib.umd.edu/collection#0085-UA #University of Maryland Print File photographs
+  "University of Maryland Photographs, Print File": http://vocab.lib.umd.edu/collection#0085-UA #University of Maryland Print File photographs
+  # "University of Maryland Photographs" print file?
+  "University of Maryland Posters and Broadsides": http://vocab.lib.umd.edu/collection#0157-UA
+  "University of Maryland Print Files Photograph Collection": http://vocab.lib.umd.edu/collection#0085-UA #University of Maryland Print File photographs
+  "University of Maryland scrapbooks collection": http://vocab.lib.umd.edu/collection#0068-UA #Scrapbook collection
   # "University of Maryland slide collection"
   # "University of Maryland Slide Collection"
   # "University of Maryland University College photographs"
-  # "University of Maryland, College Park. Alumni Office records"
-  # "University of Maryland, College Park. Dept. of Botany records"
+  "University of Maryland, College Park. Alumni Office records": http://vocab.lib.umd.edu/collection#0021-UA #Alumni Office records
+  "University of Maryland, College Park. Dept. of Botany records": http://vocab.lib.umd.edu/collection#0024-UA #http://vocab.lib.umd.edu/collection#0024-UA
   # "University of Maryland, College Park. Photo Services"
-  # "University of Maryland, College Park. Physical Plant records"
+  "University of Maryland, College Park. Physical Plant records": http://vocab.lib.umd.edu/collection#0061-UA #Department of Physical Plant records
   # "University of Maryland"
-  # "University Publications Acc. 2015-043"
-  # "University Publications collection, Buildings and Grounds"
-  # "University Publications collection, Intercollegiate Athletics"
-  # "University Publications Office slide collection"
-  # "University Publications records"
-  # "University Publications Slide Collection 43-367-023-0001"
-  # "University Publications Slides"
-  # "University Publications, Student Publications"
-  # "University Publications"
-  # "University Pubs Acc. 2010-104"
-  # "University Pubs, 2010-104"
-  # "University Theater"
+  "University Publications Acc. 2015-043": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications collection, Buildings and Grounds": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications collection, Intercollegiate Athletics": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications Office slide collection": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications records": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications Slide Collection 43-367-023-0001": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications Slides": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications, Student Publications": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Publications": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Pubs Acc. 2010-104": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Pubs, 2010-104": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "University Theater": http://vocab.lib.umd.edu/collection#0242-UA #University Theater records
   # "University"
-  # "UPUB 2010-104"
-  # "UPUB Ill."
-  # "UPUB Ill.018"
-  # "Victor E. Delnore Papers"
-  # "Victor Gold papers"
-  # "Vincent Godfrey Burns papers"
-  # "Virginie and WIlliam Brown collection"
-  # "Vox Pop Collection"
-  # "Warfield Family papers"
-  # "Warfield Family Papers"
+  "UPUB 2010-104": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "UPUB Ill.": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "UPUB Ill.018": http://vocab.lib.umd.edu/collection#0480-UA #University Publications collection
+  "Victor E. Delnore Papers": http://vocab.lib.umd.edu/collection#0001-GWP
+  "Victor Gold papers": http://vocab.lib.umd.edu/collection#0487-MDHC
+  "Vincent Godfrey Burns papers": http://vocab.lib.umd.edu/collection#0017-LIT
+  "Virginie and WIlliam Brown collection": http://vocab.lib.umd.edu/collection#0110-UA
+  "Vox Pop Collection": http://vocab.lib.umd.edu/collection#0049-MMC-LAB #Parks Johnson collection of Vox Pop
+  "Warfield Family papers": http://vocab.lib.umd.edu/collection#0155-MDHC
+  "Warfield Family Papers": http://vocab.lib.umd.edu/collection#0155-MDHC
   "Weems-Reynolds Family Papers": http://vocab.lib.umd.edu/collection#0156-MDHC
   "Weems/Reynolds family papers": http://vocab.lib.umd.edu/collection#0156-MDHC
   "Weems/Reynolds Family Papers": http://vocab.lib.umd.edu/collection#0156-MDHC
-  # "Wilhelmina F. Jashemski Papers"
-  # "William B. Sands papers"
-  # "William Emory papers"
-  # "William F. Dove papers"
-  # "William L. Amoss papers"
-  # "William Morris Collection"
-  # "William Morris papers"
-  # "William Trippe papers"
-  # "Willis A. Pomeroy papers"
-  # "WMUC Archives"
-  # "Woman's Suburban Democratic Club archives"
-  # "Work Progress Administration in Maryland records"
-  # "Work Projects Administration in Maryland records"
-  # "Works Projects Administration in Maryland records"
-  # "Works Projects Administration in Maryland Records"
-  # "World's Fair Ephemeral and Graphical Materials collection"
-  # "WPA"
+  "Wilhelmina F. Jashemski Papers": http://vocab.lib.umd.edu/collection#0162-UA
+  "William B. Sands papers": http://vocab.lib.umd.edu/collection#0266-UA #William Sands papers 
+  "William Emory papers": http://vocab.lib.umd.edu/collection#0081-MDHC
+  "William F. Dove papers": http://vocab.lib.umd.edu/collection#0125-UA
+  "William L. Amoss papers": http://vocab.lib.umd.edu/collection#0251-UA
+  "William Morris Collection": http://vocab.lib.umd.edu/collection#0092-LIT #William Morris papers
+  "William Morris papers": http://vocab.lib.umd.edu/collection#0092-LIT
+  "William Trippe papers": http://vocab.lib.umd.edu/collection#0147-MDHC #Robert Gilmor and William Trippe papers
+  "Willis A. Pomeroy papers": http://vocab.lib.umd.edu/collection#0123-MDHC
+  "WMUC Archives": http://vocab.lib.umd.edu/collection#0203-UA #WMUC records
+  "Woman's Suburban Democratic Club archives": http://vocab.lib.umd.edu/collection#0179-MDHC #Woman's Suburban Democratic Club records
+  "Work Progress Administration in Maryland records": http://vocab.lib.umd.edu/collection#0009-MDHC #Work Projects Administration in Maryland records
+  "Work Projects Administration in Maryland records": http://vocab.lib.umd.edu/collection#0009-MDHC
+  "Works Projects Administration in Maryland records": http://vocab.lib.umd.edu/collection#0009-MDHC
+  "Works Projects Administration in Maryland Records": http://vocab.lib.umd.edu/collection#0009-MDHC
+  "World's Fair Ephemeral and Graphical Materials collection": http://vocab.lib.umd.edu/collection#0363-MDHC
+  "WPA": http://vocab.lib.umd.edu/collection#0009-MDHC #Work Projects Administration in Maryland records
