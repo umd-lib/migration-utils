@@ -59,10 +59,16 @@ files
 * Input: export.csv and exported objects and datastreams
 * Output: Avalon formatted batch_manifest.csv
 
+[scripts/archelon.py](scripts/archelon.py) - generate batch_manifest.csv which is
+ready for batch load into Archelon.
+
+* Input: export.csv and exported objects and datastreams
+* Output: Archelon formatted batch_manifest.csv
+
 [scripts/unit_tests.py](scripts/unit_tests.py) - Unit tests for verifying
 behavior of scripts
 
-## Building
+## Building Java
 
 The migration-utils Java software is built with [Maven 3](https://maven.apache.org)
 and requires Java 11 and Maven 3.1+.
@@ -71,9 +77,81 @@ and requires Java 11 and Maven 3.1+.
 mvn clean install
 ```
 
-You will need python 3.8+ to use the Python scripts in the `scripts` folder.
+## Running Python
 
-## Example
+Install pyenv
+
+```bash
+curl https://pyenv.run | bash # or brew install pyenv
+eval "$(pyenv init -)"
+
+# Add the following to your bash or zsh rc
+# export PYENV_ROOT="$HOME/.pyenv"
+# command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init -)"
+```
+
+Set up the local Python environment:
+
+```bash
+# Setup the Python version
+pyenv install --skip-existing $(cat .python-version)
+pyenv shell $(cat .python-version)
+
+# Setup the virtual environment
+python -m venv .venv --prompt f2migration-py$(cat .python-version)
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Examples
+
+### Archelon non-A/V migration
+
+```bash
+# Extract summary information about all FOXML objects.
+#
+# Creates export/info.json
+java -jar target/migration-utils-*-driver.jar \
+    --action=info \
+    --objects-dir=objects \
+    --datastreams-dir=datastreams \
+    --target-dir=export
+
+# Filter for UMDM objects which are in the Treasury of World's Fair Art & Architecture
+# collection, of any status or type. Also merges UMAM objects under their "parent"
+# UMDM object via the hasPart relationship.
+#
+# Creates export/filter.json
+scripts/filter.py \
+    --infile=export/info.json \
+    --outfile=export/filter.json \
+    --collection=umd:2 \
+    --status=Complete,Pending,Deleted,Private,Incomplete \
+    --type=UMD_IMAGE,UMD_BOOK,UMD_TEI
+
+# Export objects from objects and datastreams folders into the export folder, with summary
+# information in export.csv.
+#
+# Creates export/export.csv and export/umd_XXX directories for each UMDM.
+java -jar target/migration-utils-*-driver.jar \
+    --action=export \
+    --objects-dir=objects \
+    --datastreams-dir=datastreams \
+    --filter-json=export/filter.json \
+    --target-dir=export
+
+# Use the contents of the export directory and the export.csv file to generate
+# batch_manifest.csv for import into Avalon.
+#
+# Creates export/batch_manifest.csv
+scripts/archelon.py \
+     --title="World's Fair Migration" \
+     --email='wallberg@umd.edu' \
+     --target-dir=export
+```
+
+### Avalon A/V migration
 
 ```bash
 # Extract summary information about all FOXML objects.
