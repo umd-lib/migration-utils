@@ -6,6 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -41,13 +44,15 @@ public class MigratorFedora2ExportTest {
      *             if an exception occurs
      */
     public MigratorFedora2Export createExportMigrator(
-            final File exportOutputDir, final ExportWriter exportWriter) throws Exception {
+            final File exportOutputDir, final ExportWriter exportWriter,
+            final Set<String> datastreamsInclude) throws Exception {
         final File testInputsDir = new File(
                 this.getClass().getClassLoader().getResource("migration/export/fedora2/inputs/").getFile());
 
         final InternalIDResolver idResolver = new LegacyFSIDResolver(null, testInputsDir);
         final String f3hostname = "fcrepo.example.com";
-        final Fedora2ExportStreamingFedoraObjectHandler objectHandler = new Fedora2ExportStreamingFedoraObjectHandler();
+        final Fedora2ExportStreamingFedoraObjectHandler objectHandler =
+            new Fedora2ExportStreamingFedoraObjectHandler(datastreamsInclude);
 
         final File filterJsonInputFile = new File(testInputsDir, "filter.json");
         final InputStream filterJsonStream = new FileInputStream(filterJsonInputFile);
@@ -66,7 +71,10 @@ public class MigratorFedora2ExportTest {
         final File csvOutputFile = new File(exportOutputDir, "export.csv");
         final ExportWriter exportWriter = new CSVExportWriter(csvOutputFile.toString());
 
-        final MigratorFedora2Export exportMigrator = createExportMigrator(exportOutputDir, exportWriter);
+        final HashSet<String> datastreamsInclude = null;
+
+        final MigratorFedora2Export exportMigrator =
+            createExportMigrator(exportOutputDir, exportWriter, datastreamsInclude);
         try {
             exportMigrator.run();
         } finally {
@@ -79,6 +87,60 @@ public class MigratorFedora2ExportTest {
                 this.getClass().getClassLoader().getResource("migration/export/fedora2/expected").getFile());
         TestUtils.assertDirsAreEqual(expectedOutputDir.toPath(), exportOutputDir.toPath());
     }
+
+    @Test
+    public void testCsvExportDatastreamList() throws Exception {
+        final File exportOutputDir = tempTargetDir.getRoot();
+        final File csvOutputFile = new File(exportOutputDir, "export.csv");
+        final ExportWriter exportWriter = new CSVExportWriter(csvOutputFile.toString());
+
+        final HashSet<String> datastreamsInclude = new HashSet<String>(Arrays.asList(
+            new String[]{"amInfo-properties.json", "amInfo.xml", "doInfo-properties.json", "doInfo.xml", "foxml.xml",
+                         "properties.json", "rels-mets-properties.json", "rels-mets.xml", "umam-properties.json",
+                         "umam.xml", "umdm-properties.json", "umdm.xml"}
+        ));
+
+        final MigratorFedora2Export exportMigrator =
+            createExportMigrator(exportOutputDir, exportWriter, datastreamsInclude);
+        try {
+            exportMigrator.run();
+        } finally {
+            if (exportWriter != null) {
+                exportWriter.close();
+            }
+        }
+
+        final File expectedOutputDir = new File(
+                this.getClass().getClassLoader().getResource("migration/export/fedora2/expected").getFile());
+        TestUtils.assertDirsAreEqual(expectedOutputDir.toPath(), exportOutputDir.toPath());
+    }
+
+    @Test
+    public void testCsvExportLimitedFiles() throws Exception {
+        final File exportOutputDir = tempTargetDir.getRoot();
+        final File csvOutputFile = new File(exportOutputDir, "export.csv");
+        final ExportWriter exportWriter = new CSVExportWriter(csvOutputFile.toString());
+
+        final HashSet<String> datastreamsInclude = new HashSet<String>(Arrays.asList(
+            new String[]{"amInfo-properties.json", "umdm.xml"}
+        ));
+
+        final MigratorFedora2Export exportMigrator =
+            createExportMigrator(exportOutputDir, exportWriter, datastreamsInclude);
+        try {
+            exportMigrator.run();
+        } finally {
+            if (exportWriter != null) {
+                exportWriter.close();
+            }
+        }
+
+        final File expectedOutputDir = new File(
+                this.getClass().getClassLoader()
+                    .getResource("migration/export/fedora2/expected_limited_files").getFile());
+        TestUtils.assertDirsAreEqual(expectedOutputDir.toPath(), exportOutputDir.toPath());
+    }
+
 
     /**
      * Subclass of MigratorFedora2Export that enables overrides of methods

@@ -2,6 +2,7 @@
 
 import json
 import logging
+import random
 from argparse import ArgumentParser, FileType
 from tempfile import TemporaryFile
 from xml.etree import ElementTree
@@ -59,6 +60,14 @@ def process_args():
                         default=[],
                         help="Comma-separated list of doInfo.type")
 
+    parser.add_argument("-r", "--random",
+                        type=int,
+                        default=0,
+                        help=(
+                            "Pseudo-randomly select records at a rate of 1 out of RANDOM"
+                            "(default: every record)"
+                        ))
+
     # Process command line arguments
     return parser.parse_args()
 
@@ -107,6 +116,17 @@ def setup_filters(args):
             return 'type' in do_info and do_info['type'] in args.type
 
         filters.append(filter_type)
+
+    if args.random:
+        logging.info(f"Filter Random: 1 out of {args.random}")
+
+        random.seed(0)
+
+        def filter_random(obj):
+            return random.randrange(args.random) == 0
+
+        filters.append(filter_random)
+
 
     return filters
 
@@ -195,8 +215,8 @@ def main(args):
 
     with TemporaryFile(mode='w+') as umam_list:
         # Collect all UMDM matching the filters
-        logging.info("Finding UMDM")
         filters = setup_filters(args)
+        logging.info("Finding UMDM")
         for line in args.infile:
             obj = json.loads(line)
 
@@ -218,7 +238,7 @@ def main(args):
                 # Save the UMDM object
                 umdm.append(obj)
 
-        logging.info(f"  {len(umdm)}")
+        logging.info(f"  found {len(umdm)}")
 
         # Collect all UMAM for the matching UMDM
         logging.info("Finding UMAM")
@@ -240,7 +260,7 @@ def main(args):
 
                 parts_count += 1
 
-    logging.info(f"  {parts_count}")
+    logging.info(f"  found {parts_count}")
 
     # Write out the results
     logging.info("Writing output JSON")

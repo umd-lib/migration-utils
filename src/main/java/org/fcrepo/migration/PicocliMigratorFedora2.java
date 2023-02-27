@@ -41,7 +41,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import static edu.wisc.library.ocfl.api.util.Enforce.expressionTrue;
@@ -152,6 +154,10 @@ public class PicocliMigratorFedora2 implements Callable<Integer> {
                           "specifies the UMDM and UMAM to export; formatted as output from scripts/filter.py")
     private File filterJson;
 
+    @Option(names = {"--datastreams-include"}, order = 31,
+    description = "Comma separated list of datastream filenames to extract; default is extract all")
+    private String datastreamsInclude;
+
     /**
      * @param args Command line arguments
      */
@@ -211,6 +217,15 @@ public class PicocliMigratorFedora2 implements Callable<Integer> {
         final File pidDir = new File(targetDir, "pid");
         if (!pidDir.exists()) {
             pidDir.mkdirs();
+        }
+
+        // Datastreams Include
+        Set<String> datastreamsInclude = null;
+        if (this.datastreamsInclude != null) {
+            datastreamsInclude = new HashSet<String>();
+            for (String ds: this.datastreamsInclude.split(",")) {
+                datastreamsInclude.add(ds.trim());
+            }
         }
 
         // Which F3 source are we using? - verify associated options
@@ -279,7 +294,7 @@ public class PicocliMigratorFedora2 implements Callable<Integer> {
 
                 final MigratorFedora2Export exportMigrator = new MigratorFedora2Export(
                     targetDir, exportWriter,
-                    new Fedora2ExportStreamingFedoraObjectHandler(),
+                    new Fedora2ExportStreamingFedoraObjectHandler(datastreamsInclude),
                     jsonReader, idResolver, f3hostname);
 
                 try {
