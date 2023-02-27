@@ -142,12 +142,10 @@ java -jar target/migration-utils-*-driver.jar \
     --target-dir=export
 
 # Use the contents of the export directory and the export.csv file to generate
-# batch_manifest.csv for import into Avalon.
+# batch_manifest.csv for import into Archelon.
 #
 # Creates export/batch_manifest.csv
 scripts/archelon.py \
-     --title="World's Fair Migration" \
-     --email='wallberg@umd.edu' \
      --target-dir=export
 ```
 
