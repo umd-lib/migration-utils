@@ -6,6 +6,7 @@ import random
 from argparse import ArgumentParser, FileType
 from tempfile import TemporaryFile
 from xml.etree import ElementTree
+import dbm
 
 import requests
 
@@ -67,6 +68,10 @@ def process_args():
                             "Pseudo-randomly select records at a rate of 1 out of RANDOM"
                             "(default: every record)"
                         ))
+
+    parser.add_argument("-a", "--handles",
+                        type=str,
+                        help="Cache of (pid, handle) pairs")
 
     # Process command line arguments
     return parser.parse_args()
@@ -179,8 +184,14 @@ def hasitem_chain(obj, *keys):
     return True
 
 
-def get_handle(pid):
+def get_handle(args, pid):
     logging.debug(f'Looking up handle for {pid}')
+
+    # Try the cache first
+    if args.handles and pid in args.handles:
+       return args.handles[pid].decode('utf-8')
+
+    # Not available in the cache
     response = requests.get('https://fedora.lib.umd.edu/handle/', params={'action': 'lookup', 'pid': pid})
     if not response.ok:
         logging.warning(f'No handle found for {pid}')
@@ -192,7 +203,13 @@ def get_handle(pid):
         logging.warning(f'No handle found for {pid}')
         return ''
 
-    return handle_element.text
+    handle = handle_element.text
+
+    # Write to the cache
+    if args.handles:
+        args.handles[pid] = handle
+
+    return handle
 
 
 def main(args):
@@ -207,67 +224,76 @@ def main(args):
     Then writes to the output file.
     """
 
-    # matching UMDM objects
-    umdm = []
-    # mapping from UMAM pid => UMDM
-    umdm_for_umam_pid = {}
-    parts_count = 0
+    # Open optional handles cache file
+    if args.handles:
+        args.handles = dbm.open(args.handles, 'c')
+        logging.info(f"Using handle cache file with {len(args.handles)} entries")
 
-    with TemporaryFile(mode='w+') as umam_list:
-        # Collect all UMDM matching the filters
-        filters = setup_filters(args)
-        logging.info("Finding UMDM")
-        for line in args.infile:
-            obj = json.loads(line)
+    try:
+        # matching UMDM objects
+        umdm = []
+        # mapping from UMAM pid => UMDM
+        umdm_for_umam_pid = {}
+        parts_count = 0
 
-            # copy any UMAM objects to the temp file
-            if is_umam(obj):
-                umam_list.write(line)
+        with TemporaryFile(mode='w+') as umam_list:
+            # Collect all UMDM matching the filters
+            filters = setup_filters(args)
+            logging.info("Finding UMDM")
+            for line in args.infile:
+                obj = json.loads(line)
 
-            if is_umdm(obj) and all(check(obj) for check in filters):
-                # Map the UMAM pids to their parent UMDM
-                umam_pids = getitem_chain(obj, 'ds', 'rels-mets', 'rels', 'hasPart', default=[])
-                umdm_for_umam_pid.update({pid: obj for pid in umam_pids})
+                # copy any UMAM objects to the temp file
+                if is_umam(obj):
+                    umam_list.write(line)
 
-                # Add the title
-                obj['title'] = getitem_chain(obj, 'ds', 'umdm', 'umdm_title', default='<unknown>')
+                if is_umdm(obj) and all(check(obj) for check in filters):
+                    # Map the UMAM pids to their parent UMDM
+                    umam_pids = getitem_chain(obj, 'ds', 'rels-mets', 'rels', 'hasPart', default=[])
+                    umdm_for_umam_pid.update({pid: obj for pid in umam_pids})
 
-                # Add the handle
-                obj['handle'] = get_handle(obj['pid'])
+                    # Add the title
+                    obj['title'] = getitem_chain(obj, 'ds', 'umdm', 'umdm_title', default='<unknown>')
 
-                # Save the UMDM object
-                umdm.append(obj)
+                    # Add the handle
+                    obj['handle'] = get_handle(args, obj['pid'])
 
-        logging.info(f"  found {len(umdm)}")
+                    # Save the UMDM object
+                    umdm.append(obj)
 
-        # Collect all UMAM for the matching UMDM
-        logging.info("Finding UMAM")
+            logging.info(f"  found {len(umdm)}")
 
-        # rewind the temp file listing of UMAM objects
-        umam_list.seek(0)
-        for line in umam_list:
-            obj = json.loads(line)
-            pid = obj['pid']
+            # Collect all UMAM for the matching UMDM
+            logging.info("Finding UMAM")
 
-            if pid in umdm_for_umam_pid:
-                umdm_object = umdm_for_umam_pid[pid]
+            # rewind the temp file listing of UMAM objects
+            umam_list.seek(0)
+            for line in umam_list:
+                obj = json.loads(line)
+                pid = obj['pid']
 
-                if 'hasPart' not in umdm_object:
-                    umdm_object['hasPart'] = []
+                if pid in umdm_for_umam_pid:
+                    umdm_object = umdm_for_umam_pid[pid]
 
-                # Add the UMAM to its parent UMDM
-                umdm_object['hasPart'].append(obj)
+                    if 'hasPart' not in umdm_object:
+                        umdm_object['hasPart'] = []
 
-                parts_count += 1
+                    # Add the UMAM to its parent UMDM
+                    umdm_object['hasPart'].append(obj)
 
-    logging.info(f"  found {parts_count}")
+                    parts_count += 1
 
-    # Write out the results
-    logging.info("Writing output JSON")
-    for obj in umdm:
-        args.outfile.write(json.dumps(obj))
-        args.outfile.write("\n")
+        logging.info(f"  found {parts_count}")
 
+        # Write out the results
+        logging.info("Writing output JSON")
+        for obj in umdm:
+            args.outfile.write(json.dumps(obj))
+            args.outfile.write("\n")
+
+    finally:
+        if args.handles:
+            args.handles.close()
 
 if __name__ == '__main__':
     # Run input/output filter
