@@ -85,10 +85,11 @@ Install pyenv
 curl https://pyenv.run | bash # or brew install pyenv
 eval "$(pyenv init -)"
 
-# Add the following to your bash or zsh rc
-# export PYENV_ROOT="$HOME/.pyenv"
-# command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init -)"
+# Set your shell to use pyenv
+# Also add these to your bash or zsh rc
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 ```
 
 Set up the local Python environment:
