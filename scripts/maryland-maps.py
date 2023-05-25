@@ -27,7 +27,7 @@ import yaml
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
-def traverse_metadata(e, manifest_csv):
+def traverse_metadata(e, manifest_csv, mapping):
     """ Traverse the metadata JSON document. """
     if isinstance(e, dict):
 
@@ -41,10 +41,10 @@ def traverse_metadata(e, manifest_csv):
         )
 
         if is_map:
-            handle_map(e, manifest_csv)
+            handle_map(e, manifest_csv, mapping)
         else:
             for v in e.values():
-                traverse_metadata(v, manifest_csv)
+                traverse_metadata(v, manifest_csv, mapping)
 
 
 def handle_text(e, key):
@@ -81,25 +81,75 @@ def handle_list(e, key):
         return []
 
 
-def handle_map(e, manifest_csv):
+def handle_map(e, manifest_csv, mapping):
     """ Handle a single map. """
 
-    global rowcount, writer
+    global rowcount
 
     row = []
     headers = []
 
+    # TODO: Determine if Image is valid when there is metadata but no image
+    headers.append("Object Type")
+    row.append("http://purl.org/dc/dcmitype/Image")
+
+    headers.append("Identifier")
+    row.append(handle_text(e, "mdmap:call_number"))
+
+    headers.append("Rights Statement")
+    row.append("http://rightsstatements.org/vocab/UND/1.0/")
+
     headers.append("Title")
     row.append(html.unescape(handle_text(e, "mdmap:title")))
 
-    headers.append("CallNumber")
-    row.append(handle_text(e, "mdmap:call_number"))
+    headers.append("Handle/Link")
+    url = handle_url(e, "/mdmap:fedora")
+    row.append(url)
 
-    headers.append("Digitized")
-    row.append(handle_text(e, "mdmap:digitized"))
+    headers.append("Format")
+    row.append("http://vocab.lib.umd.edu/form#maps")
 
-    headers.append("Cartographer")
+    headers.append("Archival Collection")
+    key = "Maryland Map Collection"
+    if key in mapping['archival_collection']:
+        row.append(mapping['archival_collection'][key])
+    else:
+        row.append("")
+
+    headers.append("Description")
+    description = [
+        handle_text(e, "mdmap:map_type"),
+        handle_text(e, "mdmap:railroad"),
+        handle_text(e, "mdmap:notes"),
+    ]
+    row.append('; '.join([item for item in description if item]))
+
+    headers.append("Creator")
     row.append(handle_text(e, "mdmap:cartographer"))
+
+    headers.append("Publisher")
+    row.append(handle_text(e, "mdmap:publisher"))
+
+    headers.append("Location")
+
+    location = []
+
+    location.append(handle_text(e, "mdmap:region"))
+    location.append(handle_text(e, "mdmap:waterway"))
+
+    location.extend(handle_list(e, "mdmap:cities"))
+    location.extend(handle_list(e, "mdmap:counties"))
+    location.extend(handle_list(e, "mdmap:regions"))
+    location.extend(handle_list(e, "mdmap:states"))
+
+    row.append("|".join([l for l in location if l]))
+
+    headers.append("Extent")
+    sheets = int(handle_text(e, "mdmap:num_sheets"))
+    if sheets == 1:
+        row.append("1 sheet")
+    else:
+        row.append(f'{sheets} sheets')
 
     headers.append("StartYear")
     row.append(handle_text(e, "mdmap:start_year"))
@@ -107,43 +157,8 @@ def handle_map(e, manifest_csv):
     headers.append("EndYear")
     row.append(handle_text(e, "mdmap:end_year"))
 
-    headers.append("MapType")
-    row.append(handle_text(e, "mdmap:map_type"))
-
-    headers.append("Notes")
-    row.append(handle_text(e, "mdmap:notes"))
-
-    headers.append("NumSheets")
-    row.append(handle_text(e, "mdmap:num_sheets"))
-
-    headers.append("Publisher")
-    row.append(handle_text(e, "mdmap:publisher"))
-
-    headers.append("Region")
-    row.append(handle_text(e, "mdmap:region"))
-
-    headers.append("Railroad")
-    row.append(handle_text(e, "mdmap:railroad"))
-
-    headers.append("Waterway")
-    row.append(handle_text(e, "mdmap:waterway"))
-
-    headers.append("Cities")
-    row.append('; '.join(handle_list(e, "mdmap:cities")))
-
-    headers.append("Counties")
-    row.append('; '.join(handle_list(e, "mdmap:counties")))
-
-    headers.append("Regions")
-    row.append('; '.join(handle_list(e, "mdmap:regionis")))
-
-    headers.append("States")
-    row.append('; '.join(handle_list(e, "mdmap:states")))
-
-    headers.append("FedoraLink")
-    url = handle_url(e, "/mdmap:fedora")
-
-    row.append(url)
+    # Not Mapped:
+    #   mdmap:digitized
 
     if rowcount == 0:
         manifest_csv.writerow(headers)
@@ -203,7 +218,7 @@ def main(args: Namespace) -> None:
 
     with manifest_path.open(mode='w') as manifest_file:
         manifest_csv = writer(manifest_file)
-        traverse_metadata(doc, manifest_csv)
+        traverse_metadata(doc, manifest_csv, mapping)
 
     logging.info(f"  {rowcount} records")
 
