@@ -7,8 +7,10 @@ from typing import Dict, Iterable, List, Optional, Union
 import html
 import logging
 from argparse import ArgumentParser, Namespace
+import re
 
 import yaml
+import edtf
 
 # Convert MD Map Collection records exported from Hippo CMS to Archelon
 # input format.
@@ -25,6 +27,61 @@ import yaml
 # python3 scripts/maryland-maps.py --target-dir=maryland-maps
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
+
+
+def get_edtf(date: str) -> str:
+        """ Get Extended Data/Time Format (EDTF) string """
+
+        # Discovered Patterns in StartYear and EndYear
+        #    1 #####, ####
+        #    8 ####, #### (circa)
+        #  121 ####, ####
+        #   44 ####, ####, ####
+        #    2 ####, ####, ####, ####
+        # 4317 ####
+        #   85 #### (circa)
+        #    2 ####(circa)
+        #   14 ####-####
+        #    6 ####-#### (circa)
+        #   16 ####?
+        #    2 ###?
+        #    1 EndYear
+        #  198 No Date
+        #    1 StartYear
+        #    8 no date
+
+        date = date \
+            .strip() \
+            .replace('(circa)', ' (circa)') \
+            .replace('no date', '') \
+            .replace('No Date', '') \
+            .replace('"', '')
+
+        date = re.sub(r'(^|[^\d])(\d{3})\?', r'\1\2x', date)
+
+        # No Date
+        if date == "":
+            return ""
+
+        # List of dates
+        elif ',' in date:
+            return '[' + ', '.join(get_edtf(s) for s in date.split(',')) + ']'
+
+        # Date Range
+        elif '/' in date:
+            return  '/'.join(get_edtf(s) for s in date.split('/'))
+
+        else:
+            try:
+                # Some natural language can be converted to EDTF
+                if (edtf_date := edtf.text_to_edtf(date)) is not None:
+                    date = edtf_date
+
+                # Parse to make sure it is properly EDTF formatted
+                return str(edtf.parse_edtf(date))
+
+            except Exception:
+                return f'Invalid EDTF: {date}'
 
 
 def traverse_metadata(e, manifest_csv, mapping):
@@ -151,11 +208,21 @@ def handle_map(e, manifest_csv, mapping):
     else:
         row.append(f'{sheets} sheets')
 
-    headers.append("StartYear")
-    row.append(handle_text(e, "mdmap:start_year"))
+    headers.append("Date")
+    start_date = handle_text(e, "mdmap:start_year")
+    end_date = handle_text(e, "mdmap:end_year")
 
-    headers.append("EndYear")
-    row.append(handle_text(e, "mdmap:end_year"))
+    if start_date and end_date:
+        if start_date == end_date:
+            date = start_date
+        else:
+            date = start_date + '/' + end_date
+    elif start_date:
+        date = start_date
+    else:
+        date = end_date
+
+    row.append(get_edtf(date))
 
     # Not Mapped:
     #   mdmap:digitized
