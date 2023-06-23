@@ -30,62 +30,78 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 
 def get_edtf(date: str) -> str:
-        """ Get Extended Data/Time Format (EDTF) string """
+    """ Get Extended Data/Time Format (EDTF) string """
 
-        # Discovered Patterns in StartYear and EndYear
-        #    1 #####, ####
-        #    8 ####, #### (circa)
-        #  121 ####, ####
-        #   44 ####, ####, ####
-        #    2 ####, ####, ####, ####
-        # 4317 ####
-        #   85 #### (circa)
-        #    2 ####(circa)
-        #   14 ####-####
-        #    6 ####-#### (circa)
-        #   16 ####?
-        #    2 ###?
-        #    1 EndYear
-        #  198 No Date
-        #    1 StartYear
-        #    8 no date
+    # Discovered Patterns in StartYear and EndYear
+    #    1 #####, ####
+    #    8 ####, #### (circa)
+    #  121 ####, ####
+    #   44 ####, ####, ####
+    #    2 ####, ####, ####, ####
+    # 4317 ####
+    #   85 #### (circa)
+    #    2 ####(circa)
+    #   14 ####-####
+    #    6 ####-#### (circa)
+    #   16 ####?
+    #    2 ###?
+    #    1 EndYear
+    #  198 No Date
+    #    1 StartYear
+    #    8 no date
 
-        date = date \
-            .strip() \
-            .replace('(circa)', ' (circa)') \
-            .replace('no date', '') \
-            .replace('No Date', '') \
-            .replace('"', '')
+    date = date \
+        .strip() \
+        .replace('(circa)', ' (circa)') \
+        .replace('no date', '') \
+        .replace('No Date', '') \
+        .replace('"', '')
 
-        date = re.sub(r'(^|[^\d])(\d{3})\?', r'\1\2x', date)
+    date = re.sub(r'(^|[^\d])(\d{3})\?', r'\1\2x', date)
 
-        # No Date
-        if date == "":
-            return ""
+    # No Date
+    if date == "":
+        return ""
 
-        # List of dates
-        elif ',' in date:
-            return '[' + ', '.join(get_edtf(s) for s in date.split(',')) + ']'
+    # List of dates
+    elif ',' in date:
+        return '[' + ', '.join(get_edtf(s) for s in date.split(',')) + ']'
 
-        # Date Range
-        elif '/' in date:
-            return  '/'.join(get_edtf(s) for s in date.split('/'))
+    # Date Range
+    elif '/' in date:
+        return '/'.join(get_edtf(s) for s in date.split('/'))
 
+    else:
+        try:
+            # Some natural language can be converted to EDTF
+            if (edtf_date := edtf.text_to_edtf(date)) is not None:
+                date = edtf_date
+
+            # Parse to make sure it is properly EDTF formatted
+            return str(edtf.parse_edtf(date))
+
+        except Exception:
+            return f'Invalid EDTF: {date}'
+
+
+def traverse_gallery(e, image_map):
+    """ Traverse the image gallery document. """
+    if isinstance(e, dict):
+
+        is_image = (
+            "jcr:primaryType" in e
+            and e["jcr:primaryType"] == "hippo:handle"
+        )
+
+        if is_image:
+            handle_image(e, image_map)
         else:
-            try:
-                # Some natural language can be converted to EDTF
-                if (edtf_date := edtf.text_to_edtf(date)) is not None:
-                    date = edtf_date
-
-                # Parse to make sure it is properly EDTF formatted
-                return str(edtf.parse_edtf(date))
-
-            except Exception:
-                return f'Invalid EDTF: {date}'
+            for v in e.values():
+                traverse_gallery(v, image_map)
 
 
-def traverse_metadata(e, manifest_csv, mapping):
-    """ Traverse the metadata JSON document. """
+def traverse_metadata(e, manifest_csv, mapping, image_map):
+    """ Traverse the metadata document. """
     if isinstance(e, dict):
 
         is_map = (
@@ -98,10 +114,21 @@ def traverse_metadata(e, manifest_csv, mapping):
         )
 
         if is_map:
-            handle_map(e, manifest_csv, mapping)
+            handle_map(e, manifest_csv, mapping, image_map)
         else:
             for v in e.values():
-                traverse_metadata(v, manifest_csv, mapping)
+                traverse_metadata(v, manifest_csv, mapping, image_map)
+
+
+def handle_image(e, image_map):
+    """ Handle a single gallery image. """
+
+    uuid = e['jcr:uuid']
+
+    for v in e.values():
+        if isinstance(v, dict):
+            if '/hippogallery:original' in v:
+                image_map[uuid] = v['/hippogallery:original']['jcr:data']['resource']
 
 
 def handle_text(e, key):
@@ -130,6 +157,14 @@ def handle_url(e, key):
     return url
 
 
+def handle_imagelink(e, key):
+    """ Handle an imagelink field """
+    uuid = ""
+    if key in e:
+        uuid = e[key]["hippo:docbase"]
+    return uuid
+
+
 def handle_list(e, key):
     """ Handle an array field. """
     if key in e:
@@ -138,7 +173,7 @@ def handle_list(e, key):
         return []
 
 
-def handle_map(e, manifest_csv, mapping):
+def handle_map(e, manifest_csv, mapping, image_map):
     """ Handle a single map. """
 
     global rowcount
@@ -199,7 +234,7 @@ def handle_map(e, manifest_csv, mapping):
     location.extend(handle_list(e, "mdmap:regions"))
     location.extend(handle_list(e, "mdmap:states"))
 
-    row.append("|".join([l for l in location if l]))
+    row.append("|".join([loc for loc in location if loc]))
 
     headers.append("Extent")
     sheets = int(handle_text(e, "mdmap:num_sheets"))
@@ -223,6 +258,14 @@ def handle_map(e, manifest_csv, mapping):
         date = end_date
 
     row.append(get_edtf(date))
+
+    headers.append("FILES")
+    uuid = handle_imagelink(e, "/mdmap:maps")
+
+    if uuid and uuid in image_map:
+        row.append(image_map[uuid])
+    else:
+        row.append("")
 
     # Not Mapped:
     #   mdmap:digitized
@@ -272,7 +315,24 @@ def main(args: Namespace) -> None:
     # Load mapping document (assumes cwd is the migration-utils directory)
     mapping = load_mapping()
 
-    # Read in exported metadata records (YAML)
+    # Load exported image gallery
+    gallery_path = target / 'maryland-maps-gallery.yaml'
+    logging.info(f"Reading exported images from {gallery_path}")
+
+    with gallery_path.open(mode='r') as gallery_file:
+        gallery = yaml.safe_load(gallery_file)
+
+    # Map image uuid to image resource path
+    image_map = {}
+    traverse_gallery(gallery, image_map)
+
+    # Verify images are available
+    for uuid, resource in image_map.items():
+        resource_file = target / resource
+        if not resource_file.exists():
+            logging.error(f'For {uuid=}, resource file {resource} is missing')
+
+    # Load exported metadata records (YAML)
     export_path = target / 'maryland-maps.yaml'
     logging.info(f"Reading exported records from {export_path}")
 
@@ -285,7 +345,7 @@ def main(args: Namespace) -> None:
 
     with manifest_path.open(mode='w') as manifest_file:
         manifest_csv = writer(manifest_file)
-        traverse_metadata(doc, manifest_csv, mapping)
+        traverse_metadata(doc, manifest_csv, mapping, image_map)
 
     logging.info(f"  {rowcount} records")
 
@@ -296,4 +356,3 @@ rowcount = 0
 if __name__ == '__main__':
     # Run the conversion
     main(process_args())
-
