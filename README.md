@@ -79,7 +79,7 @@ mvn clean install
 
 ## Running Python
 
-Install pyenv
+### Install pyenv
 
 ```bash
 curl https://pyenv.run | bash # or brew install pyenv
@@ -92,7 +92,7 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 ```
 
-Set up the local Python environment:
+### Set up the local Python environment
 
 ```bash
 # Setup the Python version
@@ -103,6 +103,19 @@ pyenv shell $(cat .python-version)
 python -m venv .venv --prompt f2migration-py$(cat .python-version)
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+### Test archelon.py
+
+Download https://umd.box.com/s/ta191e4i8eh3vzb9joruosgkmr3cgwif to migration-utils-sample-data-archelon.tgz in the migration-utils root folder.
+
+```bash
+# Unpack to the sample folder
+tar xfz migration-utils-sample-data-archelon.tgz
+
+# Use the contents of the sample directory to generate
+# sample/batch_manifest.csv, for developing/testing archelon.py
+scripts/archelon.py --target-dir=sample
 ```
 
 ## Examples
