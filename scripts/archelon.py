@@ -143,16 +143,16 @@ class Object:
 
                     elif (agent_type == 'creator' and
                           (
-                            child.nodeName == 'corpName' and (agent_role is None or agent_role == 'author')
-                            or child.nodeName == 'persName' and (agent_role is None or agent_role == 'author')
+                            child.nodeName == 'corpName' and ((not agent_role) or agent_role == 'author')
+                            or child.nodeName == 'persName' and ((not agent_role) or agent_role == 'author')
                             or child.nodeName == 'other'
                           )):
                         self.creator.append(text)
 
                     elif (agent_type == 'contributor' and
                           (
-                            child.nodeName == 'corpName' and (agent_role is None or agent_role in ('illustrator', 'editor'))
-                            or child.nodeName == 'persName' and (agent_role is None or agent_role in ('illustrator', 'editor'))
+                            child.nodeName == 'corpName' and ((not agent_role) or agent_role in ('illustrator', 'editor'))
+                            or child.nodeName == 'persName' and ((not agent_role) or agent_role in ('illustrator', 'editor'))
                             or child.nodeName == 'other'
                           )):
                         self.contributor.append(text)
