@@ -68,6 +68,11 @@ ready for batch load into Archelon.
 [scripts/unit_tests.py](scripts/unit_tests.py) - Unit tests for verifying
 behavior of scripts
 
+[scripts/maryland-maps.py](scripts/maryland-maps.py) - Convert MD Map Collection records exported from Hippo CMS to Archelon.
+
+* Input: Hippo CMS exported YAML and binaries.
+* Output: Archelon formatted batch_manifest.csv
+
 ## Building Java
 
 The migration-utils Java software is built with [Maven 3](https://maven.apache.org)
@@ -226,4 +231,19 @@ python3 csv_rsync.py \
     --input_file=<CSV_FILE>
     --source-dir-prefix=<SOURCE_PREFIX>
     --dest-dir-prefix=<DEST_PREFIX>
+```
+
+### Hippo CMS Maryland Map Collection to Archelon migration
+
+```bash
+mkdir maryland-maps
+
+# In the Hippo console, export path=/content/gallery/public/maryland-maps
+# to maryland-maps/{maryland-maps-gallery.yaml, maryland-maps}
+
+# In the Hippo console, export path=/content/documents/digital/maryland-maps
+# to maryland-maps/maryland-maps.yaml
+#
+# Create maryland-maps/batch_manifest.csv
+python3 scripts/maryland-maps.py --target-dir=maryland-maps
 ```
