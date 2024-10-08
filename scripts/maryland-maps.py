@@ -100,7 +100,7 @@ def traverse_gallery(e, image_map):
                 traverse_gallery(v, image_map)
 
 
-def traverse_metadata(e, manifest_csv, mapping, image_map):
+def traverse_metadata(e, manifest_csv, mapping, image_map, current_key=None):
     """ Traverse the metadata document. """
     if isinstance(e, dict):
 
@@ -113,11 +113,18 @@ def traverse_metadata(e, manifest_csv, mapping, image_map):
             and "live" in e["hippo:availability"]
         )
 
+        for k in e.keys():
+            if isinstance(e[k], dict):
+                if k != '/mdmap:fedora' and k != '/mdmap:maps':
+                    logging.info(k)
+                    current_key = k
+
         if is_map:
-            handle_map(e, manifest_csv, mapping, image_map)
+            handle_map(e, manifest_csv, mapping, image_map, current_key)
+            current_key = None
         else:
             for v in e.values():
-                traverse_metadata(v, manifest_csv, mapping, image_map)
+                traverse_metadata(v, manifest_csv, mapping, image_map, current_key)
 
 
 def handle_image(e, image_map):
@@ -173,7 +180,15 @@ def handle_list(e, key):
         return []
 
 
-def handle_map(e, manifest_csv, mapping, image_map):
+def handle_path(raw_path):
+    """ Clean up JCR Path """
+    path = raw_path
+    if "[" in raw_path:
+        path,sub_path = raw_path.split('[', 1)
+    return path.replace("/", "")
+
+
+def handle_map(e, manifest_csv, mapping, image_map, hippo_path):
     """ Handle a single map. """
 
     global rowcount
@@ -181,69 +196,106 @@ def handle_map(e, manifest_csv, mapping, image_map):
     row = []
     headers = []
 
+    local_id = handle_text(e, "mdmap:call_number").strip()
+    local_title = html.unescape(handle_text(e, "mdmap:title")).strip()
+
+    headers.append("id")
+    row.append(local_id)
+
     # TODO: Determine if Image is valid when there is metadata but no image
-    headers.append("Object Type")
+    headers.append("object_type")
     row.append("http://purl.org/dc/dcmitype/Image")
 
-    headers.append("Identifier")
-    row.append(handle_text(e, "mdmap:call_number"))
-
-    headers.append("Rights Statement")
+    headers.append("rights_statement")
     row.append("http://rightsstatements.org/vocab/UND/1.0/")
 
-    headers.append("Title")
-    row.append(html.unescape(handle_text(e, "mdmap:title")))
+    headers.append("title")
+    row.append(local_title)
 
-    headers.append("Handle/Link")
+    headers.append("handle_link")
     url = handle_url(e, "/mdmap:fedora")
     row.append(url)
 
-    headers.append("Format")
+    headers.append("format")
     row.append("http://vocab.lib.umd.edu/form#maps")
 
-    headers.append("Archival Collection")
+    headers.append("archival_collection")
     key = "Maryland Map Collection"
     if key in mapping['archival_collection']:
         row.append(mapping['archival_collection'][key])
     else:
         row.append("")
 
-    headers.append("Description")
-    description = [
-        handle_text(e, "mdmap:map_type"),
-        handle_text(e, "mdmap:railroad"),
-        handle_text(e, "mdmap:notes"),
-    ]
-    row.append('; '.join([item for item in description if item]))
+    # headers.append("description")
+    # description = [
+    #     handle_text(e, "mdmap:map_type"),
+    #     handle_text(e, "mdmap:railroad"),
+    #     handle_text(e, "mdmap:notes"),
+    # ]
+    # row.append('; '.join([item for item in description if item]))
 
-    headers.append("Creator")
+    headers.append("notes")
+    row.append(handle_text(e, "mdmap:notes"))
+
+    headers.append("railroad")
+    row.append(handle_text(e, "mdmap:railroad"))
+
+    headers.append("map_type")
+    row.append(handle_text(e, "mdmap:map_type"))
+
+    headers.append("creator")
     row.append(handle_text(e, "mdmap:cartographer"))
 
-    headers.append("Publisher")
+    headers.append("publisher")
     row.append(handle_text(e, "mdmap:publisher"))
 
-    headers.append("Location")
+    headers.append("region")
+    row.append(handle_text(e, "mdmap:region"))
 
-    location = []
+    headers.append("waterway")
+    row.append(handle_text(e, "mdmap:waterway"))
 
-    location.append(handle_text(e, "mdmap:region"))
-    location.append(handle_text(e, "mdmap:waterway"))
+    # Multivalued
+    headers.append("states")
+    states = handle_text(e, "mdmap:states")
+    row.append(";".join([state for state in states if state]))
 
-    location.extend(handle_list(e, "mdmap:cities"))
-    location.extend(handle_list(e, "mdmap:counties"))
-    location.extend(handle_list(e, "mdmap:regions"))
-    location.extend(handle_list(e, "mdmap:states"))
+    # Multivalued
+    headers.append("regions")
+    regions = handle_text(e, "mdmap:md_regions")
+    row.append(";".join([reg for reg in regions if reg]))
 
-    row.append("|".join([loc for loc in location if loc]))
+    # Multivalued
+    headers.append("counties")
+    counties = handle_text(e, "mdmap:counties")
+    row.append(";".join([county for county in counties if county]))
 
-    headers.append("Extent")
+    # Multivalued
+    headers.append("cities")
+    cities = handle_text(e, "mdmap:cities")
+    row.append(";".join([city for city in cities if city]))
+
+    # headers.append("location")
+    # location = []
+
+    # location.append(handle_text(e, "mdmap:region"))
+    # location.append(handle_text(e, "mdmap:waterway"))
+
+    # location.extend(handle_list(e, "mdmap:cities"))
+    # location.extend(handle_list(e, "mdmap:counties"))
+    # location.extend(handle_list(e, "mdmap:regions"))
+    # location.extend(handle_list(e, "mdmap:states"))
+
+    # row.append("|".join([loc for loc in location if loc]))
+
+    headers.append("extent")
     sheets = int(handle_text(e, "mdmap:num_sheets"))
     if sheets == 1:
         row.append("1 sheet")
     else:
         row.append(f'{sheets} sheets')
 
-    headers.append("Date")
+    headers.append("display_date")
     start_date = handle_text(e, "mdmap:start_year")
     end_date = handle_text(e, "mdmap:end_year")
 
@@ -259,7 +311,13 @@ def handle_map(e, manifest_csv, mapping, image_map):
 
     row.append(get_edtf(date))
 
-    headers.append("FILES")
+    headers.append("start_date")
+    row.append(start_date)
+
+    headers.append("path")
+    row.append(handle_path(hippo_path))
+
+    headers.append("files")
     uuid = handle_imagelink(e, "/mdmap:maps")
 
     if uuid and uuid in image_map:
@@ -273,8 +331,12 @@ def handle_map(e, manifest_csv, mapping, image_map):
     if rowcount == 0:
         manifest_csv.writerow(headers)
 
-    manifest_csv.writerow(row)
-    rowcount += 1
+    if local_title is None or local_id is None or local_title == '' or local_id == '':
+        # skip row
+        logging.info("Skipped row")
+    else:
+        manifest_csv.writerow(row)
+        rowcount += 1
 
 
 def process_args() -> Namespace:

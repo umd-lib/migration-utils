@@ -234,3 +234,9 @@ mkdir maryland-maps
 # Create maryland-maps/batch_manifest.csv
 python3 scripts/maryland-maps.py --target-dir=maryland-maps
 ```
+
+Or if using uv:
+
+```bash
+uv run --with pyyaml --with edtf scripts/maryland-maps.py --target-dir=maryland-maps
+```
